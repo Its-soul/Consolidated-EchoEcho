@@ -144,7 +144,10 @@ class CopyrightCheckApiRequest(BaseModel):
 @asynccontextmanager
 async def lifespan(_: FastAPI) -> AsyncIterator[None]:
     ensure_files()
-    validate_kieai_config()
+    try:
+        validate_kieai_config()
+    except Exception as exc:
+        logger.warning("KieAI config invalid — API generation disabled: %s", exc)
     Thread(target=warm_model, daemon=True).start()
     yield
 
