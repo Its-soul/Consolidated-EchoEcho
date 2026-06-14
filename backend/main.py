@@ -1202,6 +1202,22 @@ def serve_frontend() -> FileResponse:
     return FileResponse(index_path)
 
 
+@app.get("/login", include_in_schema=False)
+def serve_login_page() -> FileResponse:
+    path = FRONTEND_DIR / "login.html"
+    if not path.exists():
+        raise HTTPException(status_code=404, detail="Login page not found.")
+    return FileResponse(path, media_type="text/html")
+
+
+@app.get("/signup", include_in_schema=False)
+def serve_signup_page() -> FileResponse:
+    path = FRONTEND_DIR / "signup.html"
+    if not path.exists():
+        raise HTTPException(status_code=404, detail="Signup page not found.")
+    return FileResponse(path, media_type="text/html")
+
+
 @app.get("/{page}.html", include_in_schema=False)
 def serve_page(page: str) -> FileResponse:
     path = FRONTEND_DIR / f"{Path(page).name}.html"
