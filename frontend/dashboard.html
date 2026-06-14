@@ -1387,21 +1387,23 @@ const STEPS = [
   {
     id:'mood', label:'Mood',
     title:'How do you want to feel?',
-    sub:'Pick the vibe that captures your current state of mind.',
+    sub:'Pick one or more vibes that capture your state of mind.',
     type:'grid', key:'mood',
     options:[
-      {e:'😌',l:'Calm'},     {e:'🌧️',l:'Melancholy'}, {e:'🔥',l:'Energetic'}, {e:'✨',l:'Euphoric'},
-      {e:'🎸',l:'Rebellious'},{e:'🌙',l:'Dreamy'},      {e:'🖤',l:'Dark'},       {e:'🌅',l:'Hopeful'},
+      {e:'😌',l:'Calm'},      {e:'🌧️',l:'Melancholy'}, {e:'🔥',l:'Energetic'},  {e:'✨',l:'Euphoric'},
+      {e:'🎸',l:'Rebellious'},{e:'🌙',l:'Dreamy'},       {e:'🖤',l:'Dark'},        {e:'🌅',l:'Hopeful'},
+      {e:'😤',l:'Angry'},     {e:'💫',l:'Trippy'},        {e:'🥹',l:'Emotional'},  {e:'😎',l:'Cool'},
     ]
   },
   {
     id:'genre', label:'Genre',
     title:'Choose a genre',
-    sub:'What kind of music are you in the mood for?',
+    sub:'Select one or more genres you want blended.',
     type:'grid', key:'genre',
     options:[
-      {e:'🎹',l:'Lo-fi'},   {e:'🎷',l:'Jazz'},     {e:'🎸',l:'Rock'},    {e:'🎻',l:'Classical'},
-      {e:'⚡',l:'Electronic'},{e:'🎤',l:'Hip-hop'}, {e:'🌊',l:'Ambient'},  {e:'🎵',l:'Pop'},
+      {e:'🎹',l:'Lo-fi'},     {e:'🎷',l:'Jazz'},      {e:'🎸',l:'Rock'},      {e:'🎻',l:'Classical'},
+      {e:'⚡',l:'Electronic'},{e:'🎤',l:'Hip-hop'},    {e:'🌊',l:'Ambient'},   {e:'🎵',l:'Pop'},
+      {e:'🤠',l:'Country'},   {e:'🔊',l:'R&B'},        {e:'🎺',l:'Soul'},      {e:'🌴',l:'Reggae'},
     ]
   },
   {
@@ -1410,18 +1412,20 @@ const STEPS = [
     sub:'What world should your music bring to life?',
     type:'grid', key:'theme',
     options:[
-      {e:'🌿',l:'Nature'},  {e:'🏙️',l:'Urban'},   {e:'🌌',l:'Space'},    {e:'🌊',l:'Ocean'},
-      {e:'📼',l:'Nostalgia'},{e:'🧚',l:'Fantasy'}, {e:'❤️',l:'Love'},     {e:'🕊️',l:'Freedom'},
+      {e:'🌿',l:'Nature'},    {e:'🏙️',l:'Urban'},    {e:'🌌',l:'Space'},     {e:'🌊',l:'Ocean'},
+      {e:'📼',l:'Nostalgia'}, {e:'🧚',l:'Fantasy'},   {e:'❤️',l:'Love'},      {e:'🕊️',l:'Freedom'},
+      {e:'🌃',l:'Midnight'},  {e:'🏔️',l:'Mountain'}, {e:'🔥',l:'Hustle'},    {e:'☮️',l:'Peace'},
     ]
   },
   {
     id:'instrument', label:'Instrument',
     title:'Lead with an instrument',
-    sub:'Which instrument should carry the melody?',
+    sub:'Pick one or more instruments for the melody.',
     type:'grid', key:'instrument',
     options:[
-      {e:'🎹',l:'Piano'},  {e:'🎸',l:'Guitar'}, {e:'🥁',l:'Drums'},   {e:'🎻',l:'Violin'},
-      {e:'🎛️',l:'Synth'}, {e:'🎵',l:'Bass'},   {e:'🎺',l:'Trumpet'}, {e:'🪈',l:'Flute'},
+      {e:'🎹',l:'Piano'},    {e:'🎸',l:'Guitar'},   {e:'🥁',l:'Drums'},    {e:'🎻',l:'Violin'},
+      {e:'🎛️',l:'Synth'},   {e:'🎵',l:'Bass'},     {e:'🎺',l:'Trumpet'},  {e:'🪈',l:'Flute'},
+      {e:'🪗',l:'Accordion'},{e:'🎙️',l:'Vocals'},  {e:'🪘',l:'Tabla'},    {e:'🎚️',l:'808'},
     ]
   },
   {
@@ -1430,8 +1434,9 @@ const STEPS = [
     sub:'How should the track be crafted and finished?',
     type:'grid', key:'style',
     options:[
-      {e:'🎵',l:'Acoustic'},    {e:'⚡',l:'Electric'},      {e:'🎼',l:'Orchestral'}, {e:'▫️',l:'Minimal'},
-      {e:'🎚️',l:'Layered'},    {e:'🔬',l:'Experimental'},  {e:'🎭',l:'Dramatic'},   {e:'🌸',l:'Delicate'},
+      {e:'🎵',l:'Acoustic'},      {e:'⚡',l:'Electric'},      {e:'🎼',l:'Orchestral'},  {e:'▫️',l:'Minimal'},
+      {e:'🎚️',l:'Layered'},      {e:'🔬',l:'Experimental'},  {e:'🎭',l:'Dramatic'},    {e:'🌸',l:'Delicate'},
+      {e:'🔈',l:'Lo-fi Mixed'},   {e:'🔊',l:'Club Ready'},    {e:'🌀',l:'Psychedelic'}, {e:'🧊',l:'Icy'},
     ]
   },
   {
@@ -1515,7 +1520,8 @@ function buildStepHTML(step){
     const cols = step.cols || 4;
     html += `<div class="choice-grid${cols===5?' cols-5':''}">`;
     step.options.forEach(o => {
-      const active = sel[step.key] === o.l;
+      const sv = sel[step.key];
+      const active = Array.isArray(sv) ? sv.includes(o.l) : sv === o.l;
       html += `<div class="choice-chip${active?' sel':''}" data-key="${step.key}" data-val="${o.l}" onclick="selectChip(this)">
         <span class="chip-emoji">${o.e}</span>
         <span class="chip-label">${o.l}</span>
@@ -1584,9 +1590,16 @@ function renderPopupStep(idx, dir){
 function selectChip(el){
   const key = el.dataset.key;
   const val = el.dataset.val;
-  sel[key] = val;
-  el.closest('.choice-grid').querySelectorAll('.choice-chip').forEach(c => c.classList.remove('sel'));
-  el.classList.add('sel');
+  if(!Array.isArray(sel[key])) sel[key] = [];
+  const idx = sel[key].indexOf(val);
+  if(idx === -1){ sel[key].push(val); el.classList.add('sel'); }
+  else { sel[key].splice(idx,1); el.classList.remove('sel'); }
+}
+
+function joinSel(key, fallback=''){
+  const v = sel[key];
+  if(!v || (Array.isArray(v) && !v.length)) return fallback;
+  return Array.isArray(v) ? v.join(', ') : v;
 }
 
 function onBPMInput(input){
@@ -1687,13 +1700,13 @@ function submitInspo(){
 
 async function startVocalGeneration(){
   const payload = {
-    mood:       sel.mood       || 'Energetic',
-    genre:      sel.genre      || 'Pop',
-    theme:      sel.theme      || '',
-    instrument: sel.instrument || '',
-    style:      sel.style      || '',
+    mood:       joinSel('mood','Energetic'),
+    genre:      joinSel('genre','Pop'),
+    theme:      joinSel('theme',''),
+    instrument: joinSel('instrument',''),
+    style:      joinSel('style',''),
     bpm:        sel.bpm        || 90,
-    tempoFeel:  sel.tempoFeel  || '',
+    tempoFeel:  joinSel('tempoFeel',''),
     promptText: sel.promptText || '',
   };
 
