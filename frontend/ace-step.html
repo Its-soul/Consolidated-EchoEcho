@@ -1,0 +1,809 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0"/>
+  <title>Echo Echo — ACE-Step Vocals</title>
+  <link rel="icon" type="image/svg+xml" href="logo.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    @keyframes fade-up{0%{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+    @keyframes spin{to{transform:rotate(360deg)}}
+    @keyframes pulse-ring{0%{transform:scale(1);opacity:.6}100%{transform:scale(1.55);opacity:0}}
+    @keyframes shimmer{0%{background-position:-400px 0}100%{background-position:400px 0}}
+    @keyframes wave-bar{from{transform:scaleY(.2);opacity:.3}to{transform:scaleY(1);opacity:1}}
+
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    html,body{height:100%;font-family:'Inter',ui-sans-serif,system-ui,sans-serif;-webkit-font-smoothing:antialiased;background:#fff;color:#0d0d0d}
+
+    :root{
+      --dark:#0d0d0d;
+      --white:#fff;
+      --greyF4:#f4f4f4;
+      --greyF5:#f5f5f5;
+      --greyD9:#d9d9d9;
+      --grey71:#717171;
+      --gradient:linear-gradient(0.351turn,#ff5858 23.71%,#c058ff 78.8%);
+      --gradient-text:linear-gradient(135deg,#ff5858 0%,#c058ff 100%);
+      --shadow-box:0px 2.5px 6px rgba(0,0,0,.05),0px 10px 50px rgba(0,0,0,.04),0px 0px 2.5px rgba(0,0,0,.15);
+      --shadow-nav:0px 2px 5px rgba(0,0,0,.05),0px 8px 40px rgba(0,0,0,.04),0px 0px 2px rgba(0,0,0,.15);
+      --nav-h:64px;
+    }
+
+    /* ── NAV ───────────────────────────────────────────── */
+    .nav{
+      position:fixed;top:0;left:0;right:0;z-index:9999;
+      height:var(--nav-h);background:#fff;
+      border-bottom:1px solid rgba(13,13,13,.06);
+      display:flex;align-items:center;
+      padding:0 2rem;gap:1rem;
+    }
+    .nav-logo{display:flex;align-items:center;gap:.45rem;text-decoration:none}
+    .nav-logo-icon{
+      width:32px;height:32px;border-radius:9px;background:var(--gradient);
+      display:flex;align-items:center;justify-content:center;flex-shrink:0;
+    }
+    .nav-logo-icon svg{width:16px;height:16px}
+    .nav-wordmark{font-size:1rem;font-weight:800;letter-spacing:-.03em;color:var(--dark)}
+    .nav-wordmark em{font-style:normal;background:var(--gradient-text);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+    .nav-divider{width:1px;height:20px;background:rgba(13,13,13,.08);margin:0 .25rem}
+    .nav-page-title{font-size:.875rem;font-weight:600;color:var(--grey71)}
+    .nav-badge{
+      display:inline-flex;align-items:center;gap:.3rem;
+      background:linear-gradient(135deg,rgba(255,88,88,.12),rgba(192,88,255,.12));
+      border:1px solid rgba(192,88,255,.25);
+      border-radius:9999px;padding:.2rem .65rem;
+      font-size:.72rem;font-weight:700;letter-spacing:.04em;
+      color:#c058ff;
+    }
+
+    .nav-right{display:flex;align-items:center;gap:.75rem;margin-left:auto}
+    .nav-btn{
+      display:flex;align-items:center;gap:.45rem;
+      background:var(--greyF4);color:var(--dark);
+      font-weight:600;font-size:.875rem;
+      font-family:'Inter',sans-serif;
+      border-radius:9999px;padding:.55rem 1.125rem;
+      border:none;cursor:pointer;text-decoration:none;
+      transition:background .15s;
+    }
+    .nav-btn:hover{background:var(--greyD9)}
+
+    /* ── MAIN ─────────────────────────────────────────── */
+    .main{padding-top:calc(var(--nav-h) + 3rem);padding-bottom:6rem;min-height:100vh}
+    .container{max-width:760px;margin:0 auto;padding:0 1.5rem}
+
+    /* ── HERO ─────────────────────────────────────────── */
+    .hero{text-align:center;margin-bottom:3rem;animation:fade-up .5s ease both}
+    .hero-icon{
+      width:64px;height:64px;border-radius:18px;background:var(--gradient);
+      display:flex;align-items:center;justify-content:center;
+      margin:0 auto 1.25rem;font-size:1.75rem;
+    }
+    .hero-title{font-size:2rem;font-weight:800;letter-spacing:-.04em;color:var(--dark);margin-bottom:.5rem}
+    .hero-title span{background:var(--gradient-text);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+    .hero-sub{font-size:.95rem;color:var(--grey71);line-height:1.6;max-width:480px;margin:0 auto}
+
+    /* ── STEP CARD ────────────────────────────────────── */
+    .step-card{
+      background:#fff;border-radius:20px;
+      border:1px solid rgba(13,13,13,.07);
+      box-shadow:var(--shadow-box);
+      padding:1.75rem;margin-bottom:1.25rem;
+      animation:fade-up .4s ease both;
+    }
+    .step-card:nth-child(2){animation-delay:.05s}
+    .step-card:nth-child(3){animation-delay:.1s}
+    .step-card:nth-child(4){animation-delay:.15s}
+    .step-card:nth-child(5){animation-delay:.2s}
+    .step-card:nth-child(6){animation-delay:.25s}
+    .step-card:nth-child(7){animation-delay:.3s}
+
+    .step-header{display:flex;align-items:center;gap:.75rem;margin-bottom:1.25rem}
+    .step-num{
+      width:28px;height:28px;border-radius:50%;
+      background:var(--greyF4);
+      display:flex;align-items:center;justify-content:center;
+      font-size:.75rem;font-weight:700;color:var(--grey71);flex-shrink:0;
+    }
+    .step-num.active{background:var(--gradient);color:#fff}
+    .step-title{font-size:1rem;font-weight:700;color:var(--dark)}
+    .step-hint{font-size:.78rem;color:var(--grey71);margin-left:auto}
+
+    /* ── CHIP GRID ────────────────────────────────────── */
+    .chip-grid{display:flex;flex-wrap:wrap;gap:.5rem}
+    .chip{
+      display:inline-flex;align-items:center;gap:.4rem;
+      background:var(--greyF4);
+      border:1.5px solid transparent;
+      border-radius:9999px;padding:.45rem .9rem;
+      font-size:.82rem;font-weight:600;color:var(--dark);
+      cursor:pointer;transition:all .15s;user-select:none;
+    }
+    .chip:hover{background:#ebebeb}
+    .chip.selected{
+      background:linear-gradient(135deg,rgba(255,88,88,.1),rgba(192,88,255,.1));
+      border-color:rgba(192,88,255,.4);
+      color:#c058ff;
+    }
+    .chip .chip-em{font-size:1rem}
+
+    /* ── SLIDER ──────────────────────────────────────── */
+    .slider-row{display:flex;align-items:center;gap:1rem}
+    .slider-wrap{flex:1;position:relative}
+    input[type=range]{
+      -webkit-appearance:none;appearance:none;
+      width:100%;height:6px;border-radius:3px;
+      background:var(--greyF4);outline:none;cursor:pointer;
+    }
+    input[type=range]::-webkit-slider-thumb{
+      -webkit-appearance:none;
+      width:20px;height:20px;border-radius:50%;
+      background:var(--dark);cursor:pointer;
+      transition:transform .1s;
+    }
+    input[type=range]::-webkit-slider-thumb:hover{transform:scale(1.15)}
+    .slider-labels{display:flex;justify-content:space-between;margin-top:.4rem}
+    .slider-labels span{font-size:.7rem;color:var(--grey71)}
+    .slider-val{
+      min-width:52px;text-align:center;
+      background:var(--greyF4);border-radius:10px;
+      padding:.35rem .6rem;font-size:.85rem;font-weight:700;
+    }
+
+    /* ── DURATION PILLS ───────────────────────────────── */
+    .dur-grid{display:flex;gap:.5rem;flex-wrap:wrap}
+    .dur-pill{
+      flex:1;min-width:70px;padding:.6rem;
+      background:var(--greyF4);border:1.5px solid transparent;
+      border-radius:14px;text-align:center;cursor:pointer;
+      transition:all .15s;
+    }
+    .dur-pill:hover{background:#ebebeb}
+    .dur-pill.selected{
+      background:linear-gradient(135deg,rgba(255,88,88,.1),rgba(192,88,255,.1));
+      border-color:rgba(192,88,255,.4);
+    }
+    .dur-pill .dur-sec{font-size:1.1rem;font-weight:800;color:var(--dark)}
+    .dur-pill .dur-label{font-size:.68rem;color:var(--grey71);margin-top:.1rem}
+    .dur-pill.selected .dur-sec{background:var(--gradient-text);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+
+    /* ── LYRICS ──────────────────────────────────────── */
+    .lyrics-wrap{position:relative}
+    .lyrics-wrap textarea{
+      width:100%;min-height:180px;resize:vertical;
+      background:var(--greyF5);border:1.5px solid rgba(13,13,13,.08);
+      border-radius:14px;padding:1rem;
+      font-family:'Inter',sans-serif;font-size:.875rem;line-height:1.7;
+      color:var(--dark);outline:none;
+      transition:border-color .2s;
+    }
+    .lyrics-wrap textarea:focus{border-color:rgba(192,88,255,.4)}
+    .lyrics-section-btns{display:flex;gap:.4rem;margin-bottom:.6rem;flex-wrap:wrap}
+    .lyrics-tag-btn{
+      padding:.3rem .65rem;border-radius:9999px;
+      background:var(--greyF4);border:none;cursor:pointer;
+      font-size:.75rem;font-weight:600;color:var(--grey71);
+      transition:all .15s;
+    }
+    .lyrics-tag-btn:hover{background:#ebebeb;color:var(--dark)}
+    .lyrics-hint{font-size:.75rem;color:var(--grey71);margin-top:.5rem;line-height:1.5}
+
+    /* ── GENERATE BUTTON ──────────────────────────────── */
+    .gen-section{margin-top:2rem;text-align:center;animation:fade-up .5s .35s ease both}
+    .gen-btn{
+      display:inline-flex;align-items:center;justify-content:center;gap:.65rem;
+      background:var(--dark);color:#fff;
+      border:none;border-radius:9999px;
+      padding:.9rem 2.5rem;font-size:1rem;font-weight:700;
+      font-family:'Inter',sans-serif;cursor:pointer;
+      position:relative;overflow:hidden;
+      transition:opacity .15s,transform .1s;min-width:220px;
+    }
+    .gen-btn::before{
+      content:'';position:absolute;inset:0;
+      background:var(--gradient);opacity:0;
+      transition:opacity .2s;
+    }
+    .gen-btn span,.gen-btn svg{position:relative;z-index:1}
+    .gen-btn:hover::before{opacity:1}
+    .gen-btn:active{transform:scale(.97)}
+    .gen-btn:disabled{opacity:.55;cursor:not-allowed;transform:none}
+    .gen-btn .spinner{
+      width:18px;height:18px;border:2.5px solid rgba(255,255,255,.3);
+      border-top-color:#fff;border-radius:50%;
+      animation:spin .7s linear infinite;display:none;
+    }
+    .gen-btn.loading .btn-label{display:none}
+    .gen-btn.loading .spinner{display:block}
+
+    /* ── RESULT ───────────────────────────────────────── */
+    #result-section{display:none;margin-top:2.5rem;animation:fade-up .4s ease both}
+    .result-card{
+      background:#fff;border-radius:20px;
+      border:1px solid rgba(13,13,13,.07);
+      box-shadow:var(--shadow-box);
+      padding:1.75rem;
+      position:relative;overflow:hidden;
+    }
+    .result-card::before{
+      content:'';position:absolute;top:0;left:0;right:0;height:3px;
+      background:var(--gradient);
+    }
+    .result-header{display:flex;align-items:center;gap:.75rem;margin-bottom:1.25rem}
+    .result-icon{
+      width:40px;height:40px;border-radius:12px;background:var(--gradient);
+      display:flex;align-items:center;justify-content:center;font-size:1.1rem;
+    }
+    .result-title{font-size:1rem;font-weight:700;color:var(--dark)}
+    .result-sub{font-size:.78rem;color:var(--grey71);margin-top:.15rem}
+
+    audio{width:100%;border-radius:10px;margin:1rem 0;outline:none}
+    audio::-webkit-media-controls-panel{background:var(--greyF4)}
+
+    .result-tags{display:flex;flex-wrap:wrap;gap:.4rem;margin-top:.75rem}
+    .result-tag{
+      background:var(--greyF4);border-radius:9999px;
+      padding:.25rem .65rem;font-size:.72rem;font-weight:600;color:var(--grey71);
+    }
+
+    .result-actions{display:flex;gap:.75rem;margin-top:1.25rem;flex-wrap:wrap}
+    .action-btn{
+      flex:1;min-width:120px;display:flex;align-items:center;justify-content:center;gap:.45rem;
+      padding:.6rem 1rem;border-radius:12px;font-size:.85rem;font-weight:600;
+      font-family:'Inter',sans-serif;cursor:pointer;border:none;transition:all .15s;text-decoration:none;
+    }
+    .action-btn.primary{background:var(--dark);color:#fff}
+    .action-btn.primary:hover{opacity:.85}
+    .action-btn.secondary{background:var(--greyF4);color:var(--dark)}
+    .action-btn.secondary:hover{background:#ebebeb}
+
+    /* ── WAVEFORM VISUAL ────────────────────────────── */
+    .wave-visual{
+      display:flex;align-items:center;justify-content:center;gap:3px;
+      height:48px;margin-bottom:.75rem;
+    }
+    .wave-bar{
+      width:3px;border-radius:2px;
+      background:var(--gradient);
+      animation:wave-bar .6s ease-in-out infinite alternate;
+    }
+
+    /* ── ERROR ────────────────────────────────────────── */
+    #error-box{
+      display:none;margin-top:1.25rem;
+      background:rgba(255,88,88,.08);border:1px solid rgba(255,88,88,.25);
+      border-radius:14px;padding:1rem 1.25rem;
+      font-size:.85rem;color:#c0392b;line-height:1.5;
+    }
+
+    /* ── PROGRESS ────────────────────────────────────── */
+    #progress-section{
+      display:none;margin-top:2rem;
+      background:var(--greyF5);border-radius:16px;
+      padding:1.5rem;text-align:center;
+    }
+    .progress-title{font-size:.95rem;font-weight:700;margin-bottom:.25rem}
+    .progress-sub{font-size:.8rem;color:var(--grey71);margin-bottom:1rem}
+    .progress-bar-wrap{background:var(--greyD9);border-radius:9999px;height:6px;overflow:hidden}
+    .progress-bar{height:100%;background:var(--gradient);width:0%;transition:width .4s ease;border-radius:9999px}
+
+    /* ── RESPONSIVE ───────────────────────────────────── */
+    @media(max-width:600px){
+      .nav{padding:0 1rem}
+      .main{padding-top:calc(var(--nav-h) + 1.5rem)}
+      .container{padding:0 1rem}
+      .step-card{padding:1.25rem}
+      .hero-title{font-size:1.5rem}
+      .dur-pill{min-width:60px}
+    }
+  </style>
+</head>
+<body>
+
+<!-- ══════ NAV ══════ -->
+<nav class="nav">
+  <a href="index.html" class="nav-logo">
+    <div class="nav-logo-icon">
+      <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="22" cy="44" r="7" fill="#fff"/><rect x="26.5" y="18" width="4" height="26" rx="2" fill="#fff"/><path d="M42 26a11 11 0 0 1 0 14" stroke="#fff" stroke-width="4" stroke-linecap="round"/><path d="M49 20a20 20 0 0 1 0 26" stroke="#fff" stroke-width="4" stroke-linecap="round" opacity=".55"/></svg>
+    </div>
+    <span class="nav-wordmark">Echo <em>Echo</em></span>
+  </a>
+  <div class="nav-divider"></div>
+  <span class="nav-page-title">ACE-Step Vocals</span>
+  <span class="nav-badge">🎤 AI Vocals</span>
+
+  <div class="nav-right">
+    <a class="nav-btn" href="dashboard.html">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+      Dashboard
+    </a>
+  </div>
+</nav>
+
+<!-- ══════ MAIN ══════ -->
+<main class="main">
+  <div class="container">
+
+    <!-- Hero -->
+    <div class="hero">
+      <div class="hero-icon">🎤</div>
+      <h1 class="hero-title">Generate with <span>AI Vocals</span></h1>
+      <p class="hero-sub">Powered by ACE-Step — compose original songs with real sung lyrics. Choose your style, write your lyrics, get a full track.</p>
+    </div>
+
+    <!-- Step 1: Mood (multi) -->
+    <div class="step-card">
+      <div class="step-header">
+        <div class="step-num active" id="sn1">1</div>
+        <div>
+          <div class="step-title">What's the mood?</div>
+        </div>
+        <span class="step-hint">Pick as many as you like</span>
+      </div>
+      <div class="chip-grid" id="mood-grid">
+        <div class="chip" data-val="happy" onclick="toggle(this,'mood')"><span class="chip-em">😊</span>Happy</div>
+        <div class="chip" data-val="sad" onclick="toggle(this,'mood')"><span class="chip-em">😢</span>Sad</div>
+        <div class="chip" data-val="romantic" onclick="toggle(this,'mood')"><span class="chip-em">💕</span>Romantic</div>
+        <div class="chip" data-val="energetic" onclick="toggle(this,'mood')"><span class="chip-em">⚡</span>Energetic</div>
+        <div class="chip" data-val="calm" onclick="toggle(this,'mood')"><span class="chip-em">🌊</span>Calm</div>
+        <div class="chip" data-val="dark" onclick="toggle(this,'mood')"><span class="chip-em">🌑</span>Dark</div>
+        <div class="chip" data-val="epic" onclick="toggle(this,'mood')"><span class="chip-em">🔥</span>Epic</div>
+        <div class="chip" data-val="chill" onclick="toggle(this,'mood')"><span class="chip-em">🧊</span>Chill</div>
+        <div class="chip" data-val="playful" onclick="toggle(this,'mood')"><span class="chip-em">🎉</span>Playful</div>
+        <div class="chip" data-val="nostalgic" onclick="toggle(this,'mood')"><span class="chip-em">🌅</span>Nostalgic</div>
+        <div class="chip" data-val="mysterious" onclick="toggle(this,'mood')"><span class="chip-em">🌙</span>Mysterious</div>
+        <div class="chip" data-val="hopeful" onclick="toggle(this,'mood')"><span class="chip-em">✨</span>Hopeful</div>
+      </div>
+    </div>
+
+    <!-- Step 2: Genre (multi) -->
+    <div class="step-card">
+      <div class="step-header">
+        <div class="step-num active" id="sn2">2</div>
+        <div>
+          <div class="step-title">Genre / Style</div>
+        </div>
+        <span class="step-hint">Pick as many as you like</span>
+      </div>
+      <div class="chip-grid" id="genre-grid">
+        <div class="chip" data-val="pop" onclick="toggle(this,'genre')"><span class="chip-em">🎵</span>Pop</div>
+        <div class="chip" data-val="hip-hop" onclick="toggle(this,'genre')"><span class="chip-em">🎤</span>Hip-hop</div>
+        <div class="chip" data-val="r&b" onclick="toggle(this,'genre')"><span class="chip-em">🎙</span>R&amp;B</div>
+        <div class="chip" data-val="rock" onclick="toggle(this,'genre')"><span class="chip-em">🎸</span>Rock</div>
+        <div class="chip" data-val="jazz" onclick="toggle(this,'genre')"><span class="chip-em">🎷</span>Jazz</div>
+        <div class="chip" data-val="soul" onclick="toggle(this,'genre')"><span class="chip-em">💛</span>Soul</div>
+        <div class="chip" data-val="electronic" onclick="toggle(this,'genre')"><span class="chip-em">🎛</span>Electronic</div>
+        <div class="chip" data-val="indie" onclick="toggle(this,'genre')"><span class="chip-em">🌿</span>Indie</div>
+        <div class="chip" data-val="folk" onclick="toggle(this,'genre')"><span class="chip-em">🪕</span>Folk</div>
+        <div class="chip" data-val="classical" onclick="toggle(this,'genre')"><span class="chip-em">🎻</span>Classical</div>
+        <div class="chip" data-val="lo-fi" onclick="toggle(this,'genre')"><span class="chip-em">📻</span>Lo-fi</div>
+        <div class="chip" data-val="country" onclick="toggle(this,'genre')"><span class="chip-em">🤠</span>Country</div>
+        <div class="chip" data-val="afrobeats" onclick="toggle(this,'genre')"><span class="chip-em">🥁</span>Afrobeats</div>
+        <div class="chip" data-val="latin" onclick="toggle(this,'genre')"><span class="chip-em">🌺</span>Latin</div>
+      </div>
+    </div>
+
+    <!-- Step 3: Instruments (multi) -->
+    <div class="step-card">
+      <div class="step-header">
+        <div class="step-num active" id="sn3">3</div>
+        <div>
+          <div class="step-title">Instruments</div>
+        </div>
+        <span class="step-hint">Pick as many as you like</span>
+      </div>
+      <div class="chip-grid" id="instruments-grid">
+        <div class="chip" data-val="piano" onclick="toggle(this,'instruments')"><span class="chip-em">🎹</span>Piano</div>
+        <div class="chip" data-val="acoustic guitar" onclick="toggle(this,'instruments')"><span class="chip-em">🎸</span>Acoustic Guitar</div>
+        <div class="chip" data-val="electric guitar" onclick="toggle(this,'instruments')"><span class="chip-em">⚡🎸</span>Electric Guitar</div>
+        <div class="chip" data-val="drums" onclick="toggle(this,'instruments')"><span class="chip-em">🥁</span>Drums</div>
+        <div class="chip" data-val="bass" onclick="toggle(this,'instruments')"><span class="chip-em">🎸</span>Bass</div>
+        <div class="chip" data-val="violin" onclick="toggle(this,'instruments')"><span class="chip-em">🎻</span>Violin</div>
+        <div class="chip" data-val="cello" onclick="toggle(this,'instruments')"><span class="chip-em">🎻</span>Cello</div>
+        <div class="chip" data-val="trumpet" onclick="toggle(this,'instruments')"><span class="chip-em">🎺</span>Trumpet</div>
+        <div class="chip" data-val="saxophone" onclick="toggle(this,'instruments')"><span class="chip-em">🎷</span>Saxophone</div>
+        <div class="chip" data-val="flute" onclick="toggle(this,'instruments')"><span class="chip-em">🪈</span>Flute</div>
+        <div class="chip" data-val="synth" onclick="toggle(this,'instruments')"><span class="chip-em">🎛</span>Synth</div>
+        <div class="chip" data-val="choir" onclick="toggle(this,'instruments')"><span class="chip-em">🎼</span>Choir</div>
+        <div class="chip" data-val="strings" onclick="toggle(this,'instruments')"><span class="chip-em">🎻</span>Strings</div>
+        <div class="chip" data-val="808" onclick="toggle(this,'instruments')"><span class="chip-em">💥</span>808</div>
+      </div>
+    </div>
+
+    <!-- Step 4: Tempo & Energy -->
+    <div class="step-card">
+      <div class="step-header">
+        <div class="step-num active" id="sn4">4</div>
+        <div><div class="step-title">Tempo &amp; Energy</div></div>
+      </div>
+
+      <div style="margin-bottom:1.5rem">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.6rem">
+          <span style="font-size:.85rem;font-weight:600">BPM</span>
+          <span class="slider-val" id="bpm-val">90</span>
+        </div>
+        <input type="range" id="bpm-slider" min="40" max="200" value="90"
+               oninput="document.getElementById('bpm-val').textContent=this.value">
+        <div class="slider-labels"><span>40 (Slow)</span><span>120 (Fast)</span><span>200 (Rapid)</span></div>
+      </div>
+
+      <div>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.6rem">
+          <span style="font-size:.85rem;font-weight:600">Energy</span>
+          <span class="slider-val" id="energy-val">5</span>
+        </div>
+        <input type="range" id="energy-slider" min="1" max="10" value="5"
+               oninput="document.getElementById('energy-val').textContent=this.value">
+        <div class="slider-labels"><span>1 (Very calm)</span><span>5 (Moderate)</span><span>10 (Extreme)</span></div>
+      </div>
+    </div>
+
+    <!-- Step 5: Vocal Style (multi) -->
+    <div class="step-card">
+      <div class="step-header">
+        <div class="step-num active" id="sn5">5</div>
+        <div><div class="step-title">Vocal Style</div></div>
+        <span class="step-hint">Pick as many as you like</span>
+      </div>
+      <div class="chip-grid" id="vocal-grid">
+        <div class="chip" data-val="male vocals" onclick="toggle(this,'vocal')"><span class="chip-em">🧑</span>Male</div>
+        <div class="chip" data-val="female vocals" onclick="toggle(this,'vocal')"><span class="chip-em">👩</span>Female</div>
+        <div class="chip" data-val="whisper" onclick="toggle(this,'vocal')"><span class="chip-em">🤫</span>Whisper</div>
+        <div class="chip" data-val="powerful" onclick="toggle(this,'vocal')"><span class="chip-em">💪</span>Powerful</div>
+        <div class="chip" data-val="breathy" onclick="toggle(this,'vocal')"><span class="chip-em">💨</span>Breathy</div>
+        <div class="chip" data-val="raspy" onclick="toggle(this,'vocal')"><span class="chip-em">🌪</span>Raspy</div>
+        <div class="chip" data-val="smooth" onclick="toggle(this,'vocal')"><span class="chip-em">🌊</span>Smooth</div>
+        <div class="chip" data-val="falsetto" onclick="toggle(this,'vocal')"><span class="chip-em">🪶</span>Falsetto</div>
+        <div class="chip" data-val="choir" onclick="toggle(this,'vocal')"><span class="chip-em">🎼</span>Choir</div>
+        <div class="chip" data-val="rap" onclick="toggle(this,'vocal')"><span class="chip-em">🎤</span>Rap</div>
+      </div>
+    </div>
+
+    <!-- Step 6: Duration -->
+    <div class="step-card">
+      <div class="step-header">
+        <div class="step-num active" id="sn6">6</div>
+        <div><div class="step-title">Duration</div></div>
+      </div>
+      <div class="dur-grid">
+        <div class="dur-pill" data-val="15" onclick="selectDur(this)">
+          <div class="dur-sec">15s</div>
+          <div class="dur-label">Snippet</div>
+        </div>
+        <div class="dur-pill selected" data-val="30" onclick="selectDur(this)">
+          <div class="dur-sec">30s</div>
+          <div class="dur-label">Short</div>
+        </div>
+        <div class="dur-pill" data-val="60" onclick="selectDur(this)">
+          <div class="dur-sec">60s</div>
+          <div class="dur-label">Standard</div>
+        </div>
+        <div class="dur-pill" data-val="120" onclick="selectDur(this)">
+          <div class="dur-sec">2min</div>
+          <div class="dur-label">Extended</div>
+        </div>
+        <div class="dur-pill" data-val="180" onclick="selectDur(this)">
+          <div class="dur-sec">3min</div>
+          <div class="dur-label">Full track</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Step 7: Lyrics -->
+    <div class="step-card">
+      <div class="step-header">
+        <div class="step-num active" id="sn7">7</div>
+        <div><div class="step-title">Lyrics <span style="font-weight:400;color:var(--grey71);font-size:.85rem">(optional)</span></div></div>
+      </div>
+      <div class="lyrics-section-btns">
+        <button class="lyrics-tag-btn" onclick="insertTag('[verse]')">+ Verse</button>
+        <button class="lyrics-tag-btn" onclick="insertTag('[pre-chorus]')">+ Pre-chorus</button>
+        <button class="lyrics-tag-btn" onclick="insertTag('[chorus]')">+ Chorus</button>
+        <button class="lyrics-tag-btn" onclick="insertTag('[bridge]')">+ Bridge</button>
+        <button class="lyrics-tag-btn" onclick="insertTag('[outro]')">+ Outro</button>
+        <button class="lyrics-tag-btn" onclick="clearLyrics()" style="margin-left:auto;color:#ff5858">Clear</button>
+      </div>
+      <div class="lyrics-wrap">
+        <textarea id="lyrics-input" placeholder="[verse]&#10;Write your verse lyrics here...&#10;&#10;[chorus]&#10;Write your chorus lyrics here...&#10;&#10;Leave empty for instrumental-only generation"></textarea>
+      </div>
+      <p class="lyrics-hint">Use <code>[verse]</code>, <code>[chorus]</code>, <code>[bridge]</code>, <code>[pre-chorus]</code> tags before each section. Leave empty to generate an instrumental track.</p>
+    </div>
+
+    <!-- Generate -->
+    <div class="gen-section">
+      <button class="gen-btn" id="gen-btn" onclick="generate()">
+        <span class="btn-label">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+          Generate with ACE-Step
+        </span>
+        <div class="spinner"></div>
+      </button>
+      <p style="margin-top:.75rem;font-size:.78rem;color:var(--grey71)">Generation takes ~60–120 seconds via HuggingFace Space</p>
+    </div>
+
+    <!-- Progress -->
+    <div id="progress-section">
+      <div class="wave-visual" id="gen-wave"></div>
+      <div class="progress-title">Composing your track...</div>
+      <div class="progress-sub" id="progress-sub">Connecting to ACE-Step model</div>
+      <div class="progress-bar-wrap"><div class="progress-bar" id="progress-bar"></div></div>
+    </div>
+
+    <!-- Error -->
+    <div id="error-box"></div>
+
+    <!-- Result -->
+    <div id="result-section">
+      <div class="result-card">
+        <div class="result-card" style="box-shadow:none;border:none;padding:0">
+          <div class="result-header">
+            <div class="result-icon">🎤</div>
+            <div>
+              <div class="result-title" id="result-title">Your ACE-Step Track</div>
+              <div class="result-sub" id="result-sub"></div>
+            </div>
+          </div>
+
+          <audio id="audio-player" controls></audio>
+
+          <div class="result-tags" id="result-tags"></div>
+
+          <div class="result-actions">
+            <a class="action-btn primary" id="dl-btn" download="ace-step-track.mp3">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+              Download MP3
+            </a>
+            <button class="action-btn secondary" onclick="saveToLibrary()">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+              Save to Library
+            </button>
+            <button class="action-btn secondary" onclick="generateAgain()">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.87"/></svg>
+              Generate Again
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</main>
+
+<script>
+/* ─── State ────────────────────────────────────────────── */
+const sel = { mood: [], genre: [], instruments: [], vocal: [] };
+let duration = 30;
+let lastAudioUrl = null;
+let lastPromptTags = [];
+
+/* ─── Auth guard ───────────────────────────────────────── */
+(function(){
+  if(!localStorage.getItem('echo_auth_token')){
+    window.location.href = 'login.html';
+  }
+})();
+
+/* ─── Multi-select chip toggle ─────────────────────────── */
+function toggle(el, group) {
+  const val = el.dataset.val;
+  const arr = sel[group];
+  const idx = arr.indexOf(val);
+  if (idx === -1) {
+    arr.push(val);
+    el.classList.add('selected');
+  } else {
+    arr.splice(idx, 1);
+    el.classList.remove('selected');
+  }
+}
+
+/* ─── Duration selector ────────────────────────────────── */
+function selectDur(el) {
+  document.querySelectorAll('.dur-pill').forEach(p => p.classList.remove('selected'));
+  el.classList.add('selected');
+  duration = parseInt(el.dataset.val);
+}
+
+/* ─── Lyrics helpers ───────────────────────────────────── */
+function insertTag(tag) {
+  const ta = document.getElementById('lyrics-input');
+  const pos = ta.selectionStart;
+  const before = ta.value.substring(0, pos);
+  const after = ta.value.substring(pos);
+  const prefix = before && !before.endsWith('\n') ? '\n' : '';
+  ta.value = before + prefix + tag + '\n' + after;
+  const newPos = pos + prefix.length + tag.length + 1;
+  ta.setSelectionRange(newPos, newPos);
+  ta.focus();
+}
+function clearLyrics() {
+  document.getElementById('lyrics-input').value = '';
+}
+
+/* ─── Wave visual during generation ───────────────────── */
+function buildWave() {
+  const w = document.getElementById('gen-wave');
+  w.innerHTML = '';
+  for (let i = 0; i < 24; i++) {
+    const b = document.createElement('div');
+    b.className = 'wave-bar';
+    const h = 8 + Math.random() * 32;
+    const dur = (0.4 + Math.random() * 0.8).toFixed(2);
+    const dly = (Math.random() * 0.8).toFixed(2);
+    b.style.cssText = `height:${h}px;animation-duration:${dur}s;animation-delay:${dly}s`;
+    w.appendChild(b);
+  }
+}
+
+/* ─── Progress bar animation ───────────────────────────── */
+let progressInterval = null;
+function startProgress() {
+  const bar = document.getElementById('progress-bar');
+  const sub = document.getElementById('progress-sub');
+  const msgs = [
+    'Connecting to ACE-Step model…',
+    'Composing melody structure…',
+    'Generating vocal track…',
+    'Mixing and rendering audio…',
+    'Almost done…',
+  ];
+  let pct = 0;
+  let msgIdx = 0;
+  bar.style.width = '0%';
+  sub.textContent = msgs[0];
+  progressInterval = setInterval(() => {
+    if (pct < 90) {
+      const step = pct < 30 ? 2 : pct < 60 ? 1.2 : 0.5;
+      pct = Math.min(90, pct + step);
+      bar.style.width = pct + '%';
+      const newIdx = Math.floor((pct / 90) * (msgs.length - 1));
+      if (newIdx !== msgIdx) { msgIdx = newIdx; sub.textContent = msgs[msgIdx]; }
+    }
+  }, 800);
+}
+function endProgress(success) {
+  clearInterval(progressInterval);
+  const bar = document.getElementById('progress-bar');
+  bar.style.width = success ? '100%' : '0%';
+}
+
+/* ─── Build ACE-Step prompt from selections ────────────── */
+function buildPrompt() {
+  const tags = [];
+  sel.mood.forEach(m => tags.push(m));
+  sel.genre.forEach(g => tags.push(g));
+  sel.instruments.forEach(i => tags.push(i));
+  sel.vocal.forEach(v => tags.push(v));
+  const bpm = document.getElementById('bpm-slider').value;
+  tags.push(bpm + ' BPM');
+  const energy = parseInt(document.getElementById('energy-slider').value);
+  const energyWords = {1:'very calm',2:'calm',3:'mellow',4:'relaxed',5:'moderate',6:'upbeat',7:'energetic',8:'intense',9:'very intense',10:'extreme'};
+  if (energyWords[energy]) tags.push(energyWords[energy]);
+  return tags;
+}
+
+/* ─── Generate ─────────────────────────────────────────── */
+async function generate() {
+  const btn = document.getElementById('gen-btn');
+  const errorBox = document.getElementById('error-box');
+  const resultSection = document.getElementById('result-section');
+  const progressSection = document.getElementById('progress-section');
+
+  errorBox.style.display = 'none';
+  resultSection.style.display = 'none';
+
+  const tags = buildPrompt();
+  if (tags.length < 2) {
+    errorBox.textContent = 'Please select at least a mood or genre before generating.';
+    errorBox.style.display = 'block';
+    return;
+  }
+
+  const lyrics = document.getElementById('lyrics-input').value.trim();
+  const prompt = tags.join(', ');
+  lastPromptTags = tags;
+
+  btn.classList.add('loading');
+  btn.disabled = true;
+  progressSection.style.display = 'block';
+  buildWave();
+  startProgress();
+
+  const token = localStorage.getItem('echo_auth_token');
+
+  try {
+    const res = await fetch('/generate', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+      body: JSON.stringify({
+        prompt,
+        lyrics: lyrics || '',
+        duration,
+        mood: sel.mood.join(', '),
+        style: sel.genre.join(', '),
+        instruments: sel.instruments,
+        tempo: parseInt(document.getElementById('bpm-slider').value),
+        energy: parseInt(document.getElementById('energy-slider').value),
+        mode: 'ace-step',
+      }),
+    });
+
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({ detail: res.statusText }));
+      throw new Error(err.detail || 'Generation failed');
+    }
+
+    const data = await res.json();
+    endProgress(true);
+
+    await new Promise(r => setTimeout(r, 400));
+    progressSection.style.display = 'none';
+
+    showResult(data, prompt);
+  } catch(err) {
+    endProgress(false);
+    progressSection.style.display = 'none';
+    errorBox.textContent = 'Error: ' + err.message;
+    errorBox.style.display = 'block';
+  } finally {
+    btn.classList.remove('loading');
+    btn.disabled = false;
+  }
+}
+
+/* ─── Show result ──────────────────────────────────────── */
+function showResult(data, prompt) {
+  const section = document.getElementById('result-section');
+  const player = document.getElementById('audio-player');
+  const dlBtn = document.getElementById('dl-btn');
+  const tagsEl = document.getElementById('result-tags');
+  const subEl = document.getElementById('result-sub');
+
+  const audioUrl = data.audio_url || data.audio_path || '';
+  lastAudioUrl = audioUrl;
+
+  player.src = audioUrl;
+  dlBtn.href = audioUrl;
+
+  const bpm = document.getElementById('bpm-slider').value;
+  subEl.textContent = `${duration}s · ${bpm} BPM · ACE-Step`;
+
+  tagsEl.innerHTML = lastPromptTags
+    .map(t => `<span class="result-tag">${t}</span>`)
+    .join('');
+
+  section.style.display = 'block';
+  section.scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
+
+/* ─── Save to library ──────────────────────────────────── */
+function saveToLibrary() {
+  if (!lastAudioUrl) return;
+  const tracks = JSON.parse(localStorage.getItem('echo_tracks') || '[]');
+  const newTrack = {
+    id: Date.now(),
+    title: (sel.mood[0] || sel.genre[0] || 'ACE-Step') + ' · Vocal Track',
+    prompt: lastPromptTags.join(', '),
+    audio_url: lastAudioUrl,
+    created_at: new Date().toISOString(),
+    mode: 'ace-step',
+    bpm: document.getElementById('bpm-slider').value,
+    duration,
+  };
+  tracks.unshift(newTrack);
+  localStorage.setItem('echo_tracks', JSON.stringify(tracks));
+  alert('Saved to your library!');
+}
+
+/* ─── Generate again ───────────────────────────────────── */
+function generateAgain() {
+  document.getElementById('result-section').style.display = 'none';
+  document.getElementById('error-box').style.display = 'none';
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+</script>
+</body>
+</html>
