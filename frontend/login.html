@@ -127,8 +127,9 @@
     .right-panel{
       flex:1;height:100%;overflow-y:auto;
       background:rgba(255,255,255,.72);display:flex;flex-direction:column;
-      align-items:center;justify-content:center;
+      align-items:center;justify-content:flex-start;
       padding:2rem;position:relative;
+      scrollbar-gutter:stable;
     }
 
     /* back to home link */
@@ -144,12 +145,13 @@
 
     /* auth card */
     .auth-card{
-      width:100%;max-width:400px;
+      width:100%;max-width:500px;
+      margin:0 auto;padding:1.5rem 0 2rem;
       animation:fade-up .6s cubic-bezier(.2,.75,.28,.9) both;
     }
     .auth-card-logo{
       display:flex;align-items:center;gap:.5rem;
-      justify-content:center;margin-bottom:2rem;
+      justify-content:center;margin-bottom:1.5rem;
     }
     .auth-card-logo-icon{
       width:36px;height:36px;border-radius:10px;
@@ -170,7 +172,7 @@
     .auth-tabs{
       background:rgba(13,13,13,.05);border-radius:9999px;
       padding:.188rem .375rem;display:flex;position:relative;
-      width:100%;margin-bottom:2rem;
+      width:100%;margin-bottom:1.75rem;
     }
     .auth-tab{
       z-index:999;position:relative;cursor:pointer;
@@ -195,7 +197,7 @@
     }
     .auth-sub{
       font-size:.9rem;color:var(--grey71);text-align:center;
-      margin-bottom:2rem;line-height:1.5;
+      margin-bottom:1.75rem;line-height:1.5;
     }
 
     /* Social buttons */
@@ -226,7 +228,7 @@
     /* Divider */
     .auth-divider{
       display:flex;align-items:center;gap:.875rem;
-      margin:1.25rem 0;
+      margin:1rem 0;
     }
     .auth-divider-line{flex:1;height:1px;background:rgba(13,13,13,.08)}
     .auth-divider-text{font-size:.8rem;color:var(--grey71);font-weight:500;white-space:nowrap}
@@ -276,7 +278,7 @@
       font-weight:600;font-family:'Inter',sans-serif;
       font-size:.9375rem;border-radius:9999px;
       display:flex;justify-content:center;align-items:center;
-      cursor:pointer;border:none;overflow:hidden;margin-top:1.25rem;
+      cursor:pointer;border:none;overflow:hidden;margin-top:1rem;
     }
     .bl-dark-btn::before{
       content:'';position:absolute;inset:0;
@@ -303,7 +305,7 @@
 
     /* Terms / footer note */
     .auth-terms{
-      margin-top:1.5rem;font-size:.75rem;color:rgba(13,13,13,.35);
+      margin-top:1.25rem;font-size:.75rem;color:rgba(13,13,13,.35);
       text-align:center;line-height:1.6;
     }
     .auth-terms a{color:rgba(13,13,13,.5);text-decoration:underline}
@@ -311,7 +313,7 @@
 
     /* Toggle footer (already have account?) */
     .auth-toggle-footer{
-      margin-top:1.25rem;text-align:center;
+      margin-top:1rem;text-align:center;
       font-size:.875rem;color:var(--grey71);
     }
     .auth-toggle-footer a{
@@ -342,6 +344,7 @@
       .left-body{padding-right:0}
       .left-wave{display:none}
       .right-panel{padding:2rem 1.25rem;justify-content:flex-start;padding-top:2.5rem}
+      .auth-card{max-width:500px;padding-top:2.5rem}
       .back-link{top:1.25rem;left:1.25rem}
       .left-sub{display:none}
       .left-chips{display:none}
@@ -405,6 +408,12 @@
           <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="22" cy="44" r="7" fill="#fff"/><rect x="26.5" y="18" width="4" height="26" rx="2" fill="#fff"/><path d="M42 26a11 11 0 0 1 0 14" stroke="#fff" stroke-width="4" stroke-linecap="round"/><path d="M49 20a20 20 0 0 1 0 26" stroke="#fff" stroke-width="4" stroke-linecap="round" opacity=".55"/></svg>
         </div>
         <span class="auth-card-wordmark">Echo <em>Echo</em></span>
+      </div>
+
+      <div class="auth-tabs">
+        <div class="auth-tab-indicator" id="auth-tab-indicator"></div>
+        <button type="button" class="auth-tab" onclick="setAuthMode('login')">Log in</button>
+        <button type="button" class="auth-tab" onclick="setAuthMode('signup')">Sign up</button>
       </div>
 
       <!-- Heading -->
@@ -493,7 +502,7 @@
 
         <!-- Forgot (login only) -->
         <div class="forgot-row login-only" id="forgot-row">
-          <a href="#" class="forgot-link">Forgot password?</a>
+          <a href="#" class="forgot-link" onclick="handleForgotPassword(event)">Forgot password?</a>
         </div>
 
         <!-- Submit -->
@@ -509,16 +518,40 @@
       </p>
 
       <!-- Toggle footer -->
-      <p class="auth-toggle-footer" id="toggle-footer">
-        Echo Echo is in invite-only beta — sign-ups open soon.
-      </p>
+      <p class="auth-toggle-footer" id="toggle-footer"></p>
     </div>
   </div>
 </div>
 
-<script>
-  /* ── API base ────────────────────────────────────────── */
-  const API_BASE = location.protocol === 'file:' ? 'http://127.0.0.1:8000' : '';
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-app.js";
+  import { getAnalytics, isSupported } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-analytics.js";
+  import {
+    getAuth,
+    createUserWithEmailAndPassword,
+    signInWithEmailAndPassword,
+    signInWithPopup,
+    GoogleAuthProvider,
+    OAuthProvider,
+    updateProfile,
+    sendPasswordResetEmail
+  } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-auth.js";
+
+  async function loadFirebaseConfig(){
+    const apiBase = location.protocol === 'file:' ? 'http://127.0.0.1:8000' : '';
+    const response = await fetch(apiBase + '/api/firebase-config',{cache:'no-store'});
+    if(!response.ok) throw new Error('Firebase configuration is unavailable.');
+    return response.json();
+  }
+
+  const firebaseConfig = await loadFirebaseConfig();
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const googleProvider = new GoogleAuthProvider();
+  const appleProvider = new OAuthProvider('apple.com');
+  isSupported().then((supported) => {
+    if (supported) getAnalytics(app);
+  }).catch(() => {});
 
   /* ── Left panel waveform ─────────────────────────────── */
   (function(){
@@ -555,11 +588,24 @@
     ct.appendChild(el);
   });
 
-  /* ── Login-only mode (sign-ups are closed for the beta) ─ */
-  function applyLoginOnlyMode(){
-    document.querySelectorAll('.signup-only').forEach(el=>el.style.display='none');
-    document.getElementById('forgot-row').style.display='flex';
-    document.getElementById('password').autocomplete='current-password';
+  /* ── Auth mode ───────────────────────────────────────── */
+  let authMode='login';
+
+  function setAuthMode(mode){
+    authMode=mode==='signup'?'signup':'login';
+    const isSignup=authMode==='signup';
+    document.querySelectorAll('.signup-only').forEach(el=>el.style.display=isSignup?'block':'none');
+    document.getElementById('name-row').style.display=isSignup?'grid':'none';
+    document.querySelectorAll('.login-only').forEach(el=>el.style.display=isSignup?'none':'flex');
+    document.getElementById('auth-tab-indicator').style.transform=isSignup?'translateX(100%)':'translateX(0)';
+    document.getElementById('auth-heading').textContent=isSignup?'Create your account':'Welcome back';
+    document.getElementById('auth-sub').textContent=isSignup?'Sign up to start composing with Echo Echo':'Sign in to your Echo Echo account';
+    document.getElementById('submit-text').textContent=isSignup?'Sign up':'Log in';
+    document.getElementById('password').autocomplete=isSignup?'new-password':'current-password';
+    document.getElementById('confirm-pw').required=isSignup;
+    document.getElementById('toggle-footer').innerHTML=isSignup
+      ?'Already have an account? <a href="#" onclick="setAuthMode(\'login\');return false;">Log in</a>'
+      :'New to Echo Echo? <a href="#" onclick="setAuthMode(\'signup\');return false;">Create an account</a>';
     hideMsg();
   }
 
@@ -585,35 +631,53 @@
   }
 
   /* ── Auth helpers ────────────────────────────────────── */
-  const NETWORK_ERR="Can't reach the Echo Echo server — make sure the backend is running on port 8000.";
-
-  async function authRequest(path,body){
-    const res=await fetch(API_BASE+path,{
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body:JSON.stringify(body)
-    });
-    if(!res.ok){
-      showMsg((await res.json()).detail||'Login failed','error');
-      return null;
-    }
-    return res.json();
+  function firebaseMessage(error){
+    const code=error&&error.code?error.code:'';
+    const messages={
+      'auth/email-already-in-use':'An account with this email already exists.',
+      'auth/invalid-email':'Please enter a valid email address.',
+      'auth/invalid-credential':'Invalid email or password.',
+      'auth/popup-closed-by-user':'Sign-in was cancelled.',
+      'auth/weak-password':'Password must be at least 6 characters.',
+      'auth/user-disabled':'This account has been disabled.',
+      'auth/user-not-found':'Invalid email or password.',
+      'auth/wrong-password':'Invalid email or password.'
+    };
+    return messages[code]||'Authentication failed. Please try again.';
   }
 
   function finishAuth(data,msg){
     localStorage.setItem('echo_auth_token',data.token);
     localStorage.setItem('echo_user_name',data.user.name);
     localStorage.setItem('echo_user_email',data.user.email);
-    if(!localStorage.getItem('echo_member_since')){
-      localStorage.setItem('echo_member_since', Date.now().toString());
-    }
     showMsg(msg,'success');
     setTimeout(()=>{window.location.href='dashboard.html';},700);
   }
 
-  /* ── Social sign-in (not available during the beta) ──── */
-  function handleGoogle(){showMsg('Social sign-in is coming soon — please log in with email.','error');}
-  function handleApple(){showMsg('Social sign-in is coming soon — please log in with email.','error');}
+  async function handleProvider(provider){
+    hideMsg();
+    try{
+      const result=await signInWithPopup(auth,provider);
+      await finishAuth(result.user,'Signed in! Redirecting…');
+    }catch(err){
+      showMsg(firebaseMessage(err),'error');
+    }
+  }
+
+  async function handleGoogle(){await handleProvider(googleProvider);}
+  async function handleApple(){await handleProvider(appleProvider);}
+
+  async function handleForgotPassword(e){
+    e.preventDefault();
+    const email=document.getElementById('email').value.trim();
+    if(!email){showMsg('Enter your email first, then request a reset link.','error');return;}
+    try{
+      await sendPasswordResetEmail(auth,email);
+      showMsg('Password reset email sent.','success');
+    }catch(err){
+      showMsg(firebaseMessage(err),'error');
+    }
+  }
 
   /* ── Email form submit ───────────────────────────────── */
   async function handleSubmit(e){
@@ -628,21 +692,41 @@
     const btn=document.getElementById('submit-btn');
     const span=document.getElementById('submit-text');
     const prevLabel=span.textContent;
-    btn.disabled=true;span.textContent='Signing in…';
+    btn.disabled=true;span.textContent=authMode==='signup'?'Creating account…':'Signing in…';
 
     try{
-      const data=await authRequest('/api/auth/login',{email,password:pw});
-      if(data)finishAuth(data,'Signed in! Redirecting…');
+      if(authMode==='signup'){
+        const confirm=document.getElementById('confirm-pw').value;
+        const first=document.getElementById('first-name').value.trim();
+        const last=document.getElementById('last-name').value.trim();
+        const name=[first,last].filter(Boolean).join(' ');
+        if(pw!==confirm){showMsg('Passwords do not match.','error');return;}
+        const result=await createUserWithEmailAndPassword(auth,email,pw);
+        if(name) await updateProfile(result.user,{displayName:name});
+        await finishAuth(result.user,'Account created! Redirecting…');
+      }else{
+        const result=await signInWithEmailAndPassword(auth,email,pw);
+        await finishAuth(result.user,'Signed in! Redirecting…');
+      }
     }catch(err){
-      showMsg(NETWORK_ERR,'error');
+      showMsg(firebaseMessage(err),'error');
     }finally{
       btn.disabled=false;span.textContent=prevLabel;
     }
   }
 
   /* ── Init ────────────────────────────────────────────── */
+  Object.assign(window,{
+    setAuthMode,
+    togglePw,
+    handleGoogle,
+    handleApple,
+    handleSubmit,
+    handleForgotPassword
+  });
+
   (function(){
-    applyLoginOnlyMode();
+    setAuthMode('login');
     if(localStorage.getItem('echo_auth_token')){
       window.location.href='dashboard.html';
     }

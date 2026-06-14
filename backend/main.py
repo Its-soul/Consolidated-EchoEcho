@@ -17,6 +17,7 @@ from fastapi import FastAPI, File, HTTPException, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
+from dotenv import load_dotenv
 from pydantic import BaseModel, Field
 
 from .api_generator import (
@@ -54,6 +55,9 @@ HISTORY_FILE = BASE_DIR / "song_history.json"
 CALLBACK_FILE = BASE_DIR / "kiai_callbacks.json"
 LEGACY_CALLBACK_FILE = BASE_DIR / "kieai_callbacks.json"
 
+load_dotenv(PROJECT_DIR / ".env")
+load_dotenv(BASE_DIR / ".env")
+
 DEFAULT_GENERATION_ESTIMATE_SECONDS = 120
 ROTATING_STATUS_MESSAGES = [
     "Analyzing mood",
@@ -64,6 +68,15 @@ ROTATING_STATUS_MESSAGES = [
     "Finalizing audio",
 ]
 LYRICS_FALLBACK = "Lyrics generation is unavailable for this song, but the music was generated successfully."
+FIREBASE_ENV_MAP = {
+    "apiKey": "FIREBASE_API_KEY",
+    "authDomain": "FIREBASE_AUTH_DOMAIN",
+    "projectId": "FIREBASE_PROJECT_ID",
+    "storageBucket": "FIREBASE_STORAGE_BUCKET",
+    "messagingSenderId": "FIREBASE_MESSAGING_SENDER_ID",
+    "appId": "FIREBASE_APP_ID",
+    "measurementId": "FIREBASE_MEASUREMENT_ID",
+}
 
 logging.basicConfig(
     level=logging.INFO,
@@ -741,6 +754,25 @@ def api_auth_signup(request: SignupRequest) -> dict[str, Any]:
     except AuthError as exc:
         status_code = 409 if "already exists" in str(exc) else 400
         raise HTTPException(status_code=status_code, detail=str(exc)) from exc
+
+
+@app.get("/api/firebase-config")
+def api_firebase_config() -> dict[str, str]:
+    config = {
+        firebase_key: os.getenv(env_key, "").strip()
+        for firebase_key, env_key in FIREBASE_ENV_MAP.items()
+    }
+    missing = [
+        env_key
+        for firebase_key, env_key in FIREBASE_ENV_MAP.items()
+        if firebase_key != "measurementId" and not config[firebase_key]
+    ]
+    if missing:
+        raise HTTPException(
+            status_code=503,
+            detail=f"Firebase configuration is missing: {', '.join(missing)}",
+        )
+    return {key: value for key, value in config.items() if value}
 
 
 class AceStepLyricsRequest(BaseModel):

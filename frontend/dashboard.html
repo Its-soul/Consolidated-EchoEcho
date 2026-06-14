@@ -1018,6 +1018,22 @@
   </div>
 </div>
 
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-app.js";
+  import { getAuth, signOut } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-auth.js";
+
+  async function loadFirebaseConfig(){
+    const apiBase = location.protocol === 'file:' ? 'http://127.0.0.1:8000' : '';
+    const response = await fetch(apiBase + '/api/firebase-config',{cache:'no-store'});
+    if(!response.ok) throw new Error('Firebase configuration is unavailable.');
+    return response.json();
+  }
+
+  const firebaseConfig = await loadFirebaseConfig();
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  window.echoFirebaseSignOut = () => signOut(auth);
+</script>
 <script>
 /* ═══════════════════════════════════════════════
    DATA
@@ -1397,13 +1413,19 @@ document.addEventListener('click', ()=>{
    LOGOUT — clears session keys only; the track
    library (echo_tracks) survives logout
 ═══════════════════════════════════════════════ */
-function handleLogout(){
+async function handleLogout(){
+  sessionStorage.setItem('echo_manual_logout','1');
   localStorage.removeItem('echo_auth_token');
   localStorage.removeItem('echo_user_name');
   localStorage.removeItem('echo_user_email');
   localStorage.removeItem('echo_pending_inspo');
   localStorage.removeItem('echo_open_create');
   localStorage.removeItem('echo_current_song');
+  try{
+    if(window.echoFirebaseSignOut) await window.echoFirebaseSignOut();
+  }catch(err){
+    console.warn('Firebase sign-out failed:',err);
+  }
   window.location.href = 'login.html';
 }
 
