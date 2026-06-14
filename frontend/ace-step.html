@@ -496,8 +496,24 @@
     <div class="step-card">
       <div class="step-header">
         <div class="step-num active" id="sn7">7</div>
-        <div><div class="step-title">Lyrics <span style="font-weight:400;color:var(--grey71);font-size:.85rem">(optional)</span></div></div>
+        <div><div class="step-title">Lyrics</div></div>
       </div>
+
+      <!-- AI Generate Lyrics button -->
+      <button id="ai-lyrics-btn" onclick="generateLyricsWithAI()" style="
+        display:flex;align-items:center;gap:.5rem;
+        width:100%;padding:.75rem 1.1rem;margin-bottom:1rem;
+        background:linear-gradient(135deg,rgba(255,88,88,.08),rgba(192,88,255,.08));
+        border:1.5px solid rgba(192,88,255,.3);
+        border-radius:14px;cursor:pointer;
+        font-family:'Inter',sans-serif;font-size:.875rem;font-weight:600;
+        color:#c058ff;transition:all .15s;
+      ">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"/></svg>
+        <span id="ai-lyrics-label">Generate Lyrics with AI (Groq)</span>
+        <div id="ai-lyrics-spinner" style="display:none;width:14px;height:14px;border:2px solid rgba(192,88,255,.3);border-top-color:#c058ff;border-radius:50%;animation:spin .7s linear infinite;margin-left:auto"></div>
+      </button>
+
       <div class="lyrics-section-btns">
         <button class="lyrics-tag-btn" onclick="insertTag('[verse]')">+ Verse</button>
         <button class="lyrics-tag-btn" onclick="insertTag('[pre-chorus]')">+ Pre-chorus</button>
@@ -507,9 +523,9 @@
         <button class="lyrics-tag-btn" onclick="clearLyrics()" style="margin-left:auto;color:#ff5858">Clear</button>
       </div>
       <div class="lyrics-wrap">
-        <textarea id="lyrics-input" placeholder="[verse]&#10;Write your verse lyrics here...&#10;&#10;[chorus]&#10;Write your chorus lyrics here...&#10;&#10;Leave empty for instrumental-only generation"></textarea>
+        <textarea id="lyrics-input" placeholder="Click 'Generate Lyrics with AI' above to auto-write lyrics based on your selections ✨&#10;&#10;Or write your own:&#10;[verse]&#10;Your verse here...&#10;&#10;[chorus]&#10;Your chorus here...&#10;&#10;Leave empty for instrumental."></textarea>
       </div>
-      <p class="lyrics-hint">Use <code>[verse]</code>, <code>[chorus]</code>, <code>[bridge]</code>, <code>[pre-chorus]</code> tags before each section. Leave empty to generate an instrumental track.</p>
+      <p class="lyrics-hint">Groq writes the lyrics → ACE-Step sings them. You can edit before generating.</p>
     </div>
 
     <!-- Generate -->
@@ -517,11 +533,11 @@
       <button class="gen-btn" id="gen-btn" onclick="generate()">
         <span class="btn-label">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
-          Generate with ACE-Step
+          Sing with ACE-Step
         </span>
         <div class="spinner"></div>
       </button>
-      <p style="margin-top:.75rem;font-size:.78rem;color:var(--grey71)">Generation takes ~60–120 seconds via HuggingFace Space</p>
+      <p style="margin-top:.75rem;font-size:.78rem;color:var(--grey71)">~60–120 seconds · Groq writes · ACE-Step sings</p>
     </div>
 
     <!-- Progress -->
@@ -605,6 +621,53 @@ function selectDur(el) {
   document.querySelectorAll('.dur-pill').forEach(p => p.classList.remove('selected'));
   el.classList.add('selected');
   duration = parseInt(el.dataset.val);
+}
+
+/* ─── Generate lyrics with Groq ────────────────────────── */
+async function generateLyricsWithAI() {
+  const btn = document.getElementById('ai-lyrics-btn');
+  const label = document.getElementById('ai-lyrics-label');
+  const spinner = document.getElementById('ai-lyrics-spinner');
+
+  label.textContent = 'Writing lyrics…';
+  spinner.style.display = 'block';
+  btn.disabled = true;
+  btn.style.opacity = '.7';
+
+  try {
+    const token = localStorage.getItem('echo_auth_token');
+    const res = await fetch('/api/ace-step/lyrics', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+      body: JSON.stringify({
+        mood: sel.mood.join(', '),
+        genre: sel.genre.join(', '),
+        instruments: sel.instruments.join(', '),
+        vocal: sel.vocal.join(', '),
+        tempo: parseInt(document.getElementById('bpm-slider').value),
+        energy: parseInt(document.getElementById('energy-slider').value),
+        prompt: sel.mood.concat(sel.genre).join(', '),
+      }),
+    });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.detail || 'Lyrics generation failed');
+    }
+    const data = await res.json();
+    document.getElementById('lyrics-input').value = data.lyrics;
+    label.textContent = '✓ Lyrics generated — edit if you like, then Sing!';
+    btn.style.background = 'linear-gradient(135deg,rgba(88,200,88,.1),rgba(88,200,150,.1))';
+    btn.style.borderColor = 'rgba(88,200,100,.4)';
+    btn.style.color = '#2ecc71';
+  } catch(err) {
+    label.textContent = 'Failed: ' + err.message + ' — try again';
+    btn.style.borderColor = 'rgba(255,88,88,.4)';
+    btn.style.color = '#ff5858';
+  } finally {
+    spinner.style.display = 'none';
+    btn.disabled = false;
+    btn.style.opacity = '1';
+  }
 }
 
 /* ─── Lyrics helpers ───────────────────────────────────── */

@@ -650,9 +650,16 @@ async def generate_with_ace_step_mode(request: GenerateRequest) -> dict[str, Any
         style = first_or_join(request.genres or ([request.style] if request.style else []), "pop")
         prompt_str = f"{mood} {style}, {request.tempo}bpm, {theme}"
 
-        update_generation_status("Writing lyrics", 20)
-        lyrics_result, lyrics_ok = generate_lyrics_section(request, prompt_str)
-        lyrics_text = lyrics_result.get("text", "")
+        # Use user-provided lyrics if given; only auto-generate if empty
+        if request.lyrics and request.lyrics.strip():
+            update_generation_status("Using provided lyrics", 20)
+            lyrics_text = request.lyrics.strip()
+            lyrics_result = {"text": lyrics_text, "structure": "user-provided"}
+            lyrics_ok = True
+        else:
+            update_generation_status("Writing lyrics with AI", 20)
+            lyrics_result, lyrics_ok = generate_lyrics_section(request, prompt_str)
+            lyrics_text = lyrics_result.get("text", "")
 
         update_generation_status("Sending to ACE-Step (this may take a few minutes)", 35)
         ace_result = generate_with_ace_step(
@@ -721,6 +728,62 @@ def api_auth_signup(request: SignupRequest) -> dict[str, Any]:
     except AuthError as exc:
         status_code = 409 if "already exists" in str(exc) else 400
         raise HTTPException(status_code=status_code, detail=str(exc)) from exc
+
+
+class AceStepLyricsRequest(BaseModel):
+    mood: str = ""
+    genre: str = ""
+    instruments: str = ""
+    vocal: str = ""
+    tempo: int = 90
+    energy: int = 5
+    prompt: str = ""
+
+
+@app.post("/api/ace-step/lyrics")
+def api_ace_step_lyrics(request: AceStepLyricsRequest) -> dict[str, Any]:
+    """Generate ACE-Step formatted lyrics via Groq based on user selections."""
+    import os
+    groq_key = os.getenv("GROQ_API_KEY")
+    if not groq_key:
+        raise HTTPException(status_code=503, detail="GROQ_API_KEY not configured")
+
+    try:
+        from groq import Groq
+        client = Groq(api_key=groq_key)
+    except ImportError:
+        raise HTTPException(status_code=503, detail="groq package not installed")
+
+    energy_words = {1:"very calm",2:"calm",3:"mellow",4:"relaxed",5:"moderate",
+                    6:"upbeat",7:"energetic",8:"intense",9:"very intense",10:"extreme"}
+    energy_desc = energy_words.get(request.energy, "moderate")
+
+    system = (
+        "You are a professional songwriter. Write original song lyrics in ACE-Step format. "
+        "Use ONLY these section tags exactly as written: [verse], [pre-chorus], [chorus], [bridge]. "
+        "Each section tag must be on its own line. Write 3-4 lines per section. "
+        "Never use [Verse 1] or numbered variants — only [verse] and [chorus]. "
+        "Output ONLY the lyrics, no explanations."
+    )
+    user_prompt = (
+        f"Write a full song with [verse], [chorus], [verse], [chorus], [bridge], [chorus] structure.\n"
+        f"Mood: {request.mood or 'emotional'}\n"
+        f"Genre: {request.genre or 'pop'}\n"
+        f"Instruments: {request.instruments or 'piano, guitar'}\n"
+        f"Vocal style: {request.vocal or 'smooth'}\n"
+        f"Tempo: {request.tempo} BPM ({energy_desc} energy)\n"
+        f"Theme/prompt: {request.prompt or 'life and journey'}\n\n"
+        "Make the lyrics singable, emotional, and original."
+    )
+
+    completion = client.chat.completions.create(
+        model="llama-3.1-8b-instant",
+        messages=[{"role": "system", "content": system}, {"role": "user", "content": user_prompt}],
+        max_tokens=600,
+        temperature=0.85,
+    )
+    lyrics = completion.choices[0].message.content.strip()
+    return {"ok": True, "lyrics": lyrics}
 
 
 @app.post("/api/compose")

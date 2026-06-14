@@ -27,15 +27,28 @@ def _build_prompt(mood: str, style: str, instruments: list[str], tempo: int, ene
 
 
 def _format_lyrics(raw: str) -> str:
-    """Convert plain Verse/Chorus text to ACE-Step [tag] format."""
+    """Normalize any lyric format to ACE-Step [tag] format."""
+    import re
     if not raw or not raw.strip():
         return "[verse]\nInstrumental\n[chorus]\nInstrumental"
 
-    # Already tagged
-    if any(t in raw.lower() for t in ["[verse]", "[chorus]", "[bridge]"]):
-        return raw.strip()
+    text = raw.strip()
 
-    lines = raw.strip().split("\n")
+    # Normalize bracketed section headers (e.g. [Verse 1], [CHORUS], [Pre-Chorus 2])
+    text = re.sub(r'\[verse\s*\d*\]', '[verse]', text, flags=re.IGNORECASE)
+    text = re.sub(r'\[pre[\s\-]chorus\s*\d*\]', '[pre-chorus]', text, flags=re.IGNORECASE)
+    text = re.sub(r'\[chorus\s*\d*\]', '[chorus]', text, flags=re.IGNORECASE)
+    text = re.sub(r'\[bridge\s*\d*\]', '[bridge]', text, flags=re.IGNORECASE)
+    text = re.sub(r'\[outro\s*\d*\]', '[outro]', text, flags=re.IGNORECASE)
+    text = re.sub(r'\[intro\s*\d*\]', '[intro]', text, flags=re.IGNORECASE)
+    text = re.sub(r'\[hook\s*\d*\]', '[chorus]', text, flags=re.IGNORECASE)
+
+    # If already in ACE-Step format after normalization, return as-is
+    if any(t in text for t in ["[verse]", "[chorus]", "[bridge]"]):
+        return text
+
+    # Fall back: line-by-line conversion for plain-text section headers
+    lines = text.split("\n")
     out: list[str] = []
     for line in lines:
         s = line.strip()
