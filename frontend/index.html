@@ -257,9 +257,9 @@
     .creator-card{
       width:180px;height:220px;border-radius:20px;
       flex-shrink:0;overflow:hidden;
-      background:rgba(255,255,255,.28);
+      background:rgba(255,255,255,.90);
       backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
-      border:1px solid rgba(255,255,255,.5);
+      border:1px solid rgba(255,255,255,.9);
       box-shadow:0 4px 24px rgba(0,0,0,.06);
       position:relative;
       display:flex;flex-direction:column;
@@ -317,29 +317,29 @@
       display:grid;grid-template-columns:repeat(3,1fr);
       gap:1.5rem;margin-top:1.5rem;
     }
-    /* feature cards — strong glass so wave shows through */
+    /* feature cards */
     .f-card{
-      background:rgba(255,255,255,.26);border-radius:24px;
+      background:rgba(255,255,255,.90);border-radius:24px;
       backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);
-      border:1px solid rgba(255,255,255,.55);
+      border:1px solid rgba(255,255,255,.9);
       box-shadow:0 8px 40px rgba(0,0,0,.07),inset 0 1px 0 rgba(255,255,255,.6);
       padding:2.5rem;height:440px;
       position:relative;overflow:hidden;
       display:flex;flex-direction:column;
     }
     .f-card-sm{
-      background:rgba(255,255,255,.26);border-radius:24px;
+      background:rgba(255,255,255,.90);border-radius:24px;
       backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);
-      border:1px solid rgba(255,255,255,.55);
+      border:1px solid rgba(255,255,255,.9);
       box-shadow:0 8px 40px rgba(0,0,0,.07),inset 0 1px 0 rgba(255,255,255,.6);
       padding:2.5rem;height:380px;
       position:relative;overflow:hidden;
       display:flex;flex-direction:column;
     }
     .f-card-wide{
-      background:rgba(255,255,255,.26);border-radius:24px;
+      background:rgba(255,255,255,.90);border-radius:24px;
       backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);
-      border:1px solid rgba(255,255,255,.55);
+      border:1px solid rgba(255,255,255,.9);
       box-shadow:0 8px 40px rgba(0,0,0,.07),inset 0 1px 0 rgba(255,255,255,.6);
       padding:2.5rem;
       position:relative;overflow:hidden;
@@ -437,10 +437,10 @@
     }
     .price-card{
       position:relative;border-radius:28px;padding:2.25rem;
-      background:rgba(255,255,255,.3);
+      background:rgba(255,255,255,.90);
       backdrop-filter:blur(20px) saturate(1.4);
       -webkit-backdrop-filter:blur(20px) saturate(1.4);
-      border:1px solid rgba(255,255,255,.6);
+      border:1px solid rgba(255,255,255,.9);
       box-shadow:0 12px 48px rgba(0,0,0,.08),inset 0 1px 0 rgba(255,255,255,.7);
       display:flex;flex-direction:column;color:var(--dark);
       transition:transform .35s cubic-bezier(.2,.75,.28,.9),box-shadow .35s,background .35s;
@@ -448,7 +448,7 @@
     .price-card:hover{
       transform:translateY(-12px) scale(1.03);
       box-shadow:0 28px 70px rgba(0,0,0,.14),inset 0 1px 0 rgba(255,255,255,.8);
-      background:rgba(255,255,255,.48);
+      background:rgba(255,255,255,.92);
     }
     .price-card.popular{border-color:transparent}
     .price-card.popular::before{
@@ -523,14 +523,14 @@
     }
     .faq-list{margin-top:2.5rem;display:flex;flex-direction:column;gap:.75rem}
     .faq-item{
-      background:rgba(255,255,255,.26);cursor:pointer;
+      background:rgba(255,255,255,.90);cursor:pointer;
       backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);
-      border:1px solid rgba(255,255,255,.5);
+      border:1px solid rgba(255,255,255,.9);
       box-shadow:0 4px 20px rgba(0,0,0,.05);
       border-radius:24px;padding:1.5rem;
       transition:background .2s,box-shadow .2s;
     }
-    .faq-item:hover{background:rgba(255,255,255,.4);box-shadow:0 8px 32px rgba(0,0,0,.09)}
+    .faq-item:hover{background:rgba(255,255,255,.92);box-shadow:0 8px 32px rgba(0,0,0,.09)}
     .faq-header{display:flex;justify-content:space-between;align-items:center}
     .faq-q{font-size:1rem;font-weight:500;color:var(--dark);flex:1;margin-right:1rem}
     .faq-arrow{
@@ -577,17 +577,17 @@
     }
     .footer-nav-links a{
       color:var(--dark);text-decoration:none;font-size:.9rem;
-      opacity:.7;transition:opacity .2s;
+      opacity:.85;transition:opacity .2s;
     }
     .footer-nav-links a:hover{opacity:1}
     .footer-bottom{
       display:flex;justify-content:space-between;align-items:center;
       flex-wrap:wrap;gap:1rem;padding-top:2rem;
-      border-top:1px solid rgba(13,13,13,.06);margin-top:2rem;
+      border-top:1px solid rgba(13,13,13,.1);margin-top:2rem;
     }
-    .footer-copy{font-size:.8rem;color:var(--grey71)}
+    .footer-copy{font-size:.8rem;color:#444}
     .footer-socials{display:flex;gap:1.5rem;align-items:center}
-    .footer-socials a{color:var(--dark);text-decoration:none;opacity:.6;transition:all .15s;font-size:1.1rem}
+    .footer-socials a{color:var(--dark);text-decoration:none;opacity:.75;transition:all .15s;font-size:1.1rem}
     .footer-socials a:hover{opacity:1;transform:scale(1.1)}
 
     /* ── HERO 3D ATMOSPHERE ─────────────────────────────────── */
@@ -1022,8 +1022,8 @@
 <!-- ═══════════ BOTTOM CTA ════════════════════════════════════════════ -->
 <section class="tw-content-anim" style="text-align:center;padding:7rem 1.5rem 5rem">
   <div style="max-width:640px;margin:0 auto;
-    background:rgba(255,255,255,.22);backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px);
-    border:1px solid rgba(255,255,255,.5);border-radius:36px;
+    background:rgba(255,255,255,.90);backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px);
+    border:1px solid rgba(255,255,255,.9);border-radius:36px;
     padding:4rem 3rem;
     box-shadow:0 20px 80px rgba(0,0,0,.08),inset 0 1px 0 rgba(255,255,255,.7)">
     <div style="font-size:clamp(2rem,5vw,3.25rem);font-weight:900;letter-spacing:-.045em;line-height:1.08">
@@ -1039,7 +1039,7 @@
 </section>
 
 <!-- ═══════════ FOOTER (bio.link exact structure) ════════════════════ -->
-<div style="max-width:1100px;margin:5rem auto 0;padding:0 2.5rem">
+<div style="max-width:1100px;margin:5rem auto 0;padding:0 2.5rem;background:rgba(255,255,255,.90);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border-radius:28px 28px 0 0;border:1px solid rgba(255,255,255,.9);border-bottom:none">
   <!-- gradient wave SVG divider (bio.link) -->
   <svg width="100%" height="8" viewBox="0 0 1101 8" fill="none" xmlns="http://www.w3.org/2000/svg" style="opacity:.4">
     <path d="M0 7C5.68 7 8.58 5.05 11.13 3.35C13.44 1.82 15.26 0.61 19.16 0.61C23.05 0.61 24.87 1.82 27.18 3.35C29.73 5.05 32.63 7 38.31 7" stroke="url(#wg1)" stroke-width="1.5"/>
