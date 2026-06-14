@@ -9,47 +9,84 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
   <style>
+    @keyframes float-glow{0%,100%{box-shadow:0 0 60px rgba(192,88,255,.12),0 0 120px rgba(192,88,255,.06)}50%{box-shadow:0 0 80px rgba(192,88,255,.18),0 0 160px rgba(192,88,255,.09)}}
+    @keyframes shimmer{0%{background-position:-200% center}100%{background-position:200% center}}
+    @keyframes fade-up{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
     html{scroll-behavior:smooth}
-    body{font-family:'Inter',ui-sans-serif,system-ui,sans-serif;background:#fff;color:#0d0d0d;-webkit-font-smoothing:antialiased;font-size:16px;line-height:1.7}
+    body{
+      font-family:'Inter',ui-sans-serif,system-ui,sans-serif;
+      background:#07070f;
+      color:#e8e8f0;
+      -webkit-font-smoothing:antialiased;
+      font-size:16px;
+      line-height:1.75;
+      min-height:100vh;
+    }
+
+    /* ── AMBIENT BG ── */
+    body::before{
+      content:'';
+      position:fixed;inset:0;z-index:0;pointer-events:none;
+      background:
+        radial-gradient(ellipse 80vw 60vh at 15% 10%, rgba(120,40,255,.12) 0%, transparent 60%),
+        radial-gradient(ellipse 60vw 50vh at 85% 80%, rgba(255,50,80,.08) 0%, transparent 60%),
+        radial-gradient(ellipse 100vw 80vh at 50% 50%, rgba(10,10,30,.9) 0%, transparent 100%);
+    }
 
     :root{
-      --dark:#0d0d0d;
-      --white:#fff;
-      --grey97:#f7f7f7;
-      --greyF0:#f0f0f0;
-      --greyD:#d4d4d4;
-      --grey6:#616161;
-      --grad:linear-gradient(135deg,#ff5858 0%,#c058ff 100%);
       --nav-h:60px;
       --sidebar-w:300px;
+      --grad:linear-gradient(135deg,#ff5858 0%,#c058ff 100%);
+      --grad-text:linear-gradient(135deg,#ff6b6b 0%,#c77dff 100%);
+      --glass:rgba(255,255,255,.04);
+      --glass-border:rgba(255,255,255,.08);
+      --glass-strong:rgba(255,255,255,.07);
+      --text:#e8e8f0;
+      --text-muted:#888;
+      --text-dim:#aaa;
+      --accent:#c084fc;
+      --accent2:#ff6b6b;
+      --dark-card:rgba(255,255,255,.035);
     }
 
     /* ── TOP NAV ── */
     .topnav{
       position:fixed;top:0;left:0;right:0;z-index:9999;
       height:var(--nav-h);
-      background:rgba(255,255,255,.94);
-      backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
-      border-bottom:1px solid rgba(0,0,0,.08);
+      background:rgba(7,7,15,.7);
+      backdrop-filter:blur(24px) saturate(180%);-webkit-backdrop-filter:blur(24px) saturate(180%);
+      border-bottom:1px solid rgba(255,255,255,.07);
       display:flex;align-items:center;padding:0 1.5rem;gap:.75rem;
     }
-    .nav-logo{display:flex;align-items:center;gap:.45rem;text-decoration:none;flex-shrink:0}
-    .nav-logo-icon{width:30px;height:30px;border-radius:8px;background:var(--grad);display:flex;align-items:center;justify-content:center}
-    .nav-logo-icon svg{width:15px;height:15px;fill:none;stroke:#fff;stroke-width:2.2;stroke-linecap:round}
-    .nav-wordmark{font-size:1rem;font-weight:800;letter-spacing:-.03em;color:var(--dark)}
-    .nav-wordmark em{font-style:normal;background:var(--grad);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
-    .nav-sep{width:1px;height:16px;background:rgba(0,0,0,.1);flex-shrink:0}
-    .nav-tag{font-size:.78rem;font-weight:600;color:var(--grey6);letter-spacing:.01em}
+    .nav-logo{display:flex;align-items:center;gap:.5rem;text-decoration:none;flex-shrink:0}
+    .nav-logo-icon{
+      width:30px;height:30px;border-radius:8px;
+      background:var(--grad);
+      display:flex;align-items:center;justify-content:center;
+      box-shadow:0 0 16px rgba(192,88,255,.4);
+    }
+    .nav-logo-icon svg{width:15px;height:15px}
+    .nav-wordmark{font-size:1rem;font-weight:800;letter-spacing:-.03em;color:#fff}
+    .nav-wordmark em{font-style:normal;background:var(--grad-text);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+    .nav-sep{width:1px;height:16px;background:rgba(255,255,255,.1);flex-shrink:0}
+    .nav-tag{font-size:.78rem;font-weight:600;color:var(--text-muted);letter-spacing:.01em}
     .nav-right{margin-left:auto;display:flex;align-items:center;gap:.5rem}
-    .nav-link{font-size:.84rem;font-weight:500;color:var(--grey6);text-decoration:none;padding:.3rem .6rem;border-radius:6px;transition:background .15s,color .15s}
-    .nav-link:hover{background:var(--greyF0);color:var(--dark)}
-    .nav-btn{font-size:.84rem;font-weight:600;color:#fff;background:var(--dark);padding:.35rem .85rem;border-radius:7px;text-decoration:none;transition:opacity .15s}
-    .nav-btn:hover{opacity:.8}
-    .nav-version{font-size:.72rem;font-weight:700;background:var(--greyF0);color:var(--grey6);padding:.2rem .55rem;border-radius:20px;letter-spacing:.02em}
+    .nav-link{font-size:.84rem;font-weight:500;color:var(--text-muted);text-decoration:none;padding:.3rem .65rem;border-radius:6px;transition:background .15s,color .15s}
+    .nav-link:hover{background:rgba(255,255,255,.06);color:#fff}
+    .nav-btn{
+      font-size:.84rem;font-weight:700;color:#fff;
+      background:var(--grad);
+      padding:.35rem .9rem;border-radius:7px;text-decoration:none;
+      box-shadow:0 0 12px rgba(192,88,255,.3);
+      transition:opacity .15s,box-shadow .15s;
+    }
+    .nav-btn:hover{opacity:.9;box-shadow:0 0 20px rgba(192,88,255,.5)}
+    .nav-version{font-size:.72rem;font-weight:700;background:rgba(255,255,255,.07);color:var(--text-muted);padding:.2rem .55rem;border-radius:20px;border:1px solid rgba(255,255,255,.08);letter-spacing:.02em}
 
     /* ── LAYOUT ── */
-    .layout{display:flex;margin-top:var(--nav-h);min-height:calc(100vh - var(--nav-h))}
+    .layout{display:flex;margin-top:var(--nav-h);min-height:calc(100vh - var(--nav-h));position:relative;z-index:1}
 
     /* ── SIDEBAR ── */
     .sidebar{
@@ -58,181 +95,294 @@
       position:sticky;top:var(--nav-h);
       height:calc(100vh - var(--nav-h));
       overflow-y:auto;
-      border-right:1px solid rgba(0,0,0,.07);
-      padding:1.75rem 0 3rem;
-      background:#fff;
+      border-right:1px solid rgba(255,255,255,.06);
+      padding:1.5rem 0 3rem;
+      background:rgba(7,7,15,.6);
+      backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
     }
-    .sidebar::-webkit-scrollbar{width:4px}
-    .sidebar::-webkit-scrollbar-thumb{background:var(--greyD);border-radius:4px}
+    .sidebar::-webkit-scrollbar{width:3px}
+    .sidebar::-webkit-scrollbar-thumb{background:rgba(255,255,255,.12);border-radius:3px}
 
     .sidenav-group{margin-bottom:1.5rem}
     .sidenav-label{
-      font-size:.7rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
-      color:var(--grey6);padding:.25rem 1.5rem .35rem;display:block;
+      font-size:.68rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;
+      color:rgba(255,255,255,.28);padding:.2rem 1.4rem .4rem;display:block;
     }
     .sidenav-item{
-      display:flex;align-items:center;gap:.55rem;
-      padding:.42rem 1.5rem;font-size:.9rem;font-weight:500;
-      color:#444;text-decoration:none;cursor:pointer;
+      display:flex;align-items:center;gap:.5rem;
+      padding:.44rem 1.4rem;font-size:.9rem;font-weight:500;
+      color:rgba(255,255,255,.55);text-decoration:none;cursor:pointer;
       border-left:2px solid transparent;
-      transition:background .12s,color .12s,border-color .12s;
+      transition:all .15s;
     }
-    .sidenav-item:hover{background:var(--grey97);color:var(--dark)}
+    .sidenav-item:hover{background:rgba(255,255,255,.05);color:rgba(255,255,255,.9)}
     .sidenav-item.active{
-      background:rgba(192,88,255,.07);color:#9b2af9;
-      border-left-color:#9b2af9;font-weight:600;
+      background:rgba(192,88,255,.1);
+      color:#d8aaff;
+      border-left-color:#c084fc;
+      font-weight:600;
     }
     .method-badge{
-      font-size:.62rem;font-weight:700;letter-spacing:.04em;
-      padding:.18rem .44rem;border-radius:4px;flex-shrink:0;font-family:'JetBrains Mono',monospace;
+      font-size:.6rem;font-weight:700;letter-spacing:.05em;
+      padding:.15rem .4rem;border-radius:4px;flex-shrink:0;
+      font-family:'JetBrains Mono',monospace;
     }
-    .badge-post{background:#fef3c7;color:#b45309}
-    .badge-get{background:#d1fae5;color:#065f46}
+    .badge-post{background:rgba(251,191,36,.15);color:#fbbf24;border:1px solid rgba(251,191,36,.2)}
+    .badge-get{background:rgba(52,211,153,.12);color:#34d399;border:1px solid rgba(52,211,153,.2)}
 
     /* ── CONTENT ── */
-    .content{flex:1;padding:3rem 4rem 5rem;max-width:860px;min-width:0}
+    .content{flex:1;padding:3rem 4.5rem 5rem;max-width:900px;min-width:0;animation:fade-up .3s ease}
 
-    /* ── PAGE SECTIONS ── */
-    .page-header{margin-bottom:2.5rem;padding-bottom:1.75rem;border-bottom:1px solid var(--greyF0)}
-    .page-eyebrow{font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:#9b2af9;margin-bottom:.6rem}
-    .page-title{font-size:2.2rem;font-weight:800;letter-spacing:-.04em;line-height:1.15;color:var(--dark);margin-bottom:.8rem}
-    .page-desc{font-size:1.08rem;color:var(--grey6);line-height:1.65;max-width:640px}
+    /* ── HEADINGS ── */
+    .page-header{margin-bottom:2.5rem;padding-bottom:2rem;border-bottom:1px solid rgba(255,255,255,.07)}
+    .page-eyebrow{
+      font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.12em;
+      background:var(--grad-text);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;
+      margin-bottom:.65rem;display:block;
+    }
+    .page-title{
+      font-size:2.25rem;font-weight:900;letter-spacing:-.045em;line-height:1.12;
+      color:#fff;margin-bottom:.85rem;
+    }
+    .page-desc{font-size:1.05rem;color:var(--text-dim);line-height:1.7;max-width:660px}
 
-    h2{font-size:1.35rem;font-weight:700;letter-spacing:-.025em;color:var(--dark);margin:2.5rem 0 .9rem}
-    h3{font-size:1.1rem;font-weight:600;letter-spacing:-.02em;color:var(--dark);margin:1.8rem 0 .6rem}
-    p{margin-bottom:1rem;color:#333;font-size:1rem}
+    h2{
+      font-size:1.3rem;font-weight:700;letter-spacing:-.025em;color:#fff;
+      margin:2.5rem 0 1rem;
+      display:flex;align-items:center;gap:.6rem;
+    }
+    h2::before{content:'';width:3px;height:18px;border-radius:3px;background:var(--grad);flex-shrink:0}
+    h3{font-size:1.05rem;font-weight:600;letter-spacing:-.02em;color:rgba(255,255,255,.9);margin:1.75rem 0 .65rem}
+    p{margin-bottom:1rem;color:var(--text-dim);font-size:1rem;line-height:1.75}
     ul,ol{padding-left:1.4rem;margin-bottom:1rem}
-    li{margin-bottom:.35rem;font-size:1rem;color:#333}
-    li strong{color:var(--dark)}
-    a{color:#9b2af9;text-decoration:none}
-    a:hover{text-decoration:underline}
-    code{font-family:'JetBrains Mono',monospace;font-size:.84em;background:var(--greyF0);padding:.15em .35em;border-radius:4px;color:#c026d3}
-    strong{color:var(--dark);font-weight:600}
+    li{margin-bottom:.4rem;font-size:1rem;color:var(--text-dim)}
+    li strong{color:#fff}
+    a{color:var(--accent);text-decoration:none;transition:color .15s}
+    a:hover{color:#d8aaff;text-decoration:underline}
+    code{
+      font-family:'JetBrains Mono',monospace;font-size:.83em;
+      background:rgba(255,255,255,.08);
+      border:1px solid rgba(255,255,255,.1);
+      padding:.15em .4em;border-radius:5px;color:#d8aaff;
+    }
+    strong{color:#fff;font-weight:600}
+
+    /* ── GLASS CARD ── */
+    .glass-card{
+      background:rgba(255,255,255,.04);
+      border:1px solid rgba(255,255,255,.08);
+      border-radius:14px;
+      backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+      box-shadow:0 4px 24px rgba(0,0,0,.3),inset 0 1px 0 rgba(255,255,255,.06);
+    }
+
+    /* ── CARD GRID ── */
+    .card-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:.9rem;margin:1rem 0 1.75rem}
+    .card{
+      background:rgba(255,255,255,.04);
+      border:1px solid rgba(255,255,255,.07);
+      border-radius:12px;padding:1.2rem;
+      transition:border-color .2s,background .2s,box-shadow .2s;
+      backdrop-filter:blur(8px);
+    }
+    .card:hover{
+      border-color:rgba(192,88,255,.35);
+      background:rgba(192,88,255,.07);
+      box-shadow:0 0 20px rgba(192,88,255,.1);
+    }
+    .card-icon{font-size:1.4rem;margin-bottom:.6rem}
+    .card-name{font-size:.94rem;font-weight:700;color:#fff;margin-bottom:.3rem}
+    .card-desc{font-size:.84rem;color:var(--text-muted);line-height:1.6}
 
     /* ── CODE BLOCK ── */
     .code-block{
-      background:#0f0f0f;border-radius:10px;overflow:hidden;
-      margin:1rem 0 1.5rem;font-size:.875rem;
-      border:1px solid rgba(255,255,255,.06);
+      background:rgba(0,0,0,.5);
+      border:1px solid rgba(255,255,255,.08);
+      border-radius:12px;overflow:hidden;margin:1rem 0 1.5rem;
+      box-shadow:0 4px 20px rgba(0,0,0,.4),inset 0 1px 0 rgba(255,255,255,.04);
     }
     .code-block-header{
       display:flex;align-items:center;justify-content:space-between;
-      padding:.6rem 1rem;background:#1a1a1a;border-bottom:1px solid rgba(255,255,255,.06);
+      padding:.6rem 1.1rem;
+      background:rgba(255,255,255,.03);
+      border-bottom:1px solid rgba(255,255,255,.06);
     }
-    .code-block-lang{font-size:.7rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#666;font-family:'JetBrains Mono',monospace}
+    .code-block-lang{font-size:.68rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,.3);font-family:'JetBrains Mono',monospace}
     .copy-btn{
-      font-size:.72rem;font-weight:600;color:#666;background:rgba(255,255,255,.07);
-      border:none;border-radius:5px;padding:.3rem .65rem;cursor:pointer;
-      font-family:'Inter',sans-serif;transition:background .15s,color .15s;
+      font-size:.72rem;font-weight:600;color:rgba(255,255,255,.35);
+      background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.08);
+      border-radius:5px;padding:.28rem .65rem;cursor:pointer;
+      font-family:'Inter',sans-serif;transition:all .15s;
     }
-    .copy-btn:hover{background:rgba(255,255,255,.12);color:#ddd}
-    .copy-btn.copied{color:#4ade80}
-    pre{padding:1.1rem 1.25rem;overflow-x:auto;line-height:1.65}
-    pre code{background:none;padding:0;color:#e5e5e5;font-size:.875rem;border-radius:0}
-    .kw{color:#c084fc}
-    .str{color:#86efac}
-    .cm{color:#525252;font-style:italic}
-    .fn{color:#93c5fd}
-    .num{color:#fdba74}
-    .key{color:#67e8f9}
+    .copy-btn:hover{background:rgba(255,255,255,.1);color:rgba(255,255,255,.8)}
+    .copy-btn.copied{color:#4ade80;border-color:rgba(74,222,128,.3)}
+    pre{padding:1.15rem 1.3rem;overflow-x:auto;line-height:1.7}
+    pre code{background:none;padding:0;border:none;color:#d4d4d8;font-size:.875rem;border-radius:0}
+    .tk-kw{color:#c084fc}
+    .tk-str{color:#86efac}
+    .tk-cm{color:#52525b;font-style:italic}
+    .tk-fn{color:#93c5fd}
+    .tk-num{color:#fdba74}
+    .tk-key{color:#67e8f9}
+    .tk-op{color:#94a3b8}
 
     /* ── CODE TABS ── */
-    .code-tabs{margin:1rem 0 1.5rem;border-radius:10px;overflow:hidden;border:1px solid rgba(0,0,0,.08)}
-    .tab-bar{display:flex;background:var(--grey97);border-bottom:1px solid var(--greyD);gap:0}
-    .tab-btn{
-      padding:.55rem 1.1rem;font-size:.82rem;font-weight:600;font-family:'Inter',sans-serif;
-      background:none;border:none;cursor:pointer;color:#666;
-      border-bottom:2px solid transparent;margin-bottom:-1px;transition:color .15s,border-color .15s;
+    .code-tabs{
+      margin:1rem 0 1.5rem;border-radius:12px;overflow:hidden;
+      border:1px solid rgba(255,255,255,.08);
+      box-shadow:0 4px 20px rgba(0,0,0,.4);
     }
-    .tab-btn.active{color:#9b2af9;border-bottom-color:#9b2af9}
-    .tab-btn:hover:not(.active){color:var(--dark)}
-    .tab-content{display:none;background:#0f0f0f}
+    .tab-bar{
+      display:flex;
+      background:rgba(255,255,255,.03);
+      border-bottom:1px solid rgba(255,255,255,.07);
+    }
+    .tab-btn{
+      padding:.55rem 1.15rem;font-size:.82rem;font-weight:600;
+      font-family:'Inter',sans-serif;
+      background:none;border:none;cursor:pointer;color:rgba(255,255,255,.4);
+      border-bottom:2px solid transparent;margin-bottom:-1px;
+      transition:color .15s,border-color .15s;
+    }
+    .tab-btn.active{color:#c084fc;border-bottom-color:#c084fc}
+    .tab-btn:hover:not(.active){color:rgba(255,255,255,.7)}
+    .tab-content{display:none;background:rgba(0,0,0,.45)}
     .tab-content.active{display:block}
     .tab-content pre{border-radius:0;margin:0}
 
     /* ── CALLOUT ── */
     .callout{
-      border-radius:10px;padding:1rem 1.2rem;margin:1.25rem 0;font-size:.95rem;
-      display:flex;gap:.75rem;align-items:flex-start;
+      border-radius:11px;padding:1rem 1.2rem;margin:1.25rem 0;font-size:.95rem;
+      display:flex;gap:.8rem;align-items:flex-start;
+      backdrop-filter:blur(8px);
     }
-    .callout-info{background:#f0f9ff;border:1px solid #bae6fd;color:#0c4a6e}
-    .callout-warn{background:#fffbeb;border:1px solid #fde68a;color:#78350f}
-    .callout-tip{background:#f0fdf4;border:1px solid #bbf7d0;color:#14532d}
+    .callout-info{background:rgba(56,189,248,.07);border:1px solid rgba(56,189,248,.2);color:#7dd3fc}
+    .callout-warn{background:rgba(251,191,36,.07);border:1px solid rgba(251,191,36,.2);color:#fcd34d}
+    .callout-tip{background:rgba(52,211,153,.07);border:1px solid rgba(52,211,153,.2);color:#6ee7b7}
+    .callout-danger{background:rgba(248,113,113,.07);border:1px solid rgba(248,113,113,.2);color:#fca5a5}
     .callout-icon{font-size:1.1rem;flex-shrink:0;margin-top:.05rem}
-    .callout p{margin:0;color:inherit}
-
-    /* ── CARD GRID ── */
-    .card-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:1rem;margin:1rem 0 1.5rem}
-    .card{background:var(--grey97);border:1px solid var(--greyD);border-radius:12px;padding:1.25rem;transition:border-color .15s,box-shadow .15s}
-    .card:hover{border-color:#c084fc;box-shadow:0 2px 12px rgba(192,88,255,.1)}
-    .card-icon{font-size:1.5rem;margin-bottom:.6rem}
-    .card-name{font-size:.94rem;font-weight:700;color:var(--dark);margin-bottom:.3rem}
-    .card-desc{font-size:.84rem;color:var(--grey6);line-height:1.55}
+    .callout p{margin:0;color:inherit;font-size:.93rem}
+    .callout strong{color:inherit}
 
     /* ── PARAM TABLE ── */
     .param-table{width:100%;border-collapse:collapse;margin:1rem 0 1.5rem;font-size:.9rem}
-    .param-table th{text-align:left;padding:.6rem 1rem;background:var(--grey97);font-weight:700;font-size:.78rem;text-transform:uppercase;letter-spacing:.06em;color:var(--grey6)}
-    .param-table td{padding:.65rem 1rem;border-bottom:1px solid var(--greyF0);vertical-align:top}
+    .param-table th{
+      text-align:left;padding:.65rem 1rem;
+      background:rgba(255,255,255,.04);
+      font-weight:700;font-size:.72rem;text-transform:uppercase;letter-spacing:.07em;
+      color:rgba(255,255,255,.35);
+      border-bottom:1px solid rgba(255,255,255,.07);
+    }
+    .param-table td{padding:.7rem 1rem;border-bottom:1px solid rgba(255,255,255,.05);vertical-align:top;color:var(--text-dim)}
     .param-table tr:last-child td{border-bottom:none}
     .param-table code{font-size:.8rem}
-    .param-req{font-size:.7rem;font-weight:700;padding:.18rem .44rem;border-radius:4px;background:#fee2e2;color:#b91c1c;letter-spacing:.03em}
-    .param-opt{font-size:.7rem;font-weight:700;padding:.18rem .44rem;border-radius:4px;background:var(--greyF0);color:var(--grey6);letter-spacing:.03em}
+    .param-table tr:hover td{background:rgba(255,255,255,.02)}
+    .param-req{font-size:.67rem;font-weight:700;padding:.18rem .44rem;border-radius:4px;background:rgba(248,113,113,.15);color:#fca5a5;border:1px solid rgba(248,113,113,.2);letter-spacing:.03em}
+    .param-opt{font-size:.67rem;font-weight:700;padding:.18rem .44rem;border-radius:4px;background:rgba(255,255,255,.07);color:rgba(255,255,255,.4);border:1px solid rgba(255,255,255,.08);letter-spacing:.03em}
 
-    /* ── ENDPOINT BLOCK ── */
+    /* ── ENDPOINT ── */
     .endpoint{
-      border:1px solid var(--greyD);border-radius:12px;overflow:hidden;margin:1.5rem 0 2rem;
+      border:1px solid rgba(255,255,255,.08);
+      border-radius:14px;overflow:hidden;margin:1.5rem 0 2.5rem;
+      box-shadow:0 4px 24px rgba(0,0,0,.3);
+      backdrop-filter:blur(8px);
     }
     .endpoint-header{
-      display:flex;align-items:center;gap:.75rem;padding:.9rem 1.25rem;background:var(--grey97);
-      border-bottom:1px solid var(--greyD);
+      display:flex;align-items:center;gap:.75rem;
+      padding:1rem 1.3rem;
+      background:rgba(255,255,255,.04);
+      border-bottom:1px solid rgba(255,255,255,.07);
     }
-    .endpoint-method{font-family:'JetBrains Mono',monospace;font-size:.8rem;font-weight:700;padding:.3rem .7rem;border-radius:6px;letter-spacing:.04em}
-    .method-post{background:#fef3c7;color:#b45309}
-    .method-get{background:#d1fae5;color:#065f46}
-    .endpoint-path{font-family:'JetBrains Mono',monospace;font-size:.9rem;font-weight:500;color:var(--dark)}
-    .endpoint-desc{font-size:.85rem;color:var(--grey6);margin-left:auto}
-    .endpoint-body{padding:1.25rem}
-    .endpoint-body h4{font-size:.82rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--grey6);margin-bottom:.75rem;margin-top:1.25rem}
+    .endpoint-method{font-family:'JetBrains Mono',monospace;font-size:.78rem;font-weight:700;padding:.3rem .75rem;border-radius:6px;letter-spacing:.05em}
+    .method-post{background:rgba(251,191,36,.15);color:#fbbf24;border:1px solid rgba(251,191,36,.2)}
+    .method-get{background:rgba(52,211,153,.12);color:#34d399;border:1px solid rgba(52,211,153,.2)}
+    .endpoint-path{font-family:'JetBrains Mono',monospace;font-size:.92rem;font-weight:500;color:#fff}
+    .endpoint-desc{font-size:.83rem;color:var(--text-muted);margin-left:auto}
+    .endpoint-body{padding:1.4rem}
+    .endpoint-body h4{font-size:.74rem;font-weight:700;text-transform:uppercase;letter-spacing:.09em;color:rgba(255,255,255,.3);margin-bottom:.85rem;margin-top:1.4rem}
     .endpoint-body h4:first-child{margin-top:0}
 
     /* ── STEP LIST ── */
     .step-list{list-style:none;padding:0;counter-reset:step;margin:1rem 0}
-    .step-list li{counter-increment:step;display:flex;gap:1rem;margin-bottom:1.2rem;align-items:flex-start}
+    .step-list li{counter-increment:step;display:flex;gap:1rem;margin-bottom:1.4rem;align-items:flex-start}
     .step-list li::before{
       content:counter(step);
-      width:28px;height:28px;border-radius:50%;background:var(--dark);color:#fff;
-      font-size:.78rem;font-weight:800;display:flex;align-items:center;justify-content:center;
-      flex-shrink:0;margin-top:.1rem;
+      width:30px;height:30px;border-radius:50%;
+      background:var(--grad);
+      color:#fff;font-size:.78rem;font-weight:800;
+      display:flex;align-items:center;justify-content:center;
+      flex-shrink:0;margin-top:.05rem;
+      box-shadow:0 0 12px rgba(192,88,255,.3);
     }
     .step-body{flex:1}
-    .step-title{font-weight:700;color:var(--dark);margin-bottom:.25rem;font-size:.97rem}
-    .step-desc{font-size:.9rem;color:#555;line-height:1.55}
-
-    /* ── PREV/NEXT ── */
-    .pagination{display:flex;gap:1rem;margin-top:3.5rem;padding-top:2rem;border-top:1px solid var(--greyF0)}
-    .page-nav{
-      flex:1;padding:1rem 1.25rem;border:1px solid var(--greyD);border-radius:10px;
-      cursor:pointer;background:#fff;text-decoration:none;
-      transition:border-color .15s,box-shadow .15s;display:block;
-    }
-    .page-nav:hover{border-color:#c084fc;box-shadow:0 2px 10px rgba(192,88,255,.12);text-decoration:none}
-    .page-nav.prev{text-align:left}
-    .page-nav.next{text-align:right}
-    .page-nav-label{font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--grey6);margin-bottom:.25rem}
-    .page-nav-title{font-size:.95rem;font-weight:700;color:var(--dark)}
-    .page-nav-arrow{color:#9b2af9;font-size:1.1rem}
-    .page-nav-spacer{flex:1}
+    .step-title{font-weight:700;color:#fff;margin-bottom:.3rem;font-size:.97rem}
+    .step-desc{font-size:.91rem;color:var(--text-muted);line-height:1.6}
 
     /* ── ARCH DIAGRAM ── */
-    .arch{display:flex;flex-direction:column;gap:.6rem;margin:1.5rem 0;padding:1.5rem;background:var(--grey97);border-radius:12px;border:1px solid var(--greyD)}
+    .arch{
+      display:flex;flex-direction:column;gap:.75rem;
+      margin:1.5rem 0;padding:1.5rem;
+      background:rgba(255,255,255,.03);
+      border:1px solid rgba(255,255,255,.07);
+      border-radius:14px;
+      backdrop-filter:blur(12px);
+    }
     .arch-row{display:flex;align-items:center;gap:.6rem;flex-wrap:wrap}
-    .arch-box{padding:.5rem 1rem;border-radius:8px;font-size:.82rem;font-weight:600;border:1px solid;white-space:nowrap}
-    .arch-arrow{color:var(--grey6);font-size:1rem;flex-shrink:0}
-    .arch-label{font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--grey6);flex-shrink:0;min-width:90px}
+    .arch-box{padding:.45rem .95rem;border-radius:8px;font-size:.8rem;font-weight:600;border:1px solid;white-space:nowrap;backdrop-filter:blur(4px)}
+    .arch-arrow{color:rgba(255,255,255,.3);font-size:1rem;flex-shrink:0}
+    .arch-label{font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.09em;color:rgba(255,255,255,.25);flex-shrink:0;min-width:90px}
 
-    @media(max-width:768px){
+    /* ── RESPONSE BOX ── */
+    .response-box{
+      background:rgba(0,0,0,.45);border:1px solid rgba(255,255,255,.07);
+      border-radius:10px;padding:1rem 1.2rem;margin:.75rem 0;
+    }
+    .response-status{font-family:'JetBrains Mono',monospace;font-size:.78rem;font-weight:700;margin-bottom:.5rem}
+    .status-200{color:#34d399}
+    .status-400{color:#fbbf24}
+    .status-401{color:#fb923c}
+    .status-500{color:#f87171}
+
+    /* ── FEATURE LIST ── */
+    .feature-list{list-style:none;padding:0;display:grid;grid-template-columns:1fr 1fr;gap:.6rem;margin:1rem 0}
+    .feature-list li{
+      display:flex;align-items:flex-start;gap:.6rem;font-size:.9rem;color:var(--text-dim);
+      background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);
+      border-radius:9px;padding:.65rem .9rem;
+    }
+    .feature-list li::before{content:'✦';color:var(--accent);font-size:.7rem;margin-top:.2rem;flex-shrink:0}
+
+    /* ── PREV / NEXT ── */
+    .pagination{display:flex;gap:1rem;margin-top:3.5rem;padding-top:2rem;border-top:1px solid rgba(255,255,255,.07)}
+    .page-nav{
+      flex:1;padding:1.1rem 1.3rem;
+      border:1px solid rgba(255,255,255,.08);
+      border-radius:12px;cursor:pointer;
+      background:rgba(255,255,255,.03);
+      text-decoration:none;
+      transition:border-color .15s,background .15s,box-shadow .15s;display:block;
+      backdrop-filter:blur(8px);
+    }
+    .page-nav:hover{
+      border-color:rgba(192,88,255,.4);
+      background:rgba(192,88,255,.07);
+      box-shadow:0 0 20px rgba(192,88,255,.12);
+      text-decoration:none;
+    }
+    .page-nav.prev{text-align:left}
+    .page-nav.next{text-align:right}
+    .page-nav-label{font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.09em;color:var(--text-muted);margin-bottom:.3rem}
+    .page-nav-title{font-size:.95rem;font-weight:700;color:#fff}
+    .page-nav-arrow{color:var(--accent)}
+    .page-nav-spacer{flex:1}
+
+    /* ── INLINE CODE IN TABLES ── */
+    td code{color:#d8aaff}
+
+    @media(max-width:900px){
       .sidebar{display:none}
-      .content{padding:2rem 1.25rem}
+      .content{padding:2rem 1.5rem}
+      .feature-list{grid-template-columns:1fr}
     }
   </style>
 </head>
@@ -241,7 +391,7 @@
 <nav class="topnav">
   <a class="nav-logo" href="/">
     <div class="nav-logo-icon">
-      <svg viewBox="0 0 24 24"><path d="M12 3 L19 7 L19 17 L12 21 L5 17 L5 7 Z" stroke="#fff" stroke-width="2" fill="none"/><circle cx="12" cy="12" r="3" fill="#fff"/></svg>
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4"/><line x1="12" y1="2" x2="12" y2="5"/><line x1="12" y1="19" x2="12" y2="22"/><line x1="2" y1="12" x2="5" y2="12"/><line x1="19" y1="12" x2="22" y2="12"/></svg>
     </div>
     <span class="nav-wordmark"><em>Echo</em> Echo</span>
   </a>
@@ -250,8 +400,8 @@
   <div class="nav-right">
     <span class="nav-version">v2.0</span>
     <a class="nav-link" href="/">Home</a>
-    <a class="nav-link" href="/api/docs" target="_blank">API Ref</a>
-    <a class="nav-btn" href="/dashboard.html">Open App</a>
+    <a class="nav-link" href="/api/docs" target="_blank">Swagger</a>
+    <a class="nav-btn" href="/dashboard.html">Open App →</a>
   </div>
 </nav>
 
@@ -263,86 +413,68 @@
 </div>
 
 <script>
-// ─── ROUTE DEFINITIONS ───────────────────────────────────────────────────────
+// ─── ROUTE TABLE ─────────────────────────────────────────────────────────────
 const NAV = [
   { group: 'Introduction' },
-  { label: 'Overview',           path: '/docs' },
-  { label: 'How It Works',       path: '/docs/how-it-works' },
+  { label: 'Overview',              path: '/docs' },
+  { label: 'How It Works',          path: '/docs/how-it-works' },
   { group: 'Setup' },
-  { label: 'Tech Stack',         path: '/docs/tech-stack' },
-  { label: 'Getting Started',    path: '/docs/getting-started' },
-  { label: 'Environment Vars',   path: '/docs/environment' },
+  { label: 'Tech Stack',            path: '/docs/tech-stack' },
+  { label: 'Getting Started',       path: '/docs/getting-started' },
+  { label: 'Environment Variables', path: '/docs/environment' },
   { group: 'API Reference' },
-  { label: 'Generate Music',     path: '/docs/api/generate',   method: 'POST' },
-  { label: 'Lyrics',             path: '/docs/api/lyrics',     method: 'GET' },
-  { label: 'Copyright Check',    path: '/docs/api/copyright',  method: 'POST' },
-  { label: 'Authentication',     path: '/docs/api/auth',       method: 'POST' },
-  { label: 'Library',            path: '/docs/api/library',    method: 'GET' },
+  { label: 'Generate Music',        path: '/docs/api/generate',   method: 'POST' },
+  { label: 'Compose Prompt',        path: '/docs/api/compose',    method: 'POST' },
+  { label: 'Lyrics & Copyright',    path: '/docs/api/lyrics',     method: 'POST' },
+  { label: 'Authentication',        path: '/docs/api/auth',       method: 'POST' },
+  { label: 'Library',               path: '/docs/api/library',    method: 'GET' },
+  { label: 'Download & Trim',       path: '/docs/api/download',   method: 'GET' },
+  { label: 'Health & Status',       path: '/docs/api/health',     method: 'GET' },
   { group: 'Deploy' },
-  { label: 'Render Deployment',  path: '/docs/deployment' },
+  { label: 'Render Deployment',     path: '/docs/deployment' },
+  { label: 'Troubleshooting',       path: '/docs/troubleshooting' },
 ];
 
 const FLAT = NAV.filter(n => n.path);
-function pageIndex(path) { return FLAT.findIndex(n => n.path === path); }
-function prevPage(path) { const i = pageIndex(path); return i > 0 ? FLAT[i-1] : null; }
-function nextPage(path) { const i = pageIndex(path); return i < FLAT.length-1 ? FLAT[i+1] : null; }
+const prevPage = path => { const i = FLAT.findIndex(n => n.path === path); return i > 0 ? FLAT[i-1] : null; };
+const nextPage = path => { const i = FLAT.findIndex(n => n.path === path); return i < FLAT.length-1 ? FLAT[i+1] : null; };
 
-// ─── NAVIGATION ──────────────────────────────────────────────────────────────
+// ─── ROUTER ──────────────────────────────────────────────────────────────────
 function navigate(path) {
   history.pushState(null, '', path);
   render(path);
 }
 window.addEventListener('popstate', () => render(location.pathname));
 
-// ─── SIDEBAR RENDER ──────────────────────────────────────────────────────────
-function renderSidebar(activePath) {
-  const html = NAV.map(n => {
+// ─── SIDEBAR ─────────────────────────────────────────────────────────────────
+function renderSidebar(active) {
+  document.getElementById('sidenav').innerHTML = '<div class="sidenav-group">' + NAV.map(n => {
     if (n.group) return `<span class="sidenav-label">${n.group}</span>`;
-    const active = n.path === activePath ? ' active' : '';
-    const badge = n.method
-      ? `<span class="method-badge badge-${n.method.toLowerCase()}">${n.method}</span>`
-      : '';
-    return `<a class="sidenav-item${active}" onclick="navigate('${n.path}');return false;" href="${n.path}">${badge}${n.label}</a>`;
-  }).join('');
-  document.getElementById('sidenav').innerHTML = `<div class="sidenav-group">${html}</div>`;
+    const cls = n.path === active ? ' active' : '';
+    const badge = n.method ? `<span class="method-badge badge-${n.method.toLowerCase()}">${n.method}</span>` : '';
+    return `<a class="sidenav-item${cls}" href="${n.path}" onclick="navigate('${n.path}');return false;">${badge}${n.label}</a>`;
+  }).join('') + '</div>';
 }
 
 // ─── PAGINATION ──────────────────────────────────────────────────────────────
 function paginationHTML(path) {
-  const prev = prevPage(path);
-  const next = nextPage(path);
+  const prev = prevPage(path), next = nextPage(path);
   if (!prev && !next) return '';
-  return `<div class="pagination">
-    ${prev ? `<a class="page-nav prev" onclick="navigate('${prev.path}');return false;" href="${prev.path}">
-      <div class="page-nav-label"><span class="page-nav-arrow">←</span> Previous</div>
-      <div class="page-nav-title">${prev.label}</div>
-    </a>` : '<div class="page-nav-spacer"></div>'}
-    ${next ? `<a class="page-nav next" onclick="navigate('${next.path}');return false;" href="${next.path}">
-      <div class="page-nav-label">Next <span class="page-nav-arrow">→</span></div>
-      <div class="page-nav-title">${next.label}</div>
-    </a>` : '<div class="page-nav-spacer"></div>'}
-  </div>`;
+  const p = prev ? `<a class="page-nav prev" href="${prev.path}" onclick="navigate('${prev.path}');return false;"><div class="page-nav-label"><span class="page-nav-arrow">←</span> Previous</div><div class="page-nav-title">${prev.label}</div></a>` : '<div class="page-nav-spacer"></div>';
+  const n = next ? `<a class="page-nav next" href="${next.path}" onclick="navigate('${next.path}');return false;"><div class="page-nav-label">Next <span class="page-nav-arrow">→</span></div><div class="page-nav-title">${next.label}</div></a>` : '<div class="page-nav-spacer"></div>';
+  return `<div class="pagination">${p}${n}</div>`;
 }
 
 // ─── HELPERS ─────────────────────────────────────────────────────────────────
-function codeBlock(lang, code) {
-  return `<div class="code-block">
-    <div class="code-block-header">
-      <span class="code-block-lang">${lang}</span>
-      <button class="copy-btn" onclick="copyCode(this)">Copy</button>
-    </div>
-    <pre><code>${code}</code></pre>
-  </div>`;
+function cb(lang, code) {
+  return `<div class="code-block"><div class="code-block-header"><span class="code-block-lang">${lang}</span><button class="copy-btn" onclick="doCopy(this)">Copy</button></div><pre><code>${code}</code></pre></div>`;
 }
 
-function codeTabs(tabs) {
-  const id = 'ct_' + Math.random().toString(36).slice(2,8);
-  const btns = tabs.map((t,i) => `<button class="tab-btn${i===0?' active':''}" onclick="switchTab('${id}',${i})">${t.label}</button>`).join('');
-  const panes = tabs.map((t,i) => `<div class="tab-content${i===0?' active':''}"><pre><code>${t.code}</code></pre></div>`).join('');
-  return `<div class="code-tabs" id="${id}">
-    <div class="tab-bar">${btns}</div>
-    ${panes}
-  </div>`;
+function tabs(items) {
+  const id = 'ct' + Math.random().toString(36).slice(2,7);
+  const btns = items.map((t,i) => `<button class="tab-btn${i===0?' active':''}" onclick="switchTab('${id}',${i})">${t.l}</button>`).join('');
+  const panes = items.map((t,i) => `<div class="tab-content${i===0?' active':''}"><pre><code>${t.c}</code></pre></div>`).join('');
+  return `<div class="code-tabs" id="${id}"><div class="tab-bar">${btns}</div>${panes}</div>`;
 }
 
 function switchTab(id, idx) {
@@ -351,471 +483,724 @@ function switchTab(id, idx) {
   el.querySelectorAll('.tab-content').forEach((p,i) => p.classList.toggle('active', i===idx));
 }
 
-function copyCode(btn) {
-  const code = btn.closest('.code-block,.code-tabs').querySelector('pre code');
-  navigator.clipboard.writeText(code.textContent).then(() => {
-    btn.textContent = 'Copied!';
-    btn.classList.add('copied');
+function doCopy(btn) {
+  const pre = btn.closest('.code-block,.code-tabs').querySelector('.active pre, pre');
+  navigator.clipboard.writeText(pre.querySelector('code').textContent).then(() => {
+    btn.textContent = '✓ Copied'; btn.classList.add('copied');
     setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 1800);
   });
 }
 
-// ─── PAGE CONTENT ────────────────────────────────────────────────────────────
-const PAGES = {
+// ─── PAGES ───────────────────────────────────────────────────────────────────
+const P = {
 
 '/docs': () => `
 <div class="page-header">
-  <div class="page-eyebrow">Introduction</div>
+  <span class="page-eyebrow">Introduction</span>
   <h1 class="page-title">Echo Echo Documentation</h1>
-  <p class="page-desc">Echo Echo is an AI-powered songwriting tool that generates short instrumental sketches, writes matching lyrics, and checks copyright safety — all from a mood, genre, and theme you choose.</p>
+  <p class="page-desc">Echo Echo is an AI-powered songwriting tool that generates professional-quality 30-second instrumental sketches, writes matching lyrics, and checks copyright safety — all from a mood, genre, and theme you choose.</p>
 </div>
 
 <h2>What can Echo Echo do?</h2>
 <div class="card-grid">
-  <div class="card"><div class="card-icon">🎵</div><div class="card-name">Generate Music</div><div class="card-desc">30-second instrumental sketches via Kie.AI (powered by Suno v4) — professional quality in under a minute.</div></div>
-  <div class="card"><div class="card-icon">✍️</div><div class="card-name">Write Lyrics</div><div class="card-desc">A CrewAI + Groq agent writes verse/chorus/bridge lyrics tuned to your mood, style, and energy level.</div></div>
-  <div class="card"><div class="card-icon">🛡️</div><div class="card-name">Copyright Safety</div><div class="card-desc">An AI copyright agent checks generated lyrics for similarity to known songs before you publish.</div></div>
-  <div class="card"><div class="card-icon">📚</div><div class="card-name">Song Library</div><div class="card-desc">Browse, replay, download, and trim every track you've generated — persisted per session.</div></div>
+  <div class="card"><div class="card-icon">🎵</div><div class="card-name">Generate Music</div><div class="card-desc">30-second instrumental sketches via Kie.AI (Suno v4). Professional quality in 30–90 seconds — no DAW required.</div></div>
+  <div class="card"><div class="card-icon">✍️</div><div class="card-name">Write Lyrics</div><div class="card-desc">A CrewAI + Groq agent writes verse/pre-chorus/chorus/bridge lyrics tuned to your exact mood, style, and energy.</div></div>
+  <div class="card"><div class="card-icon">🛡️</div><div class="card-name">Copyright Safety</div><div class="card-desc">An AI agent scans generated lyrics for similarity to known songs and returns a safety verdict with confidence score.</div></div>
+  <div class="card"><div class="card-icon">📚</div><div class="card-name">Song Library</div><div class="card-desc">Every track you generate is saved with its lyrics, copyright result, and audio. Browse, replay, download, and trim.</div></div>
+  <div class="card"><div class="card-icon">⚡</div><div class="card-name">Instant API</div><div class="card-desc">All features accessible via a clean REST API. Build your own frontend, integrate into your workflow, automate generation.</div></div>
+  <div class="card"><div class="card-icon">🔐</div><div class="card-name">Invite-Only Auth</div><div class="card-desc">Lightweight email/password auth with a token stored in localStorage. Toggle public sign-ups with one env var.</div></div>
 </div>
 
-<h2>How to get started</h2>
+<h2>Quick start</h2>
 <ol class="step-list">
-  <li><div class="step-body"><div class="step-title">Clone the repo</div><div class="step-desc">Pull the project from GitHub and install Python dependencies.</div></div></li>
-  <li><div class="step-body"><div class="step-title">Set environment variables</div><div class="step-desc">Add your <code>GROQ_API_KEY</code> and optionally <code>KIEAI_API_KEY</code> to a <code>.env</code> file.</div></div></li>
-  <li><div class="step-body"><div class="step-title">Run the server</div><div class="step-desc">Start with <code>uvicorn backend.main:app --reload --port 8000</code> — the frontend and backend are served together.</div></div></li>
-  <li><div class="step-body"><div class="step-title">Open the app</div><div class="step-desc">Navigate to <code>http://localhost:8000</code> — sign up and start generating.</div></div></li>
+  <li><div class="step-body"><div class="step-title">Clone and install</div><div class="step-desc">Pull from GitHub, create a venv, and run <code>pip install -r requirements-deploy.txt</code>.</div></div></li>
+  <li><div class="step-body"><div class="step-title">Add your Groq API key</div><div class="step-desc">Create <code>.env</code> with <code>GROQ_API_KEY=gsk_...</code>. This powers lyrics and copyright checking.</div></div></li>
+  <li><div class="step-body"><div class="step-title">Start the server</div><div class="step-desc"><code>uvicorn backend.main:app --reload --port 8000</code> — one command runs everything.</div></div></li>
+  <li><div class="step-body"><div class="step-title">Open the app</div><div class="step-desc">Go to <code>http://localhost:8000</code>, create an account, and generate your first track.</div></div></li>
 </ol>
 
 <div class="callout callout-info">
   <span class="callout-icon">ℹ️</span>
-  <p>The full local setup requires Python 3.12+ and FFmpeg. For quick cloud testing, deploy to Render using the included <code>render.yaml</code> — see the <a href="/docs/deployment" onclick="navigate('/docs/deployment');return false;">Deployment guide</a>.</p>
+  <p><strong>Architecture note:</strong> Echo Echo is a single FastAPI service. The backend serves all HTML pages via <code>FileResponse</code> — you don't need a separate frontend host. One server, one deploy, zero build step.</p>
 </div>
 
 <h2>Base URL</h2>
-<p>All API endpoints are served from the same origin as the frontend:</p>
-${codeBlock('text', 'Local:   http://localhost:8000\nRender:  https://consolidated-echoecho.onrender.com')}
+<p>All endpoints are served from the same origin as the frontend. In development that's <code>localhost:8000</code>; in production it's your Render URL.</p>
+${cb('text', 'Local       http://localhost:8000\nProduction  https://consolidated-echoecho.onrender.com')}
+
+<h2>Response format</h2>
+<p>All API responses are JSON. Successful responses include an <code>"ok": true</code> or <code>"success": true</code> field. Errors follow FastAPI's default <code>{"detail": "..."}</code> shape.</p>
+${cb('json', `// Success
+{ "ok": true, "song_id": "XKPQ", "audio_url": "/generated/ECHO_XKPQ_original.mp3" }
+
+// Error
+{ "detail": "Song not found" }   // HTTP 404
+{ "detail": "MusicGen is still loading." }  // HTTP 503`)}
 `,
 
 '/docs/how-it-works': () => `
 <div class="page-header">
-  <div class="page-eyebrow">Introduction</div>
+  <span class="page-eyebrow">Introduction</span>
   <h1 class="page-title">How It Works</h1>
-  <p class="page-desc">Echo Echo uses a pipeline of AI services — from music generation to lyrics to copyright — all coordinated by a single FastAPI server.</p>
+  <p class="page-desc">Echo Echo chains three AI systems — music generation, lyrics writing, and copyright checking — into a single seamless pipeline coordinated by a FastAPI server.</p>
 </div>
 
-<h2>Architecture overview</h2>
+<h2>System architecture</h2>
 <div class="arch">
-  <div class="arch-row"><span class="arch-label">Browser</span><div class="arch-box" style="background:#ede9fe;border-color:#c4b5fd;color:#5b21b6">Vanilla HTML/CSS/JS</div><span class="arch-arrow">→</span><div class="arch-box" style="background:#ede9fe;border-color:#c4b5fd;color:#5b21b6">Three.js Background</div></div>
-  <div class="arch-row"><span class="arch-label">HTTP</span><span class="arch-arrow" style="margin-left:90px">↓ POST /api/generate</span></div>
-  <div class="arch-row"><span class="arch-label">Backend</span><div class="arch-box" style="background:#fef3c7;border-color:#fcd34d;color:#92400e">FastAPI + Uvicorn</div><span class="arch-arrow">→</span><div class="arch-box" style="background:#fef3c7;border-color:#fcd34d;color:#92400e">api_generator.py</div></div>
-  <div class="arch-row"><span class="arch-label">Music AI</span><div class="arch-box" style="background:#d1fae5;border-color:#6ee7b7;color:#064e3b">Kie.AI API</div><span class="arch-arrow">→</span><div class="arch-box" style="background:#d1fae5;border-color:#6ee7b7;color:#064e3b">Suno v4 model</div><span class="arch-arrow">→</span><div class="arch-box" style="background:#d1fae5;border-color:#6ee7b7;color:#064e3b">Webhook callback</div></div>
-  <div class="arch-row"><span class="arch-label">Agent AI</span><div class="arch-box" style="background:#fee2e2;border-color:#fca5a5;color:#7f1d1d">CrewAI</div><span class="arch-arrow">→</span><div class="arch-box" style="background:#fee2e2;border-color:#fca5a5;color:#7f1d1d">Groq / Llama 3.1</div></div>
-  <div class="arch-row"><span class="arch-label">Storage</span><div class="arch-box" style="background:#f0f9ff;border-color:#bae6fd;color:#075985">song_history.json</div><span class="arch-arrow">+</span><div class="arch-box" style="background:#f0f9ff;border-color:#bae6fd;color:#075985">backend/generated/</div></div>
+  <div class="arch-row"><span class="arch-label">Browser</span><div class="arch-box" style="background:rgba(139,92,246,.15);border-color:rgba(139,92,246,.4);color:#c4b5fd">Vanilla HTML/CSS/JS</div><span class="arch-arrow">→</span><div class="arch-box" style="background:rgba(139,92,246,.15);border-color:rgba(139,92,246,.4);color:#c4b5fd">Three.js Wave BG</div></div>
+  <div class="arch-row"><span class="arch-label">Transport</span><span style="color:rgba(255,255,255,.3);font-size:.85rem;margin-left:0">HTTP/JSON — POST /api/generate</span></div>
+  <div class="arch-row"><span class="arch-label">Backend</span><div class="arch-box" style="background:rgba(251,191,36,.1);border-color:rgba(251,191,36,.3);color:#fcd34d">FastAPI</div><span class="arch-arrow">→</span><div class="arch-box" style="background:rgba(251,191,36,.1);border-color:rgba(251,191,36,.3);color:#fcd34d">api_generator.py</div><span class="arch-arrow">→</span><div class="arch-box" style="background:rgba(251,191,36,.1);border-color:rgba(251,191,36,.3);color:#fcd34d">composer.py</div></div>
+  <div class="arch-row"><span class="arch-label">Music AI</span><div class="arch-box" style="background:rgba(52,211,153,.1);border-color:rgba(52,211,153,.3);color:#6ee7b7">Kie.AI API</div><span class="arch-arrow">→</span><div class="arch-box" style="background:rgba(52,211,153,.1);border-color:rgba(52,211,153,.3);color:#6ee7b7">Suno v4</div><span class="arch-arrow">→</span><div class="arch-box" style="background:rgba(52,211,153,.1);border-color:rgba(52,211,153,.3);color:#6ee7b7">Webhook → MP3</div></div>
+  <div class="arch-row"><span class="arch-label">Agent AI</span><div class="arch-box" style="background:rgba(248,113,113,.1);border-color:rgba(248,113,113,.3);color:#fca5a5">CrewAI</div><span class="arch-arrow">→</span><div class="arch-box" style="background:rgba(248,113,113,.1);border-color:rgba(248,113,113,.3);color:#fca5a5">Groq (Llama 3.1)</div></div>
+  <div class="arch-row"><span class="arch-label">Storage</span><div class="arch-box" style="background:rgba(56,189,248,.1);border-color:rgba(56,189,248,.3);color:#7dd3fc">song_history.json</div><span class="arch-arrow">+</span><div class="arch-box" style="background:rgba(56,189,248,.1);border-color:rgba(56,189,248,.3);color:#7dd3fc">backend/generated/</div></div>
 </div>
 
-<h2>Generation pipeline</h2>
+<h2>Generation pipeline — step by step</h2>
 <ol class="step-list">
-  <li><div class="step-body"><div class="step-title">Request arrives at <code>POST /api/generate</code></div><div class="step-desc">The browser sends mood, genre, theme, tempo, energy and other parameters as JSON.</div></div></li>
-  <li><div class="step-body"><div class="step-title">Prompt is built</div><div class="step-desc"><code>composer.py</code> combines your inputs into a natural-language descriptor like <em>"melancholic lo-fi piano, slow tempo, nostalgic rainy day"</em>.</div></div></li>
-  <li><div class="step-body"><div class="step-title">Submitted to Kie.AI</div><div class="step-desc"><code>api_generator.py</code> POSTs the prompt to Kie.AI which queues it with Suno v4. A webhook callback URL is registered so Kie.AI can notify Echo Echo when the audio is ready.</div></div></li>
-  <li><div class="step-body"><div class="step-title">Audio downloaded &amp; saved</div><div class="step-desc">When the callback fires at <code>/api/kieai/callback</code>, the MP3 is downloaded from Kie.AI's CDN and saved to <code>backend/generated/</code>.</div></div></li>
-  <li><div class="step-body"><div class="step-title">Lyrics agent runs</div><div class="step-desc">A CrewAI agent powered by Groq (Llama 3.1 8B instant) writes verse/chorus/bridge lyrics matching the style.</div></div></li>
-  <li><div class="step-body"><div class="step-title">Copyright check</div><div class="step-desc">A second AI agent scans the lyrics for similarity to known songs and returns a safety verdict.</div></div></li>
-  <li><div class="step-body"><div class="step-title">Record persisted</div><div class="step-desc">Everything — song ID, audio filename, lyrics, copyright result — is appended to <code>song_history.json</code>.</div></div></li>
+  <li><div class="step-body"><div class="step-title">Request received at <code>POST /api/generate</code></div><div class="step-desc">The browser sends a JSON body with <code>moods</code>, <code>genres</code>, <code>themes</code>, <code>instruments</code>, <code>tempo</code>, <code>energy</code>, and <code>complexity</code>. Pydantic validates every field with type-safe defaults.</div></div></li>
+  <li><div class="step-body"><div class="step-title">Prompt construction via <code>composer.py</code></div><div class="step-desc">Your inputs are merged into a natural-language descriptor: <em>"melancholic lo-fi piano, slow 72bpm, rainy day nostalgic atmosphere, moderate complexity"</em>. This descriptor is what gets sent to both Kie.AI and the lyrics agent.</div></div></li>
+  <li><div class="step-body"><div class="step-title">Submission to Kie.AI</div><div class="step-desc"><code>api_generator.py</code> POSTs the prompt to Kie.AI's task creation endpoint using HTTPX (async). A webhook callback URL pointing back to <code>/api/kieai/callback</code> is registered so Kie.AI can notify your server when the audio is done rendering.</div></div></li>
+  <li><div class="step-body"><div class="step-title">Suno v4 renders the audio</div><div class="step-desc">Kie.AI's infrastructure queues your request with Suno v4. Render time is typically 30–90 seconds for a 30-second clip. Your server polls for completion and downloads the MP3 via a CDN URL once available.</div></div></li>
+  <li><div class="step-body"><div class="step-title">MP3 saved to <code>backend/generated/</code></div><div class="step-desc">The audio file is downloaded via HTTPX streaming and saved as <code>ECHO_{ID}_original.mp3</code> where <code>ID</code> is a random 4-letter code (e.g. <code>XKPQ</code>). The ID is guaranteed unique against all existing history and files.</div></div></li>
+  <li><div class="step-body"><div class="step-title">Lyrics agent runs (CrewAI + Groq)</div><div class="step-desc">A CrewAI <code>Agent</code> configured as "Professional Lyricist" receives the full generation context and writes a complete song with verse, pre-chorus, chorus, and bridge. The agent uses Llama 3.1 8B Instant via Groq — typically completes in 2–5 seconds.</div></div></li>
+  <li><div class="step-body"><div class="step-title">Copyright check agent runs</div><div class="step-desc">A second CrewAI agent receives the generated lyrics and evaluates similarity against known copyrighted works. It returns a structured verdict: <code>status</code> (safe/risky), <code>similarity_score</code> (0–1), and notes.</div></div></li>
+  <li><div class="step-body"><div class="step-title">Record persisted to <code>song_history.json</code></div><div class="step-desc">Everything — song ID, filename, mood/theme/style, prompt, generation time, lyrics, and copyright result — is appended as a JSON record. This file is the source of truth for the library.</div></div></li>
 </ol>
 
-<h2>Two generation modes</h2>
-<p>Echo Echo supports two music generation backends:</p>
+<h2>Two generation backends</h2>
 <table class="param-table">
-  <tr><th>Mode</th><th>Backend</th><th>Quality</th><th>Speed</th><th>Requirement</th></tr>
-  <tr><td><code>api</code></td><td>Kie.AI → Suno v4</td><td>Professional</td><td>~30–60s</td><td><code>KIEAI_API_KEY</code></td></tr>
-  <tr><td><code>musicgen</code></td><td>Facebook MusicGen (local)</td><td>Research-grade</td><td>Minutes</td><td>GPU / high-end CPU</td></tr>
+  <tr><th>Mode</th><th>Backend</th><th>Audio quality</th><th>Latency</th><th>Requirement</th></tr>
+  <tr><td><code>api</code></td><td>Kie.AI → Suno v4</td><td>Professional (commercial grade)</td><td>30–90s</td><td><code>KIEAI_API_KEY</code> + public webhook URL</td></tr>
+  <tr><td><code>musicgen</code></td><td>Facebook MusicGen (local)</td><td>Research-grade</td><td>2–10 min</td><td>Local GPU / high-end CPU, ~4GB VRAM</td></tr>
 </table>
+
 <div class="callout callout-warn">
   <span class="callout-icon">⚠️</span>
-  <p>The local MusicGen model requires ~4GB VRAM and is excluded from the cloud deployment to keep the Render build small. On Render, only <code>api</code> mode is available.</p>
+  <p>MusicGen (<code>facebook/musicgen-small</code>) is intentionally excluded from <code>requirements-deploy.txt</code>. It requires <code>torch</code> and <code>transformers</code> — adding those would make the Render build ~3GB. On Render, only <code>api</code> mode is available.</p>
 </div>
+
+<h2>Webhook flow (Kie.AI)</h2>
+<p>Because music generation is async, Echo Echo uses webhooks instead of long-polling the Kie.AI API:</p>
+${cb('text', `1. POST /api/generate  →  Echo Echo submits task to Kie.AI with callback URL
+2. Kie.AI renders audio  →  (30–90 seconds in background)
+3. Kie.AI POSTs to /api/kieai/callback  →  payload includes task_id + audio CDN URL
+4. Echo Echo downloads MP3, saves to disk, updates history record
+5. GET /generation-status  →  frontend polls this every 2s to show progress bar`)}
 `,
 
 '/docs/tech-stack': () => `
 <div class="page-header">
-  <div class="page-eyebrow">Setup</div>
+  <span class="page-eyebrow">Setup</span>
   <h1 class="page-title">Tech Stack</h1>
   <p class="page-desc">Every library, API, and service powering Echo Echo — and exactly why each was chosen.</p>
 </div>
 
 <h2>Backend</h2>
 <div class="card-grid">
-  <div class="card"><div class="card-icon">⚡</div><div class="card-name">FastAPI</div><div class="card-desc">Async Python web framework. Handles all API routes, serves frontend HTML via FileResponse, and provides automatic OpenAPI documentation.</div></div>
-  <div class="card"><div class="card-icon">🚀</div><div class="card-name">Uvicorn</div><div class="card-desc">ASGI server that runs FastAPI. Used both in development (<code>--reload</code>) and production (Render start command).</div></div>
-  <div class="card"><div class="card-icon">🎵</div><div class="card-name">Kie.AI API</div><div class="card-desc">Wraps Suno v4 to generate professional-quality music from text prompts. Uses webhook callbacks to deliver the final MP3.</div></div>
-  <div class="card"><div class="card-icon">🤖</div><div class="card-name">CrewAI</div><div class="card-desc">Multi-agent framework that orchestrates the lyrics writer and copyright checker as autonomous AI tasks with defined roles and goals.</div></div>
-  <div class="card"><div class="card-icon">🧠</div><div class="card-name">Groq / Llama 3.1</div><div class="card-desc">Llama 3.1 8B Instant served via Groq's API. Powers both CrewAI agents — extremely fast inference (~200 tokens/sec).</div></div>
-  <div class="card"><div class="card-icon">🔊</div><div class="card-name">Pydub + FFmpeg</div><div class="card-desc">Trims MP3 files to a target duration client-side on the server. FFmpeg must be installed on the host for trimming to work.</div></div>
-  <div class="card"><div class="card-icon">🌐</div><div class="card-name">HTTPX</div><div class="card-desc">Async HTTP client used by <code>api_generator.py</code> to communicate with Kie.AI endpoints without blocking the event loop.</div></div>
-  <div class="card"><div class="card-icon">🎼</div><div class="card-name">MusicGen (optional)</div><div class="card-desc">Facebook's local text-to-music model via HuggingFace Transformers. Not deployed to Render; used for local experimentation.</div></div>
+  <div class="card"><div class="card-icon">⚡</div><div class="card-name">FastAPI 0.115+</div><div class="card-desc">Async Python web framework. Handles all routes, serves HTML via FileResponse, and auto-generates OpenAPI docs at <code>/api/docs</code>.</div></div>
+  <div class="card"><div class="card-icon">🚀</div><div class="card-name">Uvicorn</div><div class="card-desc">Production ASGI server. Runs with <code>--reload</code> in dev and <code>--host 0.0.0.0 --port $PORT</code> on Render.</div></div>
+  <div class="card"><div class="card-icon">🎵</div><div class="card-name">Kie.AI API</div><div class="card-desc">Thin wrapper around Suno v4 text-to-music. Submit a prompt, register a webhook, receive a professional MP3.</div></div>
+  <div class="card"><div class="card-icon">🤖</div><div class="card-name">CrewAI 0.100+</div><div class="card-desc">Multi-agent framework. Orchestrates the lyrics writer and copyright checker as autonomous AI tasks with defined roles, goals, and backstories.</div></div>
+  <div class="card"><div class="card-icon">🧠</div><div class="card-name">Groq / Llama 3.1</div><div class="card-desc"><code>llama-3.1-8b-instant</code> served via Groq's API. Powers both agents at ~200 tokens/second — fast enough for real-time feel.</div></div>
+  <div class="card"><div class="card-icon">🔊</div><div class="card-name">Pydub + FFmpeg</div><div class="card-desc">Trims MP3 files to a user-specified duration server-side. FFmpeg handles the actual audio processing; Pydub is the Python wrapper.</div></div>
+  <div class="card"><div class="card-icon">🌐</div><div class="card-name">HTTPX</div><div class="card-desc">Async HTTP client for Kie.AI communication. Non-blocking — doesn't stall the FastAPI event loop during audio download.</div></div>
+  <div class="card"><div class="card-icon">🔬</div><div class="card-name">Pydantic v2</div><div class="card-desc">Request/response validation. Every API field has a declared type, default, and constraint. Validation errors return HTTP 422 automatically.</div></div>
 </div>
 
 <h2>Frontend</h2>
 <div class="card-grid">
-  <div class="card"><div class="card-icon">📄</div><div class="card-name">Vanilla HTML/CSS/JS</div><div class="card-desc">No framework. Each page is a standalone HTML file served by FastAPI's FileResponse — zero build step.</div></div>
-  <div class="card"><div class="card-icon">🌊</div><div class="card-name">Three.js</div><div class="card-desc">WebGL animated wave background on the landing page. Loaded as an ES module from <code>/static/</code>.</div></div>
-  <div class="card"><div class="card-icon">🔐</div><div class="card-name">localStorage Auth</div><div class="card-desc">Auth token stored as <code>echo_auth_token</code> in localStorage. Sent as <code>Authorization: Bearer {token}</code> on API calls.</div></div>
-  <div class="card"><div class="card-icon">🔤</div><div class="card-name">Inter + JetBrains Mono</div><div class="card-desc">Inter for body text and UI; JetBrains Mono for all code blocks and technical content. Loaded via Google Fonts.</div></div>
+  <div class="card"><div class="card-icon">📄</div><div class="card-name">Vanilla HTML/CSS/JS</div><div class="card-desc">No React, no bundler. Each page is a standalone HTML file served by FastAPI's FileResponse — zero build step, instant deploys.</div></div>
+  <div class="card"><div class="card-icon">🌊</div><div class="card-name">Three.js (ES Module)</div><div class="card-desc">WebGL animated wave/particle background on the landing page. Loaded as <code>/static/three.module.min.js</code> ES module.</div></div>
+  <div class="card"><div class="card-icon">🔐</div><div class="card-name">localStorage Auth</div><div class="card-desc">Token stored as <code>echo_auth_token</code> in localStorage. Sent as <code>Authorization: Bearer {token}</code> header on sensitive API calls.</div></div>
+  <div class="card"><div class="card-icon">🔤</div><div class="card-name">Inter + JetBrains Mono</div><div class="card-desc">Inter for UI text, JetBrains Mono for all code blocks. Both loaded via Google Fonts with <code>preconnect</code> hints for performance.</div></div>
 </div>
 
-<h2>Infrastructure</h2>
+<h2>Infrastructure & services</h2>
 <div class="card-grid">
-  <div class="card"><div class="card-icon">☁️</div><div class="card-name">Render</div><div class="card-desc">Cloud PaaS hosting the production deployment. Free tier with ephemeral filesystem — generated audio is lost on redeploy. Use a Render Disk for persistence.</div></div>
-  <div class="card"><div class="card-icon">🐙</div><div class="card-name">GitHub</div><div class="card-desc">Source of truth. Render auto-deploys on every push to the default branch via the <code>render.yaml</code> blueprint.</div></div>
+  <div class="card"><div class="card-icon">☁️</div><div class="card-name">Render</div><div class="card-desc">Cloud PaaS for deployment. Free tier — ephemeral filesystem (audio lost on redeploy). Attach a Render Disk for persistence.</div></div>
+  <div class="card"><div class="card-icon">🐙</div><div class="card-name">GitHub</div><div class="card-desc">Source of truth. Render watches the default branch and auto-redeploys on every push. Blueprint config in <code>render.yaml</code>.</div></div>
 </div>
 
-<h2>Python dependencies (cloud)</h2>
-${codeBlock('text', '# requirements-deploy.txt\nfastapi[standard]>=0.115\nuvicorn[standard]>=0.34\nhttpx>=0.28\npydantic>=2.11\npython-multipart>=0.0.20\ngroq>=0.25\ncrewai>=0.100\npydub>=0.25')}
+<h2>Dependency files</h2>
+${cb('text', `# requirements-deploy.txt — lean cloud build (~50MB)
+fastapi[standard]>=0.115
+uvicorn[standard]>=0.34
+httpx>=0.28
+pydantic>=2.11
+python-multipart>=0.0.20
+groq>=0.25
+crewai>=0.100
+pydub>=0.25`)}
+${cb('text', `# requirements.txt — full local install (~4GB with torch)
+# All of the above, plus:
+torch>=2.2
+transformers>=4.40
+torchaudio>=2.2
+scipy>=1.13`)}
 `,
 
 '/docs/getting-started': () => `
 <div class="page-header">
-  <div class="page-eyebrow">Setup</div>
+  <span class="page-eyebrow">Setup</span>
   <h1 class="page-title">Getting Started</h1>
-  <p class="page-desc">Get Echo Echo running locally in under five minutes.</p>
+  <p class="page-desc">Get Echo Echo running locally in under five minutes. You only need Python 3.12+ and a Groq API key.</p>
 </div>
 
-<div class="callout callout-info">
-  <span class="callout-icon">ℹ️</span>
-  <p><strong>Prerequisites:</strong> Python 3.12+, Git, and FFmpeg on your PATH. FFmpeg is only needed for audio trimming — everything else works without it.</p>
+<div class="callout callout-tip">
+  <span class="callout-icon">✅</span>
+  <p><strong>Minimal setup:</strong> Only <code>GROQ_API_KEY</code> is required to get the app running. Lyrics, copyright check, and the library all work without Kie.AI. You only need <code>KIEAI_API_KEY</code> to generate audio.</p>
 </div>
 
-<h2>1. Clone the repo</h2>
-${codeBlock('bash', 'git clone https://github.com/simplysandeepp/Consolidated-EchoEcho.git\ncd Consolidated-EchoEcho')}
+<h2>1 — Clone the repository</h2>
+${cb('bash', `git clone https://github.com/simplysandeepp/Consolidated-EchoEcho.git
+cd Consolidated-EchoEcho`)}
 
-<h2>2. Create a virtual environment</h2>
-${codeBlock('bash', '# macOS / Linux\npython -m venv venv\nsource venv/bin/activate\n\n# Windows (Command Prompt)\npython -m venv venv\nvenv\\Scripts\\activate')}
+<h2>2 — Create a virtual environment</h2>
+${cb('bash', `# macOS / Linux
+python3 -m venv venv
+source venv/bin/activate
 
-<h2>3. Install dependencies</h2>
-${codeBlock('bash', '# Full local install (includes MusicGen / torch)\npip install -r requirements.txt\n\n# Lightweight cloud install (no torch)\npip install -r requirements-deploy.txt')}
+# Windows (PowerShell)
+python -m venv venv
+.\\venv\\Scripts\\Activate.ps1
 
-<h2>4. Create a <code>.env</code> file</h2>
-${codeBlock('bash', 'touch .env')}
-${codeBlock('text', '# .env\nGROQ_API_KEY=gsk_xxxxxxxxxxxxxxxxxxxxxxxxxxxx\n\n# Optional: enables Kie.AI music generation\nKIEAI_API_KEY=your-kieai-api-key\nPUBLIC_BASE_URL=http://localhost:8000   # must be publicly reachable for callbacks\n\n# Optional: allow public sign-ups\nECHO_SIGNUPS_OPEN=1')}
+# Windows (Command Prompt)
+venv\\Scripts\\activate.bat`)}
 
-<h2>5. Start the server</h2>
-${codeBlock('bash', 'uvicorn backend.main:app --reload --port 8000')}
-<p>Open <a href="http://localhost:8000" target="_blank">http://localhost:8000</a> in your browser. You should see the Echo Echo landing page.</p>
+<h2>3 — Install dependencies</h2>
+${cb('bash', `# Cloud build — fast, no torch/GPU (recommended to start)
+pip install -r requirements-deploy.txt
+
+# Full local build — includes MusicGen / torch (~4GB)
+pip install -r requirements.txt`)}
+
+<h2>4 — Create <code>.env</code></h2>
+${cb('bash', `cat > .env << 'EOF'
+GROQ_API_KEY=gsk_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+
+# Optional — enables Kie.AI audio generation
+KIEAI_API_KEY=kie_xxxxxxxxxxxxxxxx
+PUBLIC_BASE_URL=http://localhost:8000
+
+# Optional — allow public sign-ups
+ECHO_SIGNUPS_OPEN=1
+EOF`)}
 
 <div class="callout callout-warn">
   <span class="callout-icon">⚠️</span>
-  <p>If <code>KIEAI_API_KEY</code> is set but <code>PUBLIC_BASE_URL</code> is not a publicly reachable URL, the server will log a warning and disable Kie.AI mode — it won't crash. You can still use MusicGen locally.</p>
+  <p><strong>Never commit <code>.env</code></strong> — it's already in <code>.gitignore</code>. Your Groq key gives full API access to your account.</p>
 </div>
 
-<h2>Project structure</h2>
-${codeBlock('text', 'Consolidated-EchoEcho/\n├── backend/\n│   ├── main.py              # FastAPI app — all routes\n│   ├── api_generator.py     # Kie.AI integration + webhook handling\n│   ├── music_generator.py   # Local MusicGen (optional)\n│   ├── composer.py          # Prompt builder\n│   ├── auth.py              # Login / signup\n│   ├── transcriber.py       # Audio transcription\n│   ├── agents/\n│   │   ├── lyrics_agent.py          # CrewAI lyrics writer\n│   │   └── copyright_agent/main.py  # Copyright risk checker\n│   └── generated/           # Audio files saved here\n├── frontend/\n│   ├── index.html           # Landing page\n│   ├── login.html           # Auth page\n│   ├── dashboard.html       # Main generator UI\n│   ├── generate.html        # Generation flow\n│   ├── output.html          # Song result + download\n│   ├── echo.html            # Song library\n│   └── docs.html            # This page\n├── render.yaml              # Render one-click deploy\n├── requirements.txt         # Full deps (incl. torch)\n└── requirements-deploy.txt  # Cloud deps (no torch)')}
+<h2>5 — Start the server</h2>
+${cb('bash', `uvicorn backend.main:app --reload --port 8000`)}
+
+<p>You should see startup logs like:</p>
+${cb('text', `INFO:     Uvicorn running on http://127.0.0.1:8000 (Press CTRL+C to quit)
+INFO:     Started reloader process
+INFO  [Echo Echo] Loading MusicGen model...
+INFO  [Echo Echo] KieAI callback registered at /api/kieai/callback`)}
+
+<p>Open <strong>http://localhost:8000</strong> — the landing page loads, sign up (with <code>ECHO_SIGNUPS_OPEN=1</code>), and click Generate.</p>
+
+<h2>Project layout</h2>
+${cb('text', `Consolidated-EchoEcho/
+├── backend/
+│   ├── main.py              # FastAPI app — all 20+ routes
+│   ├── api_generator.py     # Kie.AI + webhook integration
+│   ├── music_generator.py   # Local MusicGen (optional)
+│   ├── composer.py          # Prompt builder from UI inputs
+│   ├── auth.py              # Email/password auth
+│   ├── transcriber.py       # Audio transcription (Whisper)
+│   ├── agents/
+│   │   ├── lyrics_agent.py          # CrewAI lyrics writer
+│   │   └── copyright_agent/
+│   │       ├── main.py              # Copyright risk checker
+│   │       └── models/              # Pydantic request/response models
+│   ├── generated/           # MP3/WAV files saved here (gitignored)
+│   ├── song_history.json    # All generated songs (gitignored)
+│   └── kiai_callbacks.json  # Raw Kie.AI webhook events
+├── frontend/
+│   ├── index.html           # Landing page (Three.js wave BG)
+│   ├── login.html           # Auth page
+│   ├── dashboard.html       # Main generator UI
+│   ├── generate.html        # Generation flow / progress
+│   ├── output.html          # Song result + download
+│   ├── echo.html            # Song library
+│   └── docs.html            # This SPA documentation
+├── render.yaml              # Render one-click blueprint
+├── requirements.txt         # Full deps (incl. torch)
+└── requirements-deploy.txt  # Cloud deps (no torch)`)}
+
+<h2>Verify everything works</h2>
+${cb('bash', `# Health check
+curl http://localhost:8000/health
+# { "status": "loading" }  or  { "status": "ready" }
+
+# Generate a test song (API mode)
+curl -X POST http://localhost:8000/api/generate \\
+  -H "Content-Type: application/json" \\
+  -d '{"moods":["happy"],"genres":["pop"],"tempo":120,"energy":7}'`)}
 `,
 
 '/docs/environment': () => `
 <div class="page-header">
-  <div class="page-eyebrow">Setup</div>
+  <span class="page-eyebrow">Setup</span>
   <h1 class="page-title">Environment Variables</h1>
-  <p class="page-desc">All configurable environment variables for Echo Echo — which are required, which are optional, and what each does.</p>
+  <p class="page-desc">All configurable environment variables for Echo Echo — what each does, when it's required, and what happens if it's missing.</p>
 </div>
 
 <table class="param-table">
-  <tr><th>Variable</th><th>Required</th><th>Description</th></tr>
-  <tr><td><code>GROQ_API_KEY</code></td><td><span class="param-req">Required</span></td><td>Groq API key. Powers both the lyrics writer and copyright checker (Llama 3.1 8B Instant). Get one at <strong>console.groq.com</strong>.</td></tr>
-  <tr><td><code>KIEAI_API_KEY</code></td><td><span class="param-opt">Optional</span></td><td>Kie.AI API key. Enables <code>api</code> mode music generation via Suno v4. Without this, only local MusicGen is available. Get one at <strong>kie.ai</strong>.</td></tr>
-  <tr><td><code>PUBLIC_BASE_URL</code></td><td><span class="param-opt">Optional*</span></td><td>The publicly reachable base URL of your deployment (e.g. <code>https://consolidated-echoecho.onrender.com</code>). Required when <code>KIEAI_API_KEY</code> is set — Kie.AI uses it to POST webhook callbacks back to your server.</td></tr>
-  <tr><td><code>ECHO_SIGNUPS_OPEN</code></td><td><span class="param-opt">Optional</span></td><td>Set to <code>1</code> to allow public sign-ups via <code>POST /api/auth/signup</code>. When unset or any other value, sign-ups are invite-only (returns HTTP 403).</td></tr>
+  <tr><th>Variable</th><th>Required</th><th>Default</th><th>Description</th></tr>
+  <tr><td><code>GROQ_API_KEY</code></td><td><span class="param-req">Required</span></td><td>—</td><td>Groq API key. Powers the lyrics writer and copyright agent (Llama 3.1 8B Instant). Get one at <strong>console.groq.com</strong> — free tier available.</td></tr>
+  <tr><td><code>KIEAI_API_KEY</code></td><td><span class="param-opt">Optional</span></td><td>—</td><td>Kie.AI API key. Enables <code>api</code> mode music generation via Suno v4. Without this key, only local MusicGen is available. Get one at <strong>kie.ai</strong>.</td></tr>
+  <tr><td><code>PUBLIC_BASE_URL</code></td><td><span class="param-opt">Optional*</span></td><td>—</td><td>The publicly reachable base URL of your deployment. Required when <code>KIEAI_API_KEY</code> is set — Kie.AI posts audio-ready callbacks back to <code>{PUBLIC_BASE_URL}/api/kieai/callback</code>.</td></tr>
+  <tr><td><code>ECHO_SIGNUPS_OPEN</code></td><td><span class="param-opt">Optional</span></td><td><code>""</code></td><td>Set to <code>"1"</code> to allow <code>POST /api/auth/signup</code>. Any other value (or unset) returns HTTP 403 — invite-only mode.</td></tr>
 </table>
 
-<div class="callout callout-warn">
-  <span class="callout-icon">⚠️</span>
-  <p><code>PUBLIC_BASE_URL</code> must be a real public URL that Kie.AI can reach. <code>http://localhost:8000</code> will not work for callbacks in production — Kie.AI's servers can't reach your laptop. In production this is always your Render URL.</p>
+<div class="callout callout-danger">
+  <span class="callout-icon">🚨</span>
+  <p><strong>PUBLIC_BASE_URL must be publicly reachable.</strong> <code>http://localhost:8000</code> will not work in production — Kie.AI's servers can't reach your laptop. In production this must be your Render URL: <code>https://consolidated-echoecho.onrender.com</code>.</p>
 </div>
 
-<h2>Example .env file</h2>
-${codeBlock('bash', '# .env (never commit this file)\nGROQ_API_KEY=gsk_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\nKIEAI_API_KEY=kie_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\nPUBLIC_BASE_URL=https://consolidated-echoecho.onrender.com\nECHO_SIGNUPS_OPEN=1')}
+<h2>Example .env</h2>
+${cb('bash', `# .env — never commit this file
+GROQ_API_KEY=gsk_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+KIEAI_API_KEY=kie_xxxxxxxxxxxxxxxxxxxxxxxxxx
+PUBLIC_BASE_URL=https://consolidated-echoecho.onrender.com
+ECHO_SIGNUPS_OPEN=1`)}
 
-<h2>How the app handles missing config</h2>
-<p>At startup, <code>backend/main.py</code> calls <code>validate_kieai_config()</code>. If the config is invalid or missing, it logs a warning and disables Kie.AI mode — the server still starts and serves all other functionality.</p>
-${codeBlock('python', '# backend/main.py — lifespan\n@asynccontextmanager\nasync def lifespan(_: FastAPI) -> AsyncIterator[None]:\n    ensure_files()\n    try:\n        validate_kieai_config()\n    except Exception as exc:\n        logger.warning("KieAI config invalid — API generation disabled: %s", exc)\n    Thread(target=warm_model, daemon=True).start()\n    yield')}
+<h2>How missing config is handled</h2>
+<p>Echo Echo is designed to degrade gracefully. At startup, <code>validate_kieai_config()</code> is called inside a <code>try/except</code>:</p>
+${cb('python', `# backend/main.py
+@asynccontextmanager
+async def lifespan(_: FastAPI) -> AsyncIterator[None]:
+    ensure_files()           # create dirs + JSON files if missing
+    try:
+        validate_kieai_config()   # checks KIEAI_API_KEY + PUBLIC_BASE_URL
+    except Exception as exc:
+        # App starts anyway — KieAI mode is just disabled
+        logger.warning("KieAI config invalid — API generation disabled: %s", exc)
+    Thread(target=warm_model, daemon=True).start()  # load MusicGen in background
+    yield`)}
+
+<p>The result: <code>GROQ_API_KEY</code> missing → lyrics/copyright agents fail silently per-request. <code>KIEAI_API_KEY</code> missing → POST /api/generate returns HTTP 500. Neither crashes the server at startup.</p>
+
+<h2>Getting API keys</h2>
+<table class="param-table">
+  <tr><th>Service</th><th>URL</th><th>Free tier</th></tr>
+  <tr><td>Groq (Llama 3.1)</td><td>console.groq.com</td><td>Yes — generous rate limits</td></tr>
+  <tr><td>Kie.AI (Suno v4)</td><td>kie.ai</td><td>Limited credits on sign-up</td></tr>
+</table>
 `,
 
 '/docs/api/generate': () => `
 <div class="page-header">
-  <div class="page-eyebrow">API Reference</div>
+  <span class="page-eyebrow">API Reference</span>
   <h1 class="page-title">Generate Music</h1>
-  <p class="page-desc">The core endpoint. Submit a mood, genre, and theme to generate a 30-second instrumental sketch with lyrics and copyright analysis.</p>
+  <p class="page-desc">The core endpoint. Submit your creative parameters and get back a full song — audio, lyrics, and copyright analysis — as a single JSON response.</p>
 </div>
 
 <div class="endpoint">
   <div class="endpoint-header">
     <span class="endpoint-method method-post">POST</span>
     <span class="endpoint-path">/api/generate</span>
-    <span class="endpoint-desc">Generate a full song via Kie.AI (Suno v4)</span>
+    <span class="endpoint-desc">Generate a song via Kie.AI (Suno v4)</span>
   </div>
   <div class="endpoint-body">
     <h4>Request body</h4>
     <table class="param-table">
-      <tr><th>Field</th><th>Type</th><th>Required</th><th>Description</th></tr>
-      <tr><td><code>moods</code></td><td>string[]</td><td><span class="param-req">Required</span></td><td>Array of mood descriptors, e.g. <code>["melancholic","dreamy"]</code></td></tr>
-      <tr><td><code>genres</code></td><td>string[]</td><td><span class="param-req">Required</span></td><td>Array of genre styles, e.g. <code>["lo-fi","ambient"]</code></td></tr>
-      <tr><td><code>themes</code></td><td>string[]</td><td><span class="param-opt">Optional</span></td><td>Array of thematic ideas, e.g. <code>["rainy day","nostalgia"]</code></td></tr>
-      <tr><td><code>instruments</code></td><td>string[]</td><td><span class="param-opt">Optional</span></td><td>Instrument hints, e.g. <code>["piano","soft synth"]</code></td></tr>
-      <tr><td><code>tempo</code></td><td>integer</td><td><span class="param-opt">Optional</span></td><td>BPM 60–160. Default: <code>90</code></td></tr>
-      <tr><td><code>energy</code></td><td>integer</td><td><span class="param-opt">Optional</span></td><td>Energy level 1–10. Default: <code>4</code></td></tr>
-      <tr><td><code>complexity</code></td><td>string</td><td><span class="param-opt">Optional</span></td><td><code>"Simple"</code> | <code>"Moderate"</code> | <code>"Rich"</code>. Default: <code>"Moderate"</code></td></tr>
-      <tr><td><code>duration</code></td><td>integer</td><td><span class="param-opt">Optional</span></td><td>Target seconds 1–600. Default: <code>30</code></td></tr>
+      <tr><th>Field</th><th>Type</th><th>Required</th><th>Default</th><th>Description</th></tr>
+      <tr><td><code>moods</code></td><td>string[]</td><td><span class="param-req">Required</span></td><td>—</td><td>Mood descriptors. e.g. <code>["melancholic","dreamy"]</code></td></tr>
+      <tr><td><code>genres</code></td><td>string[]</td><td><span class="param-req">Required</span></td><td>—</td><td>Genre/style labels. e.g. <code>["lo-fi","ambient"]</code></td></tr>
+      <tr><td><code>themes</code></td><td>string[]</td><td><span class="param-opt">Optional</span></td><td><code>[]</code></td><td>Thematic ideas. e.g. <code>["rainy day","nostalgia"]</code></td></tr>
+      <tr><td><code>instruments</code></td><td>string[]</td><td><span class="param-opt">Optional</span></td><td><code>[]</code></td><td>Instrument hints. e.g. <code>["piano","soft synth","drums"]</code></td></tr>
+      <tr><td><code>tempo</code></td><td>integer</td><td><span class="param-opt">Optional</span></td><td><code>90</code></td><td>BPM — range 60–160</td></tr>
+      <tr><td><code>energy</code></td><td>integer</td><td><span class="param-opt">Optional</span></td><td><code>4</code></td><td>Energy level 1 (quiet) to 10 (intense)</td></tr>
+      <tr><td><code>complexity</code></td><td>string</td><td><span class="param-opt">Optional</span></td><td><code>"Moderate"</code></td><td><code>"Simple"</code> | <code>"Moderate"</code> | <code>"Rich"</code></td></tr>
+      <tr><td><code>duration</code></td><td>integer</td><td><span class="param-opt">Optional</span></td><td><code>30</code></td><td>Target seconds 1–600 (Kie.AI generates ~30s clips)</td></tr>
     </table>
 
-    <h4>Code examples</h4>
-    ${codeTabs([
-      { label: 'cURL', code: `curl -X POST https://consolidated-echoecho.onrender.com/api/generate \\
+    <h4>Full code examples</h4>
+    ${tabs([
+      { l: 'cURL', c: `curl -X POST https://consolidated-echoecho.onrender.com/api/generate \\
   -H "Content-Type: application/json" \\
   -d '{
     "moods": ["melancholic", "dreamy"],
     "genres": ["lo-fi", "ambient"],
     "themes": ["rainy day", "nostalgia"],
-    "instruments": ["piano", "soft synth"],
+    "instruments": ["piano", "soft synth", "subtle drums"],
     "tempo": 72,
     "energy": 3,
     "complexity": "Moderate"
   }'` },
-      { label: 'Python', code: `import httpx
+      { l: 'Python', c: `import httpx
+
+BASE = "https://consolidated-echoecho.onrender.com"
 
 payload = {
     "moods": ["melancholic", "dreamy"],
     "genres": ["lo-fi", "ambient"],
     "themes": ["rainy day", "nostalgia"],
-    "instruments": ["piano", "soft synth"],
+    "instruments": ["piano", "soft synth", "subtle drums"],
     "tempo": 72,
     "energy": 3,
     "complexity": "Moderate",
 }
 
-with httpx.Client(timeout=120) as client:
-    r = client.post(
-        "https://consolidated-echoecho.onrender.com/api/generate",
-        json=payload,
-    )
-    r.raise_for_status()
-    data = r.json()
+# Generation takes 30-90s — use a long timeout
+with httpx.Client(timeout=180.0) as client:
+    resp = client.post(f"{BASE}/api/generate", json=payload)
+    resp.raise_for_status()
+    data = resp.json()
 
-print("Song ID:", data["song_id"])
-print("Audio URL:", data["audio_url"])
-print("Lyrics:", data["lyrics"]["text"])
-print("Copyright:", data["copyright"]["status"])` },
-      { label: 'JavaScript', code: `const payload = {
-  moods: ["melancholic", "dreamy"],
-  genres: ["lo-fi", "ambient"],
-  themes: ["rainy day", "nostalgia"],
-  instruments: ["piano", "soft synth"],
-  tempo: 72,
-  energy: 3,
-  complexity: "Moderate",
-};
+print(f"Song ID  : {data['song_id']}")
+print(f"Audio    : {BASE}{data['audio_url']}")
+print(f"Time     : {data['generation_time_seconds']}s")
+print(f"Lyrics   :\\n{data['lyrics']['text']}")
+print(f"Copyright: {data['copyright']['status']} (score: {data['copyright']['similarity_score']})")` },
+      { l: 'JavaScript', c: `const BASE = "https://consolidated-echoecho.onrender.com";
 
-const res = await fetch("/api/generate", {
-  method: "POST",
-  headers: { "Content-Type": "application/json" },
-  body: JSON.stringify(payload),
-});
+async function generateSong() {
+  const payload = {
+    moods: ["melancholic", "dreamy"],
+    genres: ["lo-fi", "ambient"],
+    themes: ["rainy day", "nostalgia"],
+    instruments: ["piano", "soft synth", "subtle drums"],
+    tempo: 72,
+    energy: 3,
+    complexity: "Moderate",
+  };
 
-if (!res.ok) throw new Error(\`HTTP \${res.status}\`);
-const data = await res.json();
+  const res = await fetch(\`\${BASE}/api/generate\`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload),
+    // Note: fetch doesn't have a built-in timeout,
+    // use AbortController for production code
+  });
 
-console.log("Song ID:", data.song_id);
-console.log("Audio URL:", data.audio_url);
-console.log("Lyrics:", data.lyrics.text);
-console.log("Copyright:", data.copyright.status);` },
+  if (!res.ok) {
+    const err = await res.json();
+    throw new Error(\`HTTP \${res.status}: \${err.detail}\`);
+  }
+
+  const data = await res.json();
+  console.log("Song ID:", data.song_id);
+  console.log("Audio URL:", \`\${BASE}\${data.audio_url}\`);
+  console.log("Lyrics:", data.lyrics.text);
+  console.log("Copyright:", data.copyright.status);
+  return data;
+}
+
+generateSong().then(console.log).catch(console.error);` },
     ])}
 
-    <h4>Response</h4>
-    ${codeBlock('json', `{
+    <h4>Success response (HTTP 200)</h4>
+    ${cb('json', `{
   "success": true,
   "ok": true,
   "mode": "api",
   "song_id": "XKPQ",
-  "audio_url": "/generated/ECHO_XKPQ_original.mp3",
   "filename": "ECHO_XKPQ_original.mp3",
+  "audio_url": "/generated/ECHO_XKPQ_original.mp3",
   "download_url": "/download/XKPQ/original",
+  "trimmed_audio_url": null,
+  "trimmed_download_url": null,
   "generation_time_seconds": 48,
+  "generation_time": "48s",
+  "prompt_used": "melancholic + dreamy lo-fi + ambient piano soft synth, slow 72bpm, rainy day nostalgia",
   "lyrics": {
-    "text": "Verse 1:\\nRain on glass, the world blurs soft\\nMemories drift like notes aloft\\n\\nChorus:\\nIn the quiet, I find you there\\nA melody that fills the air",
-    "structure": "verse/chorus"
+    "text": "Verse 1:\\nRain on glass, the world blurs soft\\nMemories drift like notes aloft\\nThe kettle hums, the city sleeps\\nAnd I hold on to what time keeps\\n\\nPre-Chorus:\\nTime moves slow when you're not here\\nEvery silence rings sincere\\n\\nChorus:\\nIn the quiet, I find you there\\nA melody that fills the air\\nLike echoes in an empty room\\nYour ghost still dances in the gloom\\n\\nVerse 2:\\nOld photographs in fading light\\nYour laughter trapped inside the night\\nI press my hand against the glass\\nAnd watch another moment pass",
+    "structure": "verse/pre-chorus/chorus"
   },
   "copyright": {
     "status": "safe",
-    "similarity_score": 0.12,
-    "notes": "No significant copyright matches found.",
-    "matches": []
+    "similarity_score": 0.09,
+    "notes": "No significant copyright matches detected. Lyrics appear original.",
+    "matches": [],
+    "risk": "low"
   },
-  "song": { "...full record..." }
+  "song": { "...full record with all fields..." }
 }`)}
+
+    <h4>Error responses</h4>
+    <div class="response-box"><div class="response-status status-500">HTTP 500</div><code>{"detail": "API song generation failed. Please try again."}</code> — Kie.AI failed or timed out</div>
+    <div class="response-box"><div class="response-status status-500">HTTP 500</div><code>{"detail": "KieAI API key is not configured."}</code> — Missing KIEAI_API_KEY</div>
+    <div class="response-box"><div class="response-status status-400">HTTP 422</div><code>{"detail": [{"loc": ["body","tempo"],"msg": "Input should be less than or equal to 160"}]}</code> — Validation error</div>
   </div>
 </div>
 
-<h2>Generation status polling</h2>
-<p>Because generation takes 30–90 seconds, the frontend polls <code>GET /generation-status</code> to show live progress:</p>
-${codeTabs([
-  { label: 'JavaScript', code: `async function pollStatus(onUpdate) {
-  const interval = setInterval(async () => {
-    const res = await fetch("/generation-status");
-    const status = await res.json();
-    onUpdate(status);
-    if (!status.active) clearInterval(interval);
+<h2>Polling generation status</h2>
+<p>Generation takes 30–90 seconds. Poll <code>GET /generation-status</code> every 2 seconds to show a live progress bar:</p>
+${tabs([
+  { l: 'JavaScript', c: `// Poll every 2 seconds until generation completes
+function pollGenerationStatus(onProgress, onComplete) {
+  let attempts = 0;
+  const MAX = 90; // 3 minutes max
+
+  const iv = setInterval(async () => {
+    if (++attempts > MAX) { clearInterval(iv); return; }
+
+    const status = await fetch("/generation-status").then(r => r.json());
+    const { stage, progress, elapsed_seconds, estimated_remaining_seconds, active } = status;
+
+    onProgress({ stage, progress, elapsed_seconds, estimated_remaining_seconds });
+
+    if (!active) {
+      clearInterval(iv);
+      onComplete(status);
+    }
   }, 2000);
+
+  return () => clearInterval(iv); // returns cancel function
 }
 
 // Usage
-pollStatus(({ stage, progress, elapsed_seconds }) => {
-  console.log(\`[\${progress}%] \${stage} — \${elapsed_seconds}s elapsed\`);
-});` },
-  { label: 'Python', code: `import httpx, time
+const cancel = pollGenerationStatus(
+  ({ stage, progress }) => {
+    document.getElementById("progress").style.width = progress + "%";
+    document.getElementById("stage").textContent = stage;
+  },
+  () => { console.log("Done! Fetch song from /history"); }
+);` },
+  { l: 'Python', c: `import httpx, time
 
-def poll_status(base_url: str) -> None:
+def poll_until_done(base_url: str, poll_interval: float = 2.0, timeout: float = 300.0) -> dict:
+    """Poll /generation-status until active=False. Returns last status."""
+    deadline = time.time() + timeout
     with httpx.Client() as client:
-        while True:
+        while time.time() < deadline:
             r = client.get(f"{base_url}/generation-status")
             s = r.json()
-            print(f"[{s['progress']}%] {s['stage']} — {s['elapsed_seconds']}s elapsed")
+            print(f"[{s['progress']:3d}%] {s['stage']:30s}  {s['elapsed_seconds']}s elapsed")
             if not s.get("active"):
-                break
-            time.sleep(2)` },
-  { label: 'cURL', code: `# Poll every 2 seconds
-watch -n 2 'curl -s https://consolidated-echoecho.onrender.com/generation-status | python3 -m json.tool'` },
+                return s
+            time.sleep(poll_interval)
+    raise TimeoutError(f"Generation did not complete within {timeout}s")
+
+status = poll_until_done("https://consolidated-echoecho.onrender.com")
+print("Final status:", status)` },
 ])}
+
+<p>Status response shape:</p>
+${cb('json', `{
+  "stage": "Composing melody",
+  "progress": 52,
+  "elapsed_seconds": 31,
+  "estimated_remaining_seconds": 29,
+  "estimated_total_seconds": 60,
+  "active": true
+}`)}
 `,
 
-'/docs/api/lyrics': () => `
+'/docs/api/compose': () => `
 <div class="page-header">
-  <div class="page-eyebrow">API Reference</div>
-  <h1 class="page-title">Lyrics</h1>
-  <p class="page-desc">Lyrics are automatically generated as part of every song generation. This page explains how the lyrics agent works and how lyrics are structured in the response.</p>
-</div>
-
-<h2>How lyrics are generated</h2>
-<p>When a song is generated, <code>backend/agents/lyrics_agent.py</code> spins up a CrewAI agent with the following system:</p>
-<ul>
-  <li>The agent receives: mood, theme, style, genre, tempo, energy, complexity, and the generated prompt</li>
-  <li>It uses Groq's Llama 3.1 8B Instant model (fastest option, ~200 tok/sec)</li>
-  <li>It writes a full song with verse/pre-chorus/chorus/bridge structure</li>
-  <li>Output is returned as a JSON object with <code>text</code> and <code>structure</code> fields</li>
-</ul>
-
-${codeBlock('python', `# backend/agents/lyrics_agent.py — how the agent is configured
-from crewai import Agent, Task, Crew
-from langchain_groq import ChatGroq
-
-llm = ChatGroq(model="llama-3.1-8b-instant", api_key=os.getenv("GROQ_API_KEY"))
-
-lyricist = Agent(
-    role="Professional Lyricist",
-    goal="Write emotionally resonant, original song lyrics",
-    backstory="A Grammy-winning lyricist with expertise in all genres...",
-    llm=llm,
-    verbose=False,
-)
-
-task = Task(
-    description=f"Write lyrics for a {mood} {style} song about {theme}...",
-    expected_output="JSON with 'text' (full lyrics) and 'structure' (e.g. verse/chorus)",
-    agent=lyricist,
-)`)}
-
-<h2>Lyrics response format</h2>
-${codeBlock('json', `"lyrics": {
-  "text": "Verse 1:\\nRain on glass, the world blurs soft\\nMemories drift like notes aloft\\n\\nPre-Chorus:\\nTime moves slow when you're not here\\n\\nChorus:\\nIn the quiet, I find you there\\nA melody that fills the air\\n\\nVerse 2:\\n...",
-  "structure": "verse/pre-chorus/chorus"
-}`)}
-
-<h2>What if lyrics fail?</h2>
-<p>If the Groq API is unavailable or the agent errors, the response still succeeds — lyrics degrade gracefully:</p>
-${codeBlock('json', `"lyrics": {
-  "text": "Lyrics generation is unavailable for this song, but the music was generated successfully.",
-  "structure": "unavailable"
-}`)}
-<p>The copyright check is automatically skipped when lyrics are unavailable.</p>
-`,
-
-'/docs/api/copyright': () => `
-<div class="page-header">
-  <div class="page-eyebrow">API Reference</div>
-  <h1 class="page-title">Copyright Check</h1>
-  <p class="page-desc">Check lyrics or song metadata for copyright risk before publishing.</p>
+  <span class="page-eyebrow">API Reference</span>
+  <h1 class="page-title">Compose Prompt</h1>
+  <p class="page-desc">Build a structured song prompt from UI inputs without triggering generation. Useful for previewing the prompt before committing to an API call.</p>
 </div>
 
 <div class="endpoint">
   <div class="endpoint-header">
     <span class="endpoint-method method-post">POST</span>
-    <span class="endpoint-path">/api/copyright/check</span>
-    <span class="endpoint-desc">Check text for copyright similarity</span>
+    <span class="endpoint-path">/api/compose</span>
+    <span class="endpoint-desc">Build a prompt from creative parameters</span>
   </div>
   <div class="endpoint-body">
     <h4>Request body</h4>
     <table class="param-table">
-      <tr><th>Field</th><th>Type</th><th>Required</th><th>Description</th></tr>
-      <tr><td><code>lyrics</code></td><td>string</td><td><span class="param-opt">Optional*</span></td><td>Full lyrics text to check. Preferred if available.</td></tr>
-      <tr><td><code>song_id</code></td><td>string</td><td><span class="param-opt">Optional*</span></td><td>ID of a previously generated song — lyrics are loaded from history.</td></tr>
-      <tr><td><code>title</code></td><td>string</td><td><span class="param-opt">Optional</span></td><td>Song title (used as fallback context if no lyrics)</td></tr>
-      <tr><td><code>prompt</code></td><td>string</td><td><span class="param-opt">Optional</span></td><td>Original generation prompt (fallback)</td></tr>
+      <tr><th>Field</th><th>Type</th><th>Description</th></tr>
+      <tr><td><code>mood</code></td><td>string</td><td>Mood descriptor, e.g. <code>"melancholic"</code></td></tr>
+      <tr><td><code>genre</code></td><td>string</td><td>Genre style, e.g. <code>"lo-fi"</code></td></tr>
+      <tr><td><code>theme</code></td><td>string</td><td>Thematic concept, e.g. <code>"rainy evening"</code></td></tr>
+      <tr><td><code>instrument</code></td><td>string</td><td>Primary instrument, e.g. <code>"piano"</code></td></tr>
+      <tr><td><code>style</code></td><td>string</td><td>Production style, e.g. <code>"cinematic"</code></td></tr>
+      <tr><td><code>tempoFeel</code></td><td>string</td><td>Tempo descriptor, e.g. <code>"slow"</code></td></tr>
+      <tr><td><code>bpm</code></td><td>integer</td><td>BPM 40–220. Default: <code>90</code></td></tr>
+      <tr><td><code>prompt</code></td><td>string</td><td>Free-text override — if provided, bypasses composition logic</td></tr>
     </table>
-    <p style="font-size:.85rem;color:#666">*At least one of <code>lyrics</code> or <code>song_id</code> must be provided.</p>
 
-    <h4>Code examples</h4>
-    ${codeTabs([
-      { label: 'cURL', code: `# Check by lyrics text
+    ${tabs([
+      { l: 'cURL', c: `curl -X POST https://consolidated-echoecho.onrender.com/api/compose \\
+  -H "Content-Type: application/json" \\
+  -d '{
+    "mood": "melancholic",
+    "genre": "lo-fi",
+    "theme": "rainy evening",
+    "instrument": "piano",
+    "bpm": 72
+  }'` },
+      { l: 'Python', c: `import httpx
+
+r = httpx.post(
+    "https://consolidated-echoecho.onrender.com/api/compose",
+    json={
+        "mood": "melancholic",
+        "genre": "lo-fi",
+        "theme": "rainy evening",
+        "instrument": "piano",
+        "bpm": 72,
+    },
+)
+song = r.json()["song"]
+print("Generated prompt:", song.get("prompt"))` },
+      { l: 'JavaScript', c: `const res = await fetch("/api/compose", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({
+    mood: "melancholic",
+    genre: "lo-fi",
+    theme: "rainy evening",
+    instrument: "piano",
+    bpm: 72,
+  }),
+});
+const { song } = await res.json();
+console.log("Prompt:", song.prompt);` },
+    ])}
+
+    <h4>Response</h4>
+    ${cb('json', `{
+  "ok": true,
+  "song": {
+    "mood": "melancholic",
+    "genre": "lo-fi",
+    "theme": "rainy evening",
+    "instrument": "piano",
+    "bpm": 72,
+    "prompt": "melancholic lo-fi piano, slow 72bpm, rainy evening atmosphere, introspective"
+  }
+}`)}
+  </div>
+</div>
+`,
+
+'/docs/api/lyrics': () => `
+<div class="page-header">
+  <span class="page-eyebrow">API Reference</span>
+  <h1 class="page-title">Lyrics &amp; Copyright</h1>
+  <p class="page-desc">Lyrics are auto-generated as part of every song. The copyright check endpoint lets you re-check any song or test arbitrary text.</p>
+</div>
+
+<h2>How lyrics are generated</h2>
+<p>After audio generation completes, <code>backend/agents/lyrics_agent.py</code> creates a CrewAI task:</p>
+${cb('python', `# backend/agents/lyrics_agent.py — simplified
+from crewai import Agent, Task, Crew
+from langchain_groq import ChatGroq
+
+llm = ChatGroq(
+    model="llama-3.1-8b-instant",
+    api_key=os.getenv("GROQ_API_KEY"),
+    temperature=0.8,
+)
+
+lyricist = Agent(
+    role="Professional Lyricist",
+    goal="Write emotionally resonant, commercially viable song lyrics",
+    backstory=(
+        "A Grammy-nominated lyricist with 20 years across pop, indie, and film scoring. "
+        "Writes in the voice of the style — never generic, always evocative."
+    ),
+    llm=llm,
+    verbose=False,
+)
+
+task = Task(
+    description=(
+        f"Write original song lyrics for a {mood} {style} track about {theme}. "
+        f"BPM: {tempo}, energy: {energy}/10, structure: verse/pre-chorus/chorus/bridge. "
+        "Return JSON with keys 'text' (full lyrics) and 'structure' (e.g. 'verse/chorus')."
+    ),
+    expected_output="JSON object with text and structure keys",
+    agent=lyricist,
+)
+
+crew = Crew(agents=[lyricist], tasks=[task], verbose=False)
+result = crew.kickoff()`)}
+
+<h2>Lyrics in the response</h2>
+${cb('json', `"lyrics": {
+  "text": "Verse 1:\\nRain on glass, the world blurs soft\\n...\\n\\nChorus:\\nIn the quiet, I find you there\\n...",
+  "structure": "verse/pre-chorus/chorus/bridge"
+}`)}
+
+<h2>Copyright check endpoint</h2>
+<div class="endpoint">
+  <div class="endpoint-header">
+    <span class="endpoint-method method-post">POST</span>
+    <span class="endpoint-path">/api/copyright/check</span>
+    <span class="endpoint-desc">Check lyrics or song metadata for copyright risk</span>
+  </div>
+  <div class="endpoint-body">
+    <h4>Request body</h4>
+    <table class="param-table">
+      <tr><th>Field</th><th>Type</th><th>Description</th></tr>
+      <tr><td><code>lyrics</code></td><td>string</td><td>Full lyrics text to check — preferred input</td></tr>
+      <tr><td><code>song_id</code></td><td>string</td><td>ID of a saved song — lyrics loaded from history automatically</td></tr>
+      <tr><td><code>title</code></td><td>string</td><td>Song title — used as fallback context if no lyrics provided</td></tr>
+      <tr><td><code>prompt</code></td><td>string</td><td>Generation prompt — fallback context</td></tr>
+    </table>
+
+    ${tabs([
+      { l: 'cURL', c: `# Check raw lyrics text
 curl -X POST https://consolidated-echoecho.onrender.com/api/copyright/check \\
   -H "Content-Type: application/json" \\
   -d '{"lyrics": "In the quiet, I find you there\\nA melody that fills the air"}'
 
-# Check by song ID
+# Check a saved song by ID
 curl -X POST https://consolidated-echoecho.onrender.com/api/copyright/check \\
   -H "Content-Type: application/json" \\
   -d '{"song_id": "XKPQ"}'` },
-      { label: 'Python', code: `import httpx
+      { l: 'Python', c: `import httpx
 
-# Option 1: check custom lyrics
-r = httpx.post(
-    "https://consolidated-echoecho.onrender.com/api/copyright/check",
-    json={"lyrics": "In the quiet, I find you there\\nA melody that fills the air"},
-)
+BASE = "https://consolidated-echoecho.onrender.com"
 
-# Option 2: re-check a saved song
-r = httpx.post(
-    "https://consolidated-echoecho.onrender.com/api/copyright/check",
-    json={"song_id": "XKPQ"},
-)
+# Option 1: raw lyrics
+r = httpx.post(f"{BASE}/api/copyright/check", json={
+    "lyrics": "In the quiet, I find you there\\nA melody that fills the air"
+})
+
+# Option 2: by song ID (auto-loads saved lyrics)
+r = httpx.post(f"{BASE}/api/copyright/check", json={"song_id": "XKPQ"})
 
 data = r.json()
-print("Status:", data["status"])  # "safe" or "risky"
-print("Score:", data["similarity_score"])
-print("Notes:", data["notes"])` },
-      { label: 'JavaScript', code: `const res = await fetch("/api/copyright/check", {
+print(f"Status: {data['status']}")            # "safe" or "risky"
+print(f"Score:  {data['similarity_score']}")  # 0.0 to 1.0
+print(f"Risk:   {data['risk']}")              # "low" / "medium" / "high"
+print(f"Notes:  {data['notes']}")` },
+      { l: 'JavaScript', c: `// Re-check a previously generated song
+const res = await fetch("/api/copyright/check", {
   method: "POST",
   headers: { "Content-Type": "application/json" },
   body: JSON.stringify({ song_id: "XKPQ" }),
 });
 
 const data = await res.json();
-console.log("Status:", data.status);       // "safe" | "risky" | "unavailable"
-console.log("Score:", data.similarity_score);
-console.log("Notes:", data.notes);
-console.log("Matches:", data.matches);` },
+if (data.status === "safe") {
+  console.log("✓ Safe to use:", data.notes);
+} else if (data.status === "risky") {
+  console.warn("⚠ Copyright risk detected");
+  data.matches.forEach(m => {
+    console.warn(\`  Similar to: "\${m.title}" by \${m.artist} (risk: \${m.risk})\`);
+  });
+}` },
     ])}
 
-    <h4>Response</h4>
-    ${codeBlock('json', `{
+    <h4>Safe response</h4>
+    ${cb('json', `{
   "status": "safe",
-  "similarity_score": 0.08,
-  "notes": "No significant copyright matches detected. Lyrics appear original.",
+  "similarity_score": 0.07,
+  "notes": "No significant copyright matches detected. Lyrics appear original and safe for commercial use.",
   "matches": [],
   "risk": "low",
   "copyright_status": "original"
 }`)}
-    ${codeBlock('json', `{
+
+    <h4>Risky response</h4>
+    ${cb('json', `{
   "status": "risky",
-  "similarity_score": 0.74,
-  "notes": "High similarity to known song. Consider revising before commercial use.",
+  "similarity_score": 0.81,
+  "notes": "High similarity to a copyrighted work. Significant revision recommended before any commercial release.",
   "matches": [
     {
       "title": "Let It Be",
@@ -824,7 +1209,16 @@ console.log("Matches:", data.matches);` },
       "copyright_status": "protected"
     }
   ],
-  "risk": "high"
+  "risk": "high",
+  "copyright_status": "protected"
+}`)}
+
+    <h4>Unavailable (agent error)</h4>
+    ${cb('json', `{
+  "status": "unavailable",
+  "similarity_score": null,
+  "notes": "Copyright check unavailable: Groq API rate limit exceeded.",
+  "matches": []
 }`)}
   </div>
 </div>
@@ -832,49 +1226,71 @@ console.log("Matches:", data.matches);` },
 
 '/docs/api/auth': () => `
 <div class="page-header">
-  <div class="page-eyebrow">API Reference</div>
+  <span class="page-eyebrow">API Reference</span>
   <h1 class="page-title">Authentication</h1>
-  <p class="page-desc">Echo Echo uses a lightweight invite-only auth system. Tokens are stored in localStorage and sent as Bearer tokens.</p>
+  <p class="page-desc">Echo Echo uses a lightweight email/password auth system. Tokens are stored client-side in localStorage and sent as Bearer tokens on API calls.</p>
+</div>
+
+<div class="callout callout-info">
+  <span class="callout-icon">ℹ️</span>
+  <p>The current auth system is intentionally minimal — it's designed for a private invite-only tool, not a public service. All user data is stored in a local JSON file on the server.</p>
 </div>
 
 <div class="endpoint">
   <div class="endpoint-header">
     <span class="endpoint-method method-post">POST</span>
     <span class="endpoint-path">/api/auth/login</span>
-    <span class="endpoint-desc">Authenticate an existing user</span>
+    <span class="endpoint-desc">Authenticate an existing user, get a token</span>
   </div>
   <div class="endpoint-body">
     <h4>Request body</h4>
     <table class="param-table">
       <tr><th>Field</th><th>Type</th><th>Required</th><th>Description</th></tr>
-      <tr><td><code>email</code></td><td>string</td><td><span class="param-req">Required</span></td><td>User email address</td></tr>
-      <tr><td><code>password</code></td><td>string</td><td><span class="param-req">Required</span></td><td>User password</td></tr>
+      <tr><td><code>email</code></td><td>string</td><td><span class="param-req">Required</span></td><td>Registered email address</td></tr>
+      <tr><td><code>password</code></td><td>string</td><td><span class="param-req">Required</span></td><td>Account password</td></tr>
     </table>
-
-    <h4>Code examples</h4>
-    ${codeTabs([
-      { label: 'cURL', code: `curl -X POST https://consolidated-echoecho.onrender.com/api/auth/login \\
+    ${tabs([
+      { l: 'cURL', c: `curl -X POST https://consolidated-echoecho.onrender.com/api/auth/login \\
   -H "Content-Type: application/json" \\
   -d '{"email": "you@example.com", "password": "yourpassword"}'` },
-      { label: 'Python', code: `import httpx
+      { l: 'Python', c: `import httpx
 
 r = httpx.post(
     "https://consolidated-echoecho.onrender.com/api/auth/login",
     json={"email": "you@example.com", "password": "yourpassword"},
 )
-data = r.json()
-token = data["token"]  # store this for subsequent requests` },
-      { label: 'JavaScript', code: `const res = await fetch("/api/auth/login", {
-  method: "POST",
-  headers: { "Content-Type": "application/json" },
-  body: JSON.stringify({ email: "you@example.com", password: "yourpassword" }),
-});
-const { token } = await res.json();
-localStorage.setItem("echo_auth_token", token);` },
-    ])}
+if r.status_code == 401:
+    print("Invalid credentials")
+else:
+    data = r.json()
+    token = data["token"]
+    print("Logged in as:", data["email"])
+    # Use token in subsequent requests:
+    # headers = {"Authorization": f"Bearer {token}"}` },
+      { l: 'JavaScript', c: `async function login(email, password) {
+  const res = await fetch("/api/auth/login", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ email, password }),
+  });
 
+  if (res.status === 401) throw new Error("Invalid email or password");
+
+  const { token, name } = await res.json();
+  localStorage.setItem("echo_auth_token", token);
+  console.log(\`Welcome, \${name}!\`);
+  return token;
+}
+
+// Use saved token in API calls
+function authHeaders() {
+  const token = localStorage.getItem("echo_auth_token");
+  return token ? { Authorization: \`Bearer \${token}\` } : {};
+}` },
+    ])}
     <h4>Response</h4>
-    ${codeBlock('json', `{ "token": "echo_abc123...", "email": "you@example.com", "name": "Your Name" }`)}
+    ${cb('json', `{ "token": "echo_a7f3bc...", "email": "you@example.com", "name": "Your Name" }`)}
+    <div class="response-box"><div class="response-status status-401">HTTP 401</div><code>{"detail": "Invalid email or password"}</code></div>
   </div>
 </div>
 
@@ -882,90 +1298,112 @@ localStorage.setItem("echo_auth_token", token);` },
   <div class="endpoint-header">
     <span class="endpoint-method method-post">POST</span>
     <span class="endpoint-path">/api/auth/signup</span>
-    <span class="endpoint-desc">Create a new account (requires <code>ECHO_SIGNUPS_OPEN=1</code>)</span>
+    <span class="endpoint-desc">Create a new account — requires <code>ECHO_SIGNUPS_OPEN=1</code></span>
   </div>
   <div class="endpoint-body">
     <h4>Request body</h4>
     <table class="param-table">
       <tr><th>Field</th><th>Type</th><th>Required</th><th>Description</th></tr>
       <tr><td><code>email</code></td><td>string</td><td><span class="param-req">Required</span></td><td>Email address</td></tr>
-      <tr><td><code>password</code></td><td>string</td><td><span class="param-req">Required</span></td><td>Password (min 8 chars)</td></tr>
+      <tr><td><code>password</code></td><td>string</td><td><span class="param-req">Required</span></td><td>Password (min 8 characters recommended)</td></tr>
       <tr><td><code>name</code></td><td>string</td><td><span class="param-opt">Optional</span></td><td>Display name</td></tr>
     </table>
-
-    ${codeTabs([
-      { label: 'cURL', code: `curl -X POST https://consolidated-echoecho.onrender.com/api/auth/signup \\
+    ${tabs([
+      { l: 'cURL', c: `curl -X POST https://consolidated-echoecho.onrender.com/api/auth/signup \\
   -H "Content-Type: application/json" \\
-  -d '{"name": "Sandeep", "email": "you@example.com", "password": "securepass123"}'` },
-      { label: 'Python', code: `r = httpx.post(
+  -d '{"name": "Sandeep", "email": "you@example.com", "password": "secure123"}'` },
+      { l: 'Python', c: `r = httpx.post(
     "https://consolidated-echoecho.onrender.com/api/auth/signup",
-    json={"name": "Sandeep", "email": "you@example.com", "password": "securepass123"},
+    json={"name": "Sandeep", "email": "you@example.com", "password": "secure123"},
 )
-# Returns 403 if ECHO_SIGNUPS_OPEN is not set
-data = r.json()
-print(data["token"])` },
-      { label: 'JavaScript', code: `const res = await fetch("/api/auth/signup", {
+if r.status_code == 403:
+    print("Sign-ups closed — set ECHO_SIGNUPS_OPEN=1")
+elif r.status_code == 409:
+    print("Email already registered")
+else:
+    print("Account created! Token:", r.json()["token"])` },
+      { l: 'JavaScript', c: `const res = await fetch("/api/auth/signup", {
   method: "POST",
   headers: { "Content-Type": "application/json" },
-  body: JSON.stringify({ name: "Sandeep", email: "you@example.com", password: "securepass123" }),
+  body: JSON.stringify({ name: "Sandeep", email: "you@example.com", password: "secure123" }),
 });
-if (res.status === 403) {
-  console.error("Sign-ups are closed");
-} else {
-  const { token } = await res.json();
-  localStorage.setItem("echo_auth_token", token);
-}` },
-    ])}
-  </div>
-</div>
 
-<div class="callout callout-warn">
-  <span class="callout-icon">⚠️</span>
-  <p>By default (<code>ECHO_SIGNUPS_OPEN</code> not set), <code>POST /api/auth/signup</code> returns <strong>HTTP 403</strong>. Set <code>ECHO_SIGNUPS_OPEN=1</code> in your environment to allow public registration.</p>
+switch (res.status) {
+  case 403: throw new Error("Sign-ups are currently closed");
+  case 409: throw new Error("An account with this email already exists");
+  case 400: throw new Error((await res.json()).detail);
+}
+
+const { token } = await res.json();
+localStorage.setItem("echo_auth_token", token);` },
+    ])}
+    <div class="response-box"><div class="response-status status-400">HTTP 403</div><code>{"detail": "Sign-ups are temporarily closed — Echo Echo is in invite-only beta."}</code></div>
+    <div class="response-box"><div class="response-status status-400">HTTP 409</div><code>{"detail": "An account with this email already exists."}</code></div>
+  </div>
 </div>
 `,
 
 '/docs/api/library': () => `
 <div class="page-header">
-  <div class="page-eyebrow">API Reference</div>
+  <span class="page-eyebrow">API Reference</span>
   <h1 class="page-title">Library</h1>
-  <p class="page-desc">Browse, retrieve, download, and trim your generated songs.</p>
+  <p class="page-desc">Browse all generated songs, fetch individual records, and manage your song history.</p>
 </div>
 
 <div class="endpoint">
   <div class="endpoint-header">
     <span class="endpoint-method method-get">GET</span>
     <span class="endpoint-path">/history</span>
-    <span class="endpoint-desc">All generated songs, newest first</span>
+    <span class="endpoint-desc">All songs, newest first</span>
   </div>
   <div class="endpoint-body">
-    ${codeTabs([
-      { label: 'cURL', code: `curl https://consolidated-echoecho.onrender.com/history` },
-      { label: 'Python', code: `import httpx
-songs = httpx.get("https://consolidated-echoecho.onrender.com/history").json()["songs"]
-for s in songs:
-    print(s["song_id"], s["audio_url"], s["lyrics"]["text"][:50])` },
-      { label: 'JavaScript', code: `const { songs } = await fetch("/history").then(r => r.json());
-songs.forEach(s => {
-  console.log(s.song_id, s.audio_url);
-});` },
+    ${tabs([
+      { l: 'cURL', c: `curl https://consolidated-echoecho.onrender.com/history` },
+      { l: 'Python', c: `import httpx
+
+resp = httpx.get("https://consolidated-echoecho.onrender.com/history")
+songs = resp.json()["songs"]
+
+for song in songs:
+    created = song.get("created_at", "unknown")
+    print(f"{song['song_id']}  [{song['mode']}]  {created[:10]}  {song['audio_url']}")` },
+      { l: 'JavaScript', c: `const { songs } = await fetch("/history").then(r => r.json());
+
+songs.forEach(song => {
+  console.log(\`\${song.song_id} [\${song.mode}] \${song.audio_url}\`);
+});
+
+// Filter for API-generated songs only
+const apiSongs = songs.filter(s => s.mode === "api");
+console.log(\`\${apiSongs.length} API-generated songs\`);` },
     ])}
     <h4>Response</h4>
-    ${codeBlock('json', `{
+    ${cb('json', `{
   "songs": [
     {
       "song_id": "XKPQ",
+      "code": "XKPQ",
       "mode": "api",
-      "created_at": "2026-06-13T18:42:00Z",
+      "created_at": "2026-06-13T18:42:00.123Z",
       "prompt": "melancholic lo-fi piano, slow 72bpm, rainy day nostalgia",
       "mood": "melancholic + dreamy",
+      "theme": "rainy day + nostalgia",
       "style": "lo-fi + ambient",
-      "audio_url": "/generated/ECHO_XKPQ_original.mp3",
-      "download_url": "/download/XKPQ/original",
-      "trimmed_audio_url": null,
+      "tempo": 72,
+      "energy": 3,
+      "complexity": "Moderate",
+      "instruments": ["piano", "soft synth"],
       "generation_time_seconds": 48,
+      "generation_time": "48s",
+      "filename": "ECHO_XKPQ_original.mp3",
+      "audio_url": "/generated/ECHO_XKPQ_original.mp3",
+      "original_audio_url": "/generated/ECHO_XKPQ_original.mp3",
+      "download_url": "/download/XKPQ/original",
+      "original_download_url": "/download/XKPQ/original",
+      "trimmed_audio_url": null,
+      "trimmed_download_url": null,
       "lyrics": { "text": "...", "structure": "verse/chorus" },
-      "copyright": { "status": "safe", "similarity_score": 0.08 }
+      "copyright": { "status": "safe", "similarity_score": 0.09, "notes": "..." }
     }
   ]
 }`)}
@@ -976,28 +1414,73 @@ songs.forEach(s => {
   <div class="endpoint-header">
     <span class="endpoint-method method-get">GET</span>
     <span class="endpoint-path">/song/{song_id}</span>
-    <span class="endpoint-desc">Get a single song record</span>
+    <span class="endpoint-desc">Fetch a single song record by ID</span>
   </div>
   <div class="endpoint-body">
-    ${codeTabs([
-      { label: 'cURL', code: `curl https://consolidated-echoecho.onrender.com/song/XKPQ` },
-      { label: 'Python', code: `r = httpx.get("https://consolidated-echoecho.onrender.com/song/XKPQ")
-song = r.json()["song"]
-print(song["audio_url"])` },
-      { label: 'JavaScript', code: `const { song } = await fetch("/song/XKPQ").then(r => r.json());
-console.log(song.audio_url);` },
+    ${tabs([
+      { l: 'cURL', c: `curl https://consolidated-echoecho.onrender.com/song/XKPQ` },
+      { l: 'Python', c: `r = httpx.get("https://consolidated-echoecho.onrender.com/song/XKPQ")
+if r.status_code == 404:
+    print("Song not found")
+else:
+    song = r.json()["song"]
+    print(song["audio_url"])
+    print(song["lyrics"]["text"])` },
+      { l: 'JavaScript', c: `const res = await fetch("/song/XKPQ");
+if (res.status === 404) throw new Error("Song not found");
+const { song } = await res.json();
+console.log(song.audio_url, song.lyrics.text);` },
     ])}
+    <div class="response-box"><div class="response-status status-400">HTTP 404</div><code>{"detail": "Song not found"}</code></div>
   </div>
+</div>
+`,
+
+'/docs/api/download': () => `
+<div class="page-header">
+  <span class="page-eyebrow">API Reference</span>
+  <h1 class="page-title">Download &amp; Trim</h1>
+  <p class="page-desc">Download original or trimmed audio files, and trim any API-generated MP3 to a target duration.</p>
 </div>
 
 <div class="endpoint">
   <div class="endpoint-header">
     <span class="endpoint-method method-get">GET</span>
     <span class="endpoint-path">/download/{song_id}/original</span>
-    <span class="endpoint-desc">Download original MP3</span>
+    <span class="endpoint-desc">Stream the original MP3</span>
   </div>
   <div class="endpoint-body">
-    ${codeBlock('bash', `# Streams the MP3 file directly\ncurl -L https://consolidated-echoecho.onrender.com/download/XKPQ/original -o song.mp3`)}
+    ${tabs([
+      { l: 'cURL', c: `# Download and save to file
+curl -L https://consolidated-echoecho.onrender.com/download/XKPQ/original \\
+     -o XKPQ_original.mp3
+
+# Check file size
+ls -lh XKPQ_original.mp3` },
+      { l: 'Python', c: `import httpx
+
+# Stream download (memory-efficient for large files)
+with httpx.stream("GET", "https://consolidated-echoecho.onrender.com/download/XKPQ/original") as r:
+    r.raise_for_status()
+    with open("XKPQ_original.mp3", "wb") as f:
+        for chunk in r.iter_bytes(chunk_size=8192):
+            f.write(chunk)
+
+print("Downloaded XKPQ_original.mp3")` },
+      { l: 'JavaScript', c: `// Browser download — triggers save dialog
+function downloadSong(songId, variant = "original") {
+  const a = document.createElement("a");
+  a.href = \`/download/\${songId}/\${variant}\`;
+  a.download = \`ECHO_\${songId}_\${variant}.mp3\`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+}
+
+downloadSong("XKPQ");           // original
+downloadSong("XKPQ", "trimmed"); // trimmed version` },
+    ])}
+    <p>Also available as <code>GET /download/{song_id}/trimmed</code> for the trimmed version, and <code>GET /download/{song_id}</code> (alias for original).</p>
   </div>
 </div>
 
@@ -1005,99 +1488,273 @@ console.log(song.audio_url);` },
   <div class="endpoint-header">
     <span class="endpoint-method method-post">POST</span>
     <span class="endpoint-path">/api/library/{song_id}/trim</span>
-    <span class="endpoint-desc">Trim a song to a target duration</span>
+    <span class="endpoint-desc">Trim an MP3 to a target duration using FFmpeg</span>
   </div>
   <div class="endpoint-body">
     <h4>Request body</h4>
     <table class="param-table">
-      <tr><th>Field</th><th>Type</th><th>Required</th><th>Description</th></tr>
-      <tr><td><code>duration_seconds</code></td><td>integer</td><td><span class="param-opt">Optional</span></td><td>Target duration in seconds (1–600). Defaults to 30.</td></tr>
-      <tr><td><code>force</code></td><td>boolean</td><td><span class="param-opt">Optional</span></td><td>Re-trim even if a trimmed version already exists. Default: <code>false</code>.</td></tr>
+      <tr><th>Field</th><th>Type</th><th>Default</th><th>Description</th></tr>
+      <tr><td><code>duration_seconds</code></td><td>integer</td><td><code>30</code></td><td>Target trim duration in seconds (1–600)</td></tr>
+      <tr><td><code>force</code></td><td>boolean</td><td><code>false</code></td><td>Re-trim even if a trimmed version already exists</td></tr>
     </table>
-    ${codeTabs([
-      { label: 'cURL', code: `curl -X POST https://consolidated-echoecho.onrender.com/api/library/XKPQ/trim \\
+    ${tabs([
+      { l: 'cURL', c: `# Trim to 30 seconds (default)
+curl -X POST https://consolidated-echoecho.onrender.com/api/library/XKPQ/trim \\
   -H "Content-Type: application/json" \\
-  -d '{"duration_seconds": 30, "force": false}'` },
-      { label: 'Python', code: `r = httpx.post(
+  -d '{"duration_seconds": 30}'
+
+# Force re-trim to 45 seconds
+curl -X POST https://consolidated-echoecho.onrender.com/api/library/XKPQ/trim \\
+  -H "Content-Type: application/json" \\
+  -d '{"duration_seconds": 45, "force": true}'` },
+      { l: 'Python', c: `r = httpx.post(
     "https://consolidated-echoecho.onrender.com/api/library/XKPQ/trim",
-    json={"duration_seconds": 30},
+    json={"duration_seconds": 30, "force": False},
 )
-song = r.json()["song"]
-print("Trimmed URL:", song["trimmed_audio_url"])` },
-      { label: 'JavaScript', code: `const res = await fetch("/api/library/XKPQ/trim", {
+data = r.json()
+if data.get("ok"):
+    song = data["song"]
+    print("Trimmed URL:", song["trimmed_audio_url"])
+    print("Download:", song["trimmed_download_url"])` },
+      { l: 'JavaScript', c: `const res = await fetch("/api/library/XKPQ/trim", {
   method: "POST",
   headers: { "Content-Type": "application/json" },
   body: JSON.stringify({ duration_seconds: 30 }),
 });
-const { song } = await res.json();
-console.log("Trimmed:", song.trimmed_audio_url);` },
+const { ok, song } = await res.json();
+if (ok) {
+  console.log("Trimmed:", song.trimmed_audio_url);
+  // Play it
+  document.querySelector("audio").src = song.trimmed_audio_url;
+}` },
     ])}
+    <h4>Response</h4>
+    ${cb('json', `{
+  "ok": true,
+  "song": {
+    "song_id": "XKPQ",
+    "trimmed_audio_url": "/generated/ECHO_XKPQ_trimmed.mp3",
+    "trimmed_download_url": "/download/XKPQ/trimmed",
+    "trimmed_duration_seconds": 30,
+    "trimmed_created_at": "2026-06-13T19:05:22.445Z",
+    "...all other song fields..."
+  }
+}`)}
+
+    <div class="callout callout-warn">
+      <span class="callout-icon">⚠️</span>
+      <p>Trimming requires <strong>FFmpeg</strong> on the server PATH. On Render, FFmpeg is pre-installed. Locally: <code>brew install ffmpeg</code> (macOS) or <code>apt install ffmpeg</code> (Ubuntu).</p>
+    </div>
+    <div class="callout callout-info">
+      <span class="callout-icon">ℹ️</span>
+      <p>Only API-generated MP3 files (<code>mode: "api"</code>) can be trimmed. MusicGen WAV files are not supported by this endpoint — convert them first.</p>
+    </div>
+  </div>
+</div>
+`,
+
+'/docs/api/health': () => `
+<div class="page-header">
+  <span class="page-eyebrow">API Reference</span>
+  <h1 class="page-title">Health &amp; Status</h1>
+  <p class="page-desc">Check server health, MusicGen model load status, and live generation progress.</p>
+</div>
+
+<div class="endpoint">
+  <div class="endpoint-header">
+    <span class="endpoint-method method-get">GET</span>
+    <span class="endpoint-path">/health</span>
+    <span class="endpoint-desc">Simple health check — returns MusicGen model status</span>
+  </div>
+  <div class="endpoint-body">
+    ${cb('bash', `curl https://consolidated-echoecho.onrender.com/health`)}
+    ${cb('json', `{ "status": "ready" }     // MusicGen loaded
+{ "status": "loading" }  // still warming up
+{ "status": "error" }    // failed to load (check server logs)`)}
+    <p>Used by Render's health check system to determine if the service is up. Returns HTTP 200 always (even if status is "error").</p>
   </div>
 </div>
 
-<div class="callout callout-warn">
-  <span class="callout-icon">⚠️</span>
-  <p>Trimming requires <strong>FFmpeg</strong> to be installed on the server. On Render's free tier, FFmpeg is available. On custom servers, install it with <code>apt install ffmpeg</code> or <code>brew install ffmpeg</code>.</p>
+<div class="endpoint">
+  <div class="endpoint-header">
+    <span class="endpoint-method method-get">GET</span>
+    <span class="endpoint-path">/status</span>
+    <span class="endpoint-desc">Detailed service status including song count</span>
+  </div>
+  <div class="endpoint-body">
+    ${cb('bash', `curl https://consolidated-echoecho.onrender.com/status`)}
+    ${cb('json', `{
+  "ok": true,
+  "service": "Echo Echo",
+  "history_count": 42,
+  "status": "ready",
+  "model_loaded": true,
+  "processor_loaded": true,
+  "error": ""
+}`)}
+  </div>
+</div>
+
+<div class="endpoint">
+  <div class="endpoint-header">
+    <span class="endpoint-method method-get">GET</span>
+    <span class="endpoint-path">/generation-status</span>
+    <span class="endpoint-desc">Live generation progress — poll every 2s during generation</span>
+  </div>
+  <div class="endpoint-body">
+    ${cb('json', `// During generation
+{
+  "stage": "Composing melody",
+  "progress": 52,
+  "elapsed_seconds": 28,
+  "estimated_remaining_seconds": 26,
+  "estimated_total_seconds": 60,
+  "active": true
+}
+
+// When idle
+{
+  "stage": "Idle",
+  "progress": 0,
+  "elapsed_seconds": 0,
+  "estimated_remaining_seconds": 0,
+  "active": false
+}
+
+// When failed
+{
+  "stage": "Failed",
+  "progress": 100,
+  "active": false
+}`)}
+    <p><code>stage</code> rotates through these messages during active generation:</p>
+    ${cb('text', `"Analyzing mood" → "Composing melody" → "Creating atmosphere" →
+"Writing musical ideas" → "Adding emotional texture" → "Finalizing audio"`)}
+  </div>
 </div>
 `,
 
 '/docs/deployment': () => `
 <div class="page-header">
-  <div class="page-eyebrow">Deploy</div>
+  <span class="page-eyebrow">Deploy</span>
   <h1 class="page-title">Render Deployment</h1>
-  <p class="page-desc">Deploy Echo Echo to Render in five minutes using the included <code>render.yaml</code> blueprint — one service handles everything.</p>
+  <p class="page-desc">Deploy Echo Echo to production on Render in under 5 minutes. One service, zero separate frontend host needed.</p>
 </div>
 
 <div class="callout callout-tip">
   <span class="callout-icon">✅</span>
-  <p>FastAPI serves both the backend API <em>and</em> all frontend HTML files. You only need <strong>one Render service</strong> — no separate frontend hosting required.</p>
+  <p><strong>Single-service architecture:</strong> FastAPI serves the backend API <em>and</em> all HTML frontend pages via <code>FileResponse</code>. One Render web service covers everything — no CDN, no separate static host.</p>
 </div>
 
-<h2>Step-by-step deployment</h2>
+<h2>Step-by-step</h2>
 <ol class="step-list">
-  <li><div class="step-body"><div class="step-title">Push to GitHub</div><div class="step-desc">Make sure all your changes are committed and pushed to <code>github.com/simplysandeepp/Consolidated-EchoEcho</code>.</div></div></li>
-  <li><div class="step-body"><div class="step-title">Create a Render account</div><div class="step-desc">Go to <strong>render.com</strong> and sign up with your GitHub account.</div></div></li>
-  <li><div class="step-body"><div class="step-title">New Web Service → Connect GitHub</div><div class="step-desc">Click <em>New → Web Service</em>, connect your GitHub repo. Render auto-detects the <code>render.yaml</code> blueprint.</div></div></li>
-  <li><div class="step-body"><div class="step-title">Add environment variables</div><div class="step-desc">In the Render dashboard under <em>Environment</em>, add <code>GROQ_API_KEY</code> and optionally <code>KIEAI_API_KEY</code>. <code>PUBLIC_BASE_URL</code> is already set in <code>render.yaml</code>.</div></div></li>
-  <li><div class="step-body"><div class="step-title">Deploy</div><div class="step-desc">Click <em>Deploy</em>. Build takes ~2 minutes; the service starts and your app is live at the Render URL.</div></div></li>
+  <li><div class="step-body"><div class="step-title">Push to GitHub</div><div class="step-desc">All changes committed and pushed to <code>github.com/simplysandeepp/Consolidated-EchoEcho</code>. Render deploys from this repo.</div></div></li>
+  <li><div class="step-body"><div class="step-title">Create a Render account</div><div class="step-desc">Go to <strong>render.com</strong> → sign up with GitHub. Free tier works fine for personal/demo use.</div></div></li>
+  <li><div class="step-body"><div class="step-title">New → Web Service → Connect GitHub</div><div class="step-desc">Select your repo. Render auto-detects <code>render.yaml</code> and fills in build/start commands. Review and confirm.</div></div></li>
+  <li><div class="step-body"><div class="step-title">Add environment variables in Render dashboard</div><div class="step-desc">Go to Environment → Add <code>GROQ_API_KEY</code> and (optionally) <code>KIEAI_API_KEY</code>. <code>PUBLIC_BASE_URL</code> is already hardcoded in <code>render.yaml</code>.</div></div></li>
+  <li><div class="step-body"><div class="step-title">Deploy</div><div class="step-desc">Click <em>Create Web Service</em>. Build takes ~2 minutes (pip install). Service starts and your app is live.</div></div></li>
 </ol>
 
-<h2>render.yaml</h2>
-${codeBlock('yaml', `services:
+<h2>render.yaml explained</h2>
+${cb('yaml', `services:
   - type: web
-    name: echo-echo
-    runtime: python
-    plan: free
+    name: echo-echo          # service display name in Render
+    runtime: python          # Python runtime
+    plan: free               # free tier (ephemeral filesystem)
     buildCommand: pip install -r requirements-deploy.txt
     startCommand: uvicorn backend.main:app --host 0.0.0.0 --port $PORT
+    # $PORT is set automatically by Render (usually 10000)
     envVars:
       - key: GROQ_API_KEY
-        sync: false       # set in Render dashboard
+        sync: false          # must be set manually in Render dashboard
       - key: KIEAI_API_KEY
-        sync: false       # set in Render dashboard (optional)
+        sync: false          # optional — enables Kie.AI music generation
       - key: PUBLIC_BASE_URL
-        value: https://consolidated-echoecho.onrender.com
+        value: https://consolidated-echoecho.onrender.com  # already set
       - key: PYTHON_VERSION
         value: 3.12.6`)}
 
-<h2>After deployment</h2>
+<h2>What's available after deploy</h2>
 <table class="param-table">
-  <tr><th>URL</th><th>What's there</th></tr>
-  <tr><td><code>/</code></td><td>Landing page</td></tr>
-  <tr><td><code>/dashboard.html</code></td><td>Song generator</td></tr>
+  <tr><th>URL</th><th>Content</th></tr>
+  <tr><td><code>/</code></td><td>Landing page (Three.js wave background)</td></tr>
+  <tr><td><code>/login.html</code></td><td>Sign in page</td></tr>
+  <tr><td><code>/dashboard.html</code></td><td>Song generator UI</td></tr>
   <tr><td><code>/echo.html</code></td><td>Song library</td></tr>
   <tr><td><code>/docs</code></td><td>This documentation</td></tr>
-  <tr><td><code>/api/docs</code></td><td>Swagger / OpenAPI UI</td></tr>
-  <tr><td><code>/health</code></td><td>Health check (JSON)</td></tr>
+  <tr><td><code>/api/docs</code></td><td>Swagger / OpenAPI interactive docs</td></tr>
+  <tr><td><code>/health</code></td><td>Health check JSON</td></tr>
+  <tr><td><code>/generated/{filename}</code></td><td>Audio file streaming</td></tr>
 </table>
 
 <div class="callout callout-warn">
   <span class="callout-icon">⚠️</span>
-  <p><strong>Ephemeral filesystem:</strong> Render's free tier resets disk on each deploy. Generated audio files will be lost. For persistence, attach a <strong>Render Disk</strong> mounted at <code>/opt/render/project/src/backend/generated</code>, or integrate an S3-compatible store.</p>
+  <p><strong>Ephemeral filesystem:</strong> Render free tier resets disk on every deploy. Generated MP3s in <code>backend/generated/</code> and <code>song_history.json</code> are lost. Solutions: attach a <strong>Render Disk</strong> (paid), or store audio on S3/R2/Cloudflare and persist history in a DB.</p>
 </div>
 
 <h2>Auto-deploy on push</h2>
-<p>Once connected, Render watches the default branch and redeploys automatically on every <code>git push</code>. Build logs and deploy history are in the Render dashboard under <em>Events</em>.</p>
+${cb('bash', `# Every git push to main triggers a new Render deploy
+git add .
+git commit -m "feat: add new feature"
+git push origin main
+# → Render detects push → starts build → deploy live in ~2 min`)}
+`,
+
+'/docs/troubleshooting': () => `
+<div class="page-header">
+  <span class="page-eyebrow">Deploy</span>
+  <h1 class="page-title">Troubleshooting</h1>
+  <p class="page-desc">Common issues and how to fix them.</p>
+</div>
+
+<h2>Server shows "Not Found" on Render</h2>
+<p><strong>Cause:</strong> App crashed at startup before it could serve any routes.</p>
+<ol class="step-list">
+  <li><div class="step-body"><div class="step-title">Check Render logs</div><div class="step-desc">Go to your Render service → Logs. Look for Python tracebacks or startup errors.</div></div></li>
+  <li><div class="step-body"><div class="step-title">Most common cause: missing env var</div><div class="step-desc">If <code>KIEAI_API_KEY</code> is set but <code>PUBLIC_BASE_URL</code> is missing or localhost, <code>validate_kieai_config()</code> used to crash. Verify both are set in Render's Environment section.</div></div></li>
+  <li><div class="step-body"><div class="step-title">Redeploy after adding env vars</div><div class="step-desc">After adding environment variables, Render does not automatically redeploy. Click <em>Manual Deploy → Deploy latest commit</em>.</div></div></li>
+</ol>
+
+<h2>Audio generation fails (HTTP 500)</h2>
+${cb('json', `{"detail": "API song generation failed. Please try again."}`)}
+<ul>
+  <li>Check that <code>KIEAI_API_KEY</code> is correctly set (no extra spaces)</li>
+  <li>Verify your Kie.AI account has remaining credits</li>
+  <li>Check that <code>PUBLIC_BASE_URL</code> matches your actual Render URL exactly (no trailing slash)</li>
+  <li>Look in Render logs for <code>KieAI request error:</code> messages with the actual API response</li>
+</ul>
+
+<h2>Lyrics always say "unavailable"</h2>
+<ul>
+  <li>Verify <code>GROQ_API_KEY</code> is set — the key must start with <code>gsk_</code></li>
+  <li>Check Groq rate limits at console.groq.com — free tier has requests-per-minute limits</li>
+  <li>Check Render logs for <code>Lyrics generation unavailable:</code> and read the error message</li>
+</ul>
+
+<h2>Trim fails with "FFmpeg required"</h2>
+${cb('json', `{"detail": "FFmpeg is required for trimming but was not found on the system PATH."}`)}
+<ul>
+  <li>On Render, FFmpeg is available by default — this error shouldn't occur</li>
+  <li>Locally: install FFmpeg with <code>brew install ffmpeg</code> (macOS) or <code>sudo apt install ffmpeg</code> (Linux)</li>
+  <li>Verify installation: <code>ffmpeg -version</code></li>
+</ul>
+
+<h2>Sign-up returns HTTP 403</h2>
+${cb('json', `{"detail": "Sign-ups are temporarily closed — Echo Echo is in invite-only beta."}`)}
+<p>Set <code>ECHO_SIGNUPS_OPEN=1</code> in your environment or Render dashboard, then redeploy.</p>
+
+<h2>MusicGen stuck on "loading"</h2>
+<p>MusicGen requires downloading ~250MB of model weights on first run. On Render free tier this can take 5–15 minutes. The model is also re-downloaded every deploy because the filesystem is ephemeral. Consider using only <code>api</code> mode on Render.</p>
+
+<h2>Generated audio 404 after redeploy</h2>
+<p>Render's free tier filesystem is ephemeral — all files in <code>backend/generated/</code> are wiped on every deploy. The <code>song_history.json</code> records remain in code but the audio files are gone. Use a <strong>Render Disk</strong> (paid add-on) mounted at the generated directory to persist audio between deploys.</p>
+
+<h2>Getting help</h2>
+<ul>
+  <li>Open an issue: <a href="https://github.com/simplysandeepp/Consolidated-EchoEcho/issues" target="_blank">github.com/simplysandeepp/Consolidated-EchoEcho/issues</a></li>
+  <li>Check Render status: <a href="https://status.render.com" target="_blank">status.render.com</a></li>
+  <li>Groq status: <a href="https://status.groq.com" target="_blank">status.groq.com</a></li>
+</ul>
 `,
 
 };
@@ -1105,17 +1762,14 @@ ${codeBlock('yaml', `services:
 // ─── RENDER ──────────────────────────────────────────────────────────────────
 function render(rawPath) {
   const path = rawPath.replace(/\/$/, '') || '/docs';
-  const page = PAGES[path] || PAGES['/docs'];
-
-  document.title = 'Echo Echo — ' + (FLAT.find(n => n.path === path)?.label || 'Docs');
+  const page = P[path] || P['/docs'];
+  const title = FLAT.find(n => n.path === path);
+  document.title = 'Echo Echo Docs' + (title ? ' — ' + title.label : '');
   document.getElementById('content').innerHTML = page() + paginationHTML(path);
   renderSidebar(path);
   window.scrollTo(0, 0);
-
-  // re-bind copy buttons (event delegation not needed since we inline onclick)
 }
 
-// ─── INIT ─────────────────────────────────────────────────────────────────────
 render(location.pathname);
 </script>
 </body>
