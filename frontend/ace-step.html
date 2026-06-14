@@ -702,8 +702,8 @@ async function generateLyricsWithAI() {
         genre: sel.genre.join(', '),
         instruments: sel.instruments.join(', '),
         vocal: sel.vocal.join(', '),
-        tempo: parseInt(document.getElementById('bpm-slider').value),
-        energy: parseInt(document.getElementById('energy-slider').value),
+        tempo: parseInt(document.getElementById('bpm-slider').value) || 90,
+        energy: parseInt(document.getElementById('energy-slider').value) || 5,
         prompt: sel.mood.concat(sel.genre).join(', '),
       }),
     });
@@ -849,8 +849,8 @@ async function generate() {
         mood: sel.mood.join(', '),
         style: sel.genre.join(', '),
         instruments: sel.instruments,
-        tempo: parseInt(document.getElementById('bpm-slider').value),
-        energy: parseInt(document.getElementById('energy-slider').value),
+        tempo: parseInt(document.getElementById('bpm-slider').value) || 90,
+        energy: parseInt(document.getElementById('energy-slider').value) || 5,
         mode: 'ace-step',
       }),
     });
