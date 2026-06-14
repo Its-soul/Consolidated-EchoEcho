@@ -379,16 +379,65 @@
     /* ── INLINE CODE IN TABLES ── */
     td code{color:#d8aaff}
 
+    /* ── HAMBURGER BUTTON ── */
+    .hamburger{
+      display:none;flex-direction:column;justify-content:center;gap:5px;
+      width:36px;height:36px;border-radius:8px;border:1px solid rgba(255,255,255,.1);
+      background:rgba(255,255,255,.05);cursor:pointer;padding:8px;
+      flex-shrink:0;transition:background .15s,border-color .15s;
+    }
+    .hamburger:hover{background:rgba(255,255,255,.09);border-color:rgba(255,255,255,.18)}
+    .hamburger span{
+      display:block;height:1.5px;border-radius:2px;background:#fff;
+      transition:transform .25s,opacity .25s,width .25s;
+      transform-origin:center;
+    }
+    .hamburger.open span:nth-child(1){transform:translateY(6.5px) rotate(45deg)}
+    .hamburger.open span:nth-child(2){opacity:0;transform:scaleX(0)}
+    .hamburger.open span:nth-child(3){transform:translateY(-6.5px) rotate(-45deg)}
+
+    /* ── MOBILE OVERLAY ── */
+    .sidebar-overlay{
+      display:none;position:fixed;inset:0;z-index:8888;
+      background:rgba(0,0,0,.6);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);
+      opacity:0;transition:opacity .25s;
+    }
+    .sidebar-overlay.visible{opacity:1}
+
     @media(max-width:900px){
-      .sidebar{display:none}
-      .content{padding:2rem 1.5rem}
+      .hamburger{display:flex}
+      .nav-link,.nav-sep,.nav-tag{display:none}
+
+      .sidebar{
+        position:fixed;top:var(--nav-h);left:0;
+        height:calc(100vh - var(--nav-h));
+        z-index:8999;
+        transform:translateX(-100%);
+        transition:transform .28s cubic-bezier(.4,0,.2,1);
+        border-right:1px solid rgba(255,255,255,.1);
+        box-shadow:8px 0 40px rgba(0,0,0,.5);
+      }
+      .sidebar.open{transform:translateX(0)}
+      .sidebar-overlay{display:block}
+
+      .content{padding:2rem 1.25rem}
       .feature-list{grid-template-columns:1fr}
+      .card-grid{grid-template-columns:1fr}
+      .endpoint-header{flex-wrap:wrap;gap:.5rem}
+      .endpoint-desc{margin-left:0;width:100%}
+      .pagination{flex-direction:column}
+      .page-nav-spacer{display:none}
     }
   </style>
 </head>
 <body>
 
+<div class="sidebar-overlay" id="overlay" onclick="closeSidebar()"></div>
+
 <nav class="topnav">
+  <button class="hamburger" id="hamburger" onclick="toggleSidebar()" aria-label="Toggle navigation">
+    <span></span><span></span><span></span>
+  </button>
   <a class="nav-logo" href="/">
     <div class="nav-logo-icon">
       <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4"/><line x1="12" y1="2" x2="12" y2="5"/><line x1="12" y1="19" x2="12" y2="22"/><line x1="2" y1="12" x2="5" y2="12"/><line x1="19" y1="12" x2="22" y2="12"/></svg>
@@ -1771,6 +1820,34 @@ function render(rawPath) {
 }
 
 render(location.pathname);
+
+// ─── MOBILE SIDEBAR ───────────────────────────────────────────────────────────
+function toggleSidebar() {
+  const sidebar = document.querySelector('.sidebar');
+  const overlay = document.getElementById('overlay');
+  const btn = document.getElementById('hamburger');
+  const open = sidebar.classList.toggle('open');
+  btn.classList.toggle('open', open);
+  overlay.classList.toggle('visible', open);
+  document.body.style.overflow = open ? 'hidden' : '';
+}
+
+function closeSidebar() {
+  document.querySelector('.sidebar').classList.remove('open');
+  document.getElementById('overlay').classList.remove('visible');
+  document.getElementById('hamburger').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+// Close sidebar on nav item click (mobile)
+document.getElementById('sidenav').addEventListener('click', e => {
+  if (e.target.classList.contains('sidenav-item') && window.innerWidth <= 900) {
+    closeSidebar();
+  }
+});
+
+// Close on Escape
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeSidebar(); });
 </script>
 </body>
 </html>
