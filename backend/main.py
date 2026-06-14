@@ -20,6 +20,7 @@ from fastapi import FastAPI, File, HTTPException, Request, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
+from dotenv import load_dotenv
 from pydantic import BaseModel, Field
 
 from .api_generator import (
@@ -62,6 +63,9 @@ LEGACY_CALLBACK_FILE = BASE_DIR / "kieai_callbacks.json"
 DEFAULT_USER_EMAIL = "test@echo.com"
 DEFAULT_USER_ID = hashlib.sha256(DEFAULT_USER_EMAIL.encode("utf-8")).hexdigest()[:12]
 
+load_dotenv(PROJECT_DIR / ".env")
+load_dotenv(BASE_DIR / ".env")
+
 DEFAULT_GENERATION_ESTIMATE_SECONDS = 120
 ROTATING_STATUS_MESSAGES = [
     "Analyzing mood",
@@ -72,6 +76,15 @@ ROTATING_STATUS_MESSAGES = [
     "Finalizing audio",
 ]
 LYRICS_FALLBACK = "Lyrics generation is unavailable for this song, but the music was generated successfully."
+FIREBASE_ENV_MAP = {
+    "apiKey": "FIREBASE_API_KEY",
+    "authDomain": "FIREBASE_AUTH_DOMAIN",
+    "projectId": "FIREBASE_PROJECT_ID",
+    "storageBucket": "FIREBASE_STORAGE_BUCKET",
+    "messagingSenderId": "FIREBASE_MESSAGING_SENDER_ID",
+    "appId": "FIREBASE_APP_ID",
+    "measurementId": "FIREBASE_MEASUREMENT_ID",
+}
 
 logging.basicConfig(
     level=logging.INFO,
@@ -975,6 +988,25 @@ def api_auth_signup(request: SignupRequest) -> dict[str, Any]:
         raise HTTPException(status_code=status_code, detail=str(exc)) from exc
 
 
+@app.get("/api/firebase-config")
+def api_firebase_config() -> dict[str, str]:
+    config = {
+        firebase_key: os.getenv(env_key, "").strip()
+        for firebase_key, env_key in FIREBASE_ENV_MAP.items()
+    }
+    missing = [
+        env_key
+        for firebase_key, env_key in FIREBASE_ENV_MAP.items()
+        if firebase_key != "measurementId" and not config[firebase_key]
+    ]
+    if missing:
+        raise HTTPException(
+            status_code=503,
+            detail=f"Firebase configuration is missing: {', '.join(missing)}",
+        )
+    return {key: value for key, value in config.items() if value}
+
+
 class AceStepLyricsRequest(BaseModel):
     mood: str = ""
     genre: str = ""
@@ -1395,6 +1427,22 @@ def serve_frontend() -> FileResponse:
     if not index_path.exists():
         raise HTTPException(status_code=404, detail="Frontend index.html not found.")
     return FileResponse(index_path)
+
+
+@app.get("/login", include_in_schema=False)
+def serve_login_page() -> FileResponse:
+    path = FRONTEND_DIR / "login.html"
+    if not path.exists():
+        raise HTTPException(status_code=404, detail="Login page not found.")
+    return FileResponse(path, media_type="text/html")
+
+
+@app.get("/signup", include_in_schema=False)
+def serve_signup_page() -> FileResponse:
+    path = FRONTEND_DIR / "signup.html"
+    if not path.exists():
+        raise HTTPException(status_code=404, detail="Signup page not found.")
+    return FileResponse(path, media_type="text/html")
 
 
 @app.get("/{page}.html", include_in_schema=False)

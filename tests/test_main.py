@@ -50,6 +50,45 @@ def test_auth_login_with_demo_credentials() -> None:
     assert "closed" in closed.json()["detail"]
 
 
+def test_firebase_config_comes_from_env(monkeypatch) -> None:
+    values = {
+        "FIREBASE_API_KEY": "test-api-key",
+        "FIREBASE_AUTH_DOMAIN": "test.firebaseapp.com",
+        "FIREBASE_PROJECT_ID": "test-project",
+        "FIREBASE_STORAGE_BUCKET": "test.firebasestorage.app",
+        "FIREBASE_MESSAGING_SENDER_ID": "123456",
+        "FIREBASE_APP_ID": "1:123456:web:abcdef",
+        "FIREBASE_MEASUREMENT_ID": "G-TEST",
+    }
+    for key, value in values.items():
+        monkeypatch.setenv(key, value)
+
+    client = TestClient(main.app)
+    response = client.get("/api/firebase-config")
+
+    assert response.status_code == 200
+    assert response.json() == {
+        "apiKey": "test-api-key",
+        "authDomain": "test.firebaseapp.com",
+        "projectId": "test-project",
+        "storageBucket": "test.firebasestorage.app",
+        "messagingSenderId": "123456",
+        "appId": "1:123456:web:abcdef",
+        "measurementId": "G-TEST",
+    }
+
+
+def test_firebase_config_requires_env(monkeypatch) -> None:
+    for env_key in main.FIREBASE_ENV_MAP.values():
+        monkeypatch.delenv(env_key, raising=False)
+
+    client = TestClient(main.app)
+    response = client.get("/api/firebase-config")
+
+    assert response.status_code == 503
+    assert "FIREBASE_API_KEY" in response.json()["detail"]
+
+
 def test_compose_endpoint_returns_song_spec(monkeypatch) -> None:
     def fake_compose(payload: dict[str, object]) -> dict[str, object]:
         assert payload["mood"] == "Dreamy"
