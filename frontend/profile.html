@@ -40,7 +40,7 @@
     .nav-logo-icon{width:32px;height:32px;border-radius:9px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
     
     .nav-wordmark{font-size:1rem;font-weight:800;letter-spacing:-.03em;color:var(--dark)}
-    .nav-wordmark em{font-style:normal;background:var(--gradient-text);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+    .nav-wordmark em{font-style:normal;color:var(--dark)}
     .nav-divider{width:1px;height:20px;background:rgba(13,13,13,.08);margin:0 .25rem}
     .nav-page-title{font-size:.875rem;font-weight:600;color:var(--grey71)}
     .nav-back{
@@ -59,10 +59,13 @@
     .avatar-section{display:flex;flex-direction:column;align-items:center;gap:.75rem;margin-bottom:2.5rem}
     .avatar-circle{
       width:80px;height:80px;border-radius:50%;
-      background:var(--gradient);
+      background:#fff;border:2px solid rgba(13,13,13,.12);
       display:flex;align-items:center;justify-content:center;
-      font-size:2rem;font-weight:800;color:#fff;
-      flex-shrink:0;
+      font-size:2.8rem;font-weight:800;color:var(--dark);
+      flex-shrink:0;line-height:1;
+    }
+    .avatar-circle.has-emoji{
+      font-size:3.4rem;
     }
     .avatar-name{font-size:1.5rem;font-weight:800;letter-spacing:-.03em;color:#0d0d0d}
     .avatar-email{font-size:.9rem;color:var(--grey71)}
@@ -137,6 +140,23 @@
     .btn-save:hover{opacity:.9}
     .btn-save:active{transform:scale(.97)}
 
+    /* AVATAR PICKER */
+    .av-pick-item{
+      aspect-ratio:1;border-radius:14px;background:#f4f4f4;
+      border:2.5px solid transparent;
+      display:flex;align-items:center;justify-content:center;
+      font-size:1.6rem;cursor:pointer;
+      transition:all .18s cubic-bezier(.2,.75,.28,.9);
+      user-select:none;
+    }
+    .av-pick-item:hover{background:#ebebeb;transform:scale(1.07)}
+    .av-pick-item.av-selected{
+      border-color:#0d0d0d;
+      background:#fff;
+      transform:scale(1.1);
+      box-shadow:0 0 0 3px rgba(13,13,13,.12);
+    }
+
     /* TOAST */
     .toast{
       position:fixed;bottom:2rem;left:50%;transform:translateX(-50%);
@@ -174,6 +194,12 @@
       <div class="avatar-circle" id="avatarCircle">?</div>
       <div class="avatar-name" id="heroName">Loading…</div>
       <div class="avatar-email" id="heroEmail"></div>
+    </div>
+
+    <!-- Card 0: Avatar Picker -->
+    <div class="card">
+      <div class="card-label">Choose Your Icon</div>
+      <div id="av-grid" style="display:grid;grid-template-columns:repeat(5,1fr);gap:.6rem;margin-bottom:.5rem"></div>
     </div>
 
     <!-- Card 1: Personal Info -->
@@ -247,10 +273,17 @@
     const bio   = localStorage.getItem('echo_user_bio')   || '';
 
     // Avatar
-    const initial = name.trim().charAt(0).toUpperCase() || '?';
-    document.getElementById('avatarCircle').textContent = initial;
-    document.getElementById('heroName').textContent     = name  || 'Your Name';
-    document.getElementById('heroEmail').textContent    = email || '';
+    const avatar = localStorage.getItem('echo_user_avatar') || '';
+    const display = avatar || name.trim().charAt(0).toUpperCase() || '?';
+    const avatarCircle = document.getElementById('avatarCircle');
+    avatarCircle.textContent = display;
+    if(avatar) avatarCircle.classList.add('has-emoji');
+    document.getElementById('heroName').textContent  = name  || 'Your Name';
+    document.getElementById('heroEmail').textContent = email || '';
+    // Mark selected avatar in picker
+    document.querySelectorAll('.av-pick-item').forEach(el => {
+      if(el.dataset.emoji === avatar) el.classList.add('av-selected');
+    });
 
     // Fields
     document.getElementById('fieldName').value  = name;
@@ -313,6 +346,40 @@
       setTimeout(()=>t.remove(), 320);
     }, 2500);
   }
+
+  // Avatar picker
+  (function buildAvatarPicker(){
+    const AVATARS = [
+      {emoji:'🐸',label:'Frog'},{emoji:'🦄',label:'Unicorn'},
+      {emoji:'🐼',label:'Panda'},{emoji:'🦊',label:'Fox'},
+      {emoji:'🐨',label:'Koala'},{emoji:'🦁',label:'Lion'},
+      {emoji:'🐯',label:'Tiger'},{emoji:'🐙',label:'Octopus'},
+      {emoji:'🦋',label:'Butterfly'},{emoji:'🦩',label:'Flamingo'},
+      {emoji:'🎸',label:'Guitar'},{emoji:'🎤',label:'Mic'},
+      {emoji:'🎧',label:'Headphones'},{emoji:'🥁',label:'Drums'},
+      {emoji:'🎹',label:'Piano'},
+    ];
+    const current = localStorage.getItem('echo_user_avatar') || '';
+    const grid = document.getElementById('av-grid');
+    AVATARS.forEach(av => {
+      const el = document.createElement('div');
+      el.className = 'av-pick-item' + (av.emoji === current ? ' av-selected' : '');
+      el.dataset.emoji = av.emoji;
+      el.textContent = av.emoji;
+      el.title = av.label;
+      el.onclick = () => {
+        document.querySelectorAll('.av-pick-item').forEach(e => e.classList.remove('av-selected'));
+        el.classList.add('av-selected');
+        localStorage.setItem('echo_user_avatar', av.emoji);
+        localStorage.setItem('echo_user_avatar_label', av.label);
+        const circle = document.getElementById('avatarCircle');
+        circle.textContent = av.emoji;
+        circle.classList.add('has-emoji');
+        showToast('Avatar updated!');
+      };
+      grid.appendChild(el);
+    });
+  })();
 </script>
 </body>
 </html>

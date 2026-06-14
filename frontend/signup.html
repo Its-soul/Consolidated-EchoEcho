@@ -449,11 +449,9 @@
         return;
       }
 
-      // Success — show success state, do NOT redirect to dashboard
-      document.getElementById('success-sub').innerHTML =
-        `Account created for <strong>${email}</strong>.<br>Log in to start making music.`;
-      document.getElementById('form-state').style.display = 'none';
-      document.getElementById('success-state').style.display = 'block';
+      // Success — redirect to avatar picker
+      localStorage.setItem('echo_pending_email', email);
+      setTimeout(() => { window.location.href = 'pick-avatar.html'; }, 600);
 
     } catch (err) {
       showMsg('Network error — check your connection and try again.', 'error');

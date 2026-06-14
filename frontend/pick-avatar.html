@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0"/>
+  <title>Echo Echo — Pick Your Vibe</title>
+  <link rel="icon" type="image/svg+xml" href="logo.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    @keyframes fade-up{0%{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+    @keyframes pop{0%{transform:scale(.8);opacity:0}60%{transform:scale(1.08)}to{transform:scale(1);opacity:1}}
+    @keyframes bounce-in{0%{transform:scale(0.3);opacity:0}50%{transform:scale(1.1)}70%{transform:scale(0.95)}to{transform:scale(1);opacity:1}}
+
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    html,body{min-height:100%;font-family:'Inter',sans-serif;-webkit-font-smoothing:antialiased;background:#fafafa;color:#0d0d0d}
+
+    :root{
+      --gradient:linear-gradient(135deg,#ff5858 0%,#c058ff 100%);
+      --dark:#0d0d0d;
+      --grey71:#717171;
+    }
+
+    .page{
+      min-height:100vh;display:flex;align-items:center;justify-content:center;
+      padding:2rem 1rem;
+    }
+
+    .card{
+      background:#fff;border-radius:28px;
+      border:1px solid rgba(13,13,13,.07);
+      box-shadow:0 4px 6px rgba(0,0,0,.04),0 20px 60px rgba(0,0,0,.08);
+      padding:2.5rem 2rem;max-width:520px;width:100%;
+      animation:fade-up .5s cubic-bezier(.2,.75,.28,.9) both;
+      text-align:center;
+    }
+
+    .icon-top{font-size:2.5rem;margin-bottom:1rem;animation:bounce-in .6s ease both .1s}
+
+    h1{
+      font-size:1.75rem;font-weight:900;letter-spacing:-.04em;
+      background:var(--gradient);-webkit-background-clip:text;background-clip:text;
+      -webkit-text-fill-color:transparent;margin-bottom:.5rem;
+    }
+    .sub{font-size:.9rem;color:var(--grey71);margin-bottom:2rem;line-height:1.5}
+
+    /* Avatar grid */
+    .avatar-grid{
+      display:grid;grid-template-columns:repeat(5,1fr);
+      gap:.75rem;margin-bottom:2rem;
+    }
+
+    .av-item{
+      aspect-ratio:1;border-radius:18px;
+      background:#f4f4f4;border:2.5px solid transparent;
+      display:flex;align-items:center;justify-content:center;
+      font-size:2rem;cursor:pointer;
+      transition:all .2s cubic-bezier(.2,.75,.28,.9);
+      user-select:none;
+      animation:pop .4s ease both;
+    }
+    .av-item:nth-child(1){animation-delay:.05s}
+    .av-item:nth-child(2){animation-delay:.08s}
+    .av-item:nth-child(3){animation-delay:.11s}
+    .av-item:nth-child(4){animation-delay:.14s}
+    .av-item:nth-child(5){animation-delay:.17s}
+    .av-item:nth-child(6){animation-delay:.20s}
+    .av-item:nth-child(7){animation-delay:.23s}
+    .av-item:nth-child(8){animation-delay:.26s}
+    .av-item:nth-child(9){animation-delay:.29s}
+    .av-item:nth-child(10){animation-delay:.32s}
+
+    .av-item:hover{background:#ebebeb;transform:scale(1.06)}
+    .av-item.selected{
+      border-color:#c058ff;
+      background:linear-gradient(135deg,rgba(255,88,88,.1),rgba(192,88,255,.12));
+      transform:scale(1.1);
+      box-shadow:0 0 0 4px rgba(192,88,255,.18);
+    }
+
+    .selected-preview{
+      display:flex;align-items:center;gap:1rem;
+      background:#f4f4f4;border-radius:16px;padding:1rem 1.25rem;
+      margin-bottom:1.5rem;text-align:left;
+      min-height:68px;
+    }
+    .preview-avatar{
+      width:48px;height:48px;border-radius:50%;
+      background:var(--gradient);
+      display:flex;align-items:center;justify-content:center;
+      font-size:1.6rem;flex-shrink:0;
+    }
+    .preview-text .pname{font-size:.95rem;font-weight:700;color:var(--dark)}
+    .preview-text .phint{font-size:.78rem;color:var(--grey71);margin-top:.15rem}
+
+    .btn-done{
+      width:100%;padding:.9rem;border:none;border-radius:14px;
+      background:var(--gradient);color:#fff;
+      font-size:1rem;font-weight:800;font-family:'Inter',sans-serif;
+      cursor:pointer;transition:opacity .15s,transform .12s;
+    }
+    .btn-done:hover{opacity:.9}
+    .btn-done:active{transform:scale(.97)}
+    .btn-done:disabled{opacity:.45;cursor:not-allowed}
+
+    .skip{
+      margin-top:1rem;font-size:.82rem;color:var(--grey71);
+      cursor:pointer;text-decoration:underline;text-underline-offset:3px;
+    }
+    .skip:hover{color:var(--dark)}
+  </style>
+</head>
+<body>
+<div class="page">
+  <div class="card">
+    <div class="icon-top">🎨</div>
+    <h1>Pick your vibe</h1>
+    <p class="sub">Choose a fun icon for your profile — you can always change it later.</p>
+
+    <div class="avatar-grid" id="avatar-grid">
+      <!-- avatars injected by JS -->
+    </div>
+
+    <div class="selected-preview" id="preview">
+      <div class="preview-avatar" id="preview-icon" style="background:#f4f4f4;font-size:1.4rem">🎵</div>
+      <div class="preview-text">
+        <div class="pname" id="preview-name">Pick an icon above</div>
+        <div class="phint">This will appear on your profile and dashboard</div>
+      </div>
+    </div>
+
+    <button class="btn-done" id="btn-done" disabled onclick="finish()">Let's go →</button>
+    <p class="skip" onclick="skip()">Skip for now</p>
+  </div>
+</div>
+
+<script>
+  const AVATARS = [
+    { emoji: '🐸', label: 'Frog' },
+    { emoji: '🦄', label: 'Unicorn' },
+    { emoji: '🐼', label: 'Panda' },
+    { emoji: '🦊', label: 'Fox' },
+    { emoji: '🐨', label: 'Koala' },
+    { emoji: '🦁', label: 'Lion' },
+    { emoji: '🐯', label: 'Tiger' },
+    { emoji: '🐙', label: 'Octopus' },
+    { emoji: '🦋', label: 'Butterfly' },
+    { emoji: '🦩', label: 'Flamingo' },
+    { emoji: '🎸', label: 'Guitar' },
+    { emoji: '🎤', label: 'Mic' },
+    { emoji: '🎧', label: 'Headphones' },
+    { emoji: '🥁', label: 'Drums' },
+    { emoji: '🎹', label: 'Piano' },
+  ];
+
+  let chosen = null;
+  const grid = document.getElementById('avatar-grid');
+  const previewIcon = document.getElementById('preview-icon');
+  const previewName = document.getElementById('preview-name');
+  const btnDone = document.getElementById('btn-done');
+
+  AVATARS.forEach((av, i) => {
+    const el = document.createElement('div');
+    el.className = 'av-item';
+    el.textContent = av.emoji;
+    el.title = av.label;
+    el.onclick = () => select(av, el);
+    grid.appendChild(el);
+  });
+
+  function select(av, el) {
+    document.querySelectorAll('.av-item').forEach(e => e.classList.remove('selected'));
+    el.classList.add('selected');
+    chosen = av;
+    previewIcon.textContent = av.emoji;
+    previewIcon.style.background = 'linear-gradient(135deg,#ff5858,#c058ff)';
+    previewName.textContent = av.label + ' — looking good!';
+    btnDone.disabled = false;
+  }
+
+  function finish() {
+    if (!chosen) return;
+    localStorage.setItem('echo_user_avatar', chosen.emoji);
+    localStorage.setItem('echo_user_avatar_label', chosen.label);
+    window.location.href = 'login.html';
+  }
+
+  function skip() {
+    window.location.href = 'login.html';
+  }
+</script>
+</body>
+</html>
