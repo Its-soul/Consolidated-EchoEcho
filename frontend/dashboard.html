@@ -375,7 +375,7 @@
     /* ── Frog mascot ────────────────────────────────────── */
     .frog-stage{--dur:0.85s;--accent-left:#ff5858;--accent-right:#c058ff;position:relative;width:12em;height:12em;font-size:14px}
     .frog,.frog div,.guitar,.guitar div,.music-note{position:absolute}
-    .frog{left:50%;top:54%;width:7em;height:7em;transform:translate(-50%,-50%);animation:frogDance var(--dur) ease-in-out infinite;filter:drop-shadow(0 0.45em 0.8em rgba(13,13,13,.16)) drop-shadow(0 0 0.35em rgba(255,88,88,.1))}
+    .frog{left:28%;top:38%;width:7em;height:7em;transform:translate(-50%,-50%);animation:frogDance var(--dur) ease-in-out infinite;filter:drop-shadow(0 0.45em 0.8em rgba(13,13,13,.16)) drop-shadow(0 0 0.35em rgba(255,88,88,.1))}
     .frog__body{left:1.8em;top:3em;width:3.4em;height:3.2em;background:#58c96f;border-radius:48% 52% 45% 45%;box-shadow:inset -0.35em -0.35em 0 #2f9f4f}
     .frog__belly{left:.65em;top:.85em;width:2.1em;height:1.9em;background:#b9f3a4;border-radius:50%}
     .frog__head{left:1.1em;top:.9em;width:4.8em;height:3.1em;background:#64d979;border-radius:48% 48% 45% 45%;box-shadow:inset -0.3em -0.25em 0 #36aa55;animation:frogHead var(--dur) ease-in-out infinite}
@@ -1513,16 +1513,14 @@ function buildStepHTML(step){
 
   if(step.type === 'grid'){
     const cols = step.cols || 4;
-    const curr = sel[step.key] || [];
     html += `<div class="choice-grid${cols===5?' cols-5':''}">`;
     step.options.forEach(o => {
-      const active = Array.isArray(curr) ? curr.includes(o.l) : curr === o.l;
+      const active = sel[step.key] === o.l;
       html += `<div class="choice-chip${active?' sel':''}" data-key="${step.key}" data-val="${o.l}" onclick="selectChip(this)">
         <span class="chip-emoji">${o.e}</span>
         <span class="chip-label">${o.l}</span>
       </div>`;
     });
-    html += `<div style="width:100%;font-size:.7rem;color:var(--grey71);margin-top:.25rem;text-align:right">Select one or more</div>`;
     html += `</div>`;
 
   } else if(step.type === 'bpm'){
@@ -1586,15 +1584,9 @@ function renderPopupStep(idx, dir){
 function selectChip(el){
   const key = el.dataset.key;
   const val = el.dataset.val;
-  if(!Array.isArray(sel[key])) sel[key] = [];
-  const idx = sel[key].indexOf(val);
-  if(idx === -1){
-    sel[key].push(val);
-    el.classList.add('sel');
-  } else {
-    sel[key].splice(idx, 1);
-    el.classList.remove('sel');
-  }
+  sel[key] = val;
+  el.closest('.choice-grid').querySelectorAll('.choice-chip').forEach(c => c.classList.remove('sel'));
+  el.classList.add('sel');
 }
 
 function onBPMInput(input){
@@ -1693,21 +1685,15 @@ function submitInspo(){
   setTimeout(() => startVocalGeneration(), 300);
 }
 
-function joinSel(key, fallback=''){
-  const v = sel[key];
-  if(!v) return fallback;
-  return Array.isArray(v) ? v.join(', ') : v;
-}
-
 async function startVocalGeneration(){
   const payload = {
-    mood:       joinSel('mood',      'Energetic'),
-    genre:      joinSel('genre',     'Pop'),
-    theme:      joinSel('theme',     ''),
-    instrument: joinSel('instrument',''),
-    style:      joinSel('style',     ''),
+    mood:       sel.mood       || 'Energetic',
+    genre:      sel.genre      || 'Pop',
+    theme:      sel.theme      || '',
+    instrument: sel.instrument || '',
+    style:      sel.style      || '',
     bpm:        sel.bpm        || 90,
-    tempoFeel:  joinSel('tempoFeel', ''),
+    tempoFeel:  sel.tempoFeel  || '',
     promptText: sel.promptText || '',
   };
 
