@@ -8,425 +8,663 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.9.1/mermaid.min.js"></script>
+  <script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"}}</script>
   <style>
-    @keyframes float-glow{0%,100%{box-shadow:0 0 60px rgba(192,88,255,.12),0 0 120px rgba(192,88,255,.06)}50%{box-shadow:0 0 80px rgba(192,88,255,.18),0 0 160px rgba(192,88,255,.09)}}
-    @keyframes shimmer{0%{background-position:-200% center}100%{background-position:200% center}}
-    @keyframes fade-up{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
 
-    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-    html{scroll-behavior:smooth}
-    body{
-      font-family:'Inter',ui-sans-serif,system-ui,sans-serif;
-      background:#07070f;
-      color:#e8e8f0;
-      -webkit-font-smoothing:antialiased;
-      font-size:16px;
-      line-height:1.75;
-      min-height:100vh;
-    }
+@keyframes float-glow{0%,100%{box-shadow:0 0 60px rgba(192,88,255,.12),0 0 120px rgba(192,88,255,.06)}50%{box-shadow:0 0 80px rgba(192,88,255,.18),0 0 160px rgba(192,88,255,.09)}}
+@keyframes shimmer{0%{background-position:-200% center}100%{background-position:200% center}}
+@keyframes fade-up{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+@keyframes pulse-dot{0%,100%{transform:scale(1);opacity:.7}50%{transform:scale(1.3);opacity:1}}
+@keyframes rotate-slow{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+@keyframes gradient-x{0%,100%{background-position:0% 50%}50%{background-position:100% 50%}}
+@keyframes typing{from{width:0}to{width:100%}}
+@keyframes blink-caret{from,to{border-color:transparent}50%{border-color:#c084fc}}
+@keyframes orbit{from{transform:rotate(0deg) translateX(120px) rotate(0deg)}to{transform:rotate(360deg) translateX(120px) rotate(-360deg)}}
+@keyframes wave-pulse{0%,100%{transform:scaleY(.5)}50%{transform:scaleY:1}}
+@keyframes slide-in-left{from{opacity:0;transform:translateX(-30px)}to{opacity:1;transform:translateX(0)}}
+@keyframes slide-in-right{from{opacity:0;transform:translateX(30px)}to{opacity:1;transform:translateX(0)}}
+@keyframes count-up{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+@keyframes glow-pulse{0%,100%{filter:drop-shadow(0 0 8px rgba(192,88,255,.3))}50%{filter:drop-shadow(0 0 20px rgba(192,88,255,.6))}}
+@keyframes particle-float{0%{transform:translateY(0) translateX(0);opacity:0}10%{opacity:1}90%{opacity:1}100%{transform:translateY(-100vh) translateX(50px);opacity:0}}
+@keyframes data-flow{0%{stroke-dashoffset:1000}100%{stroke-dashoffset:0}}
+@keyframes node-activate{0%{transform:scale(1);box-shadow:0 0 0 0 rgba(192,88,255,.4)}50%{transform:scale(1.05);box-shadow:0 0 30px 10px rgba(192,88,255,.2)}100%{transform:scale(1);box-shadow:0 0 0 0 rgba(192,88,255,0)}}
 
-    /* ── AMBIENT BG ── */
-    body::before{
-      content:'';
-      position:fixed;inset:0;z-index:0;pointer-events:none;
-      background:
-        radial-gradient(ellipse 80vw 60vh at 15% 10%, rgba(120,40,255,.12) 0%, transparent 60%),
-        radial-gradient(ellipse 60vw 50vh at 85% 80%, rgba(255,50,80,.08) 0%, transparent 60%),
-        radial-gradient(ellipse 100vw 80vh at 50% 50%, rgba(10,10,30,.9) 0%, transparent 100%);
-    }
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  font-family:'Inter',ui-sans-serif,system-ui,sans-serif;
+  background:#07070f;
+  color:#e8e8f0;
+  -webkit-font-smoothing:antialiased;
+  font-size:16px;
+  line-height:1.75;
+  min-height:100vh;
+  overflow-x:hidden;
+}
 
-    :root{
-      --nav-h:60px;
-      --sidebar-w:300px;
-      --grad:linear-gradient(135deg,#ff5858 0%,#c058ff 100%);
-      --grad-text:linear-gradient(135deg,#ff6b6b 0%,#c77dff 100%);
-      --glass:rgba(255,255,255,.04);
-      --glass-border:rgba(255,255,255,.08);
-      --glass-strong:rgba(255,255,255,.07);
-      --text:#e8e8f0;
-      --text-muted:#888;
-      --text-dim:#aaa;
-      --accent:#c084fc;
-      --accent2:#ff6b6b;
-      --dark-card:rgba(255,255,255,.035);
-    }
+/* ── AMBIENT BG ── */
+body::before{
+  content:'';
+  position:fixed;inset:0;z-index:0;pointer-events:none;
+  background:
+    radial-gradient(ellipse 80vw 60vh at 15% 10%, rgba(120,40,255,.12) 0%, transparent 60%),
+    radial-gradient(ellipse 60vw 50vh at 85% 80%, rgba(255,50,80,.08) 0%, transparent 60%),
+    radial-gradient(ellipse 100vw 80vh at 50% 50%, rgba(10,10,30,.9) 0%, transparent 100%);
+}
 
-    /* ── TOP NAV ── */
-    .topnav{
-      position:fixed;top:0;left:0;right:0;z-index:9999;
-      height:var(--nav-h);
-      background:rgba(7,7,15,.7);
-      backdrop-filter:blur(24px) saturate(180%);-webkit-backdrop-filter:blur(24px) saturate(180%);
-      border-bottom:1px solid rgba(255,255,255,.07);
-      display:flex;align-items:center;padding:0 1.5rem;gap:.75rem;
-    }
-    .nav-logo{display:flex;align-items:center;gap:.5rem;text-decoration:none;flex-shrink:0}
-    .nav-logo-icon{width:32px;height:32px;border-radius:9px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
-    
-    .nav-wordmark{font-size:1rem;font-weight:800;letter-spacing:-.03em;color:#fff}
-    .nav-wordmark em{font-style:normal;color:var(--dark)}
-    .nav-sep{width:1px;height:16px;background:rgba(255,255,255,.1);flex-shrink:0}
-    .nav-tag{font-size:.78rem;font-weight:600;color:var(--text-muted);letter-spacing:.01em}
-    .nav-right{margin-left:auto;display:flex;align-items:center;gap:.5rem}
-    .nav-link{font-size:.84rem;font-weight:500;color:var(--text-muted);text-decoration:none;padding:.3rem .65rem;border-radius:6px;transition:background .15s,color .15s}
-    .nav-link:hover{background:rgba(255,255,255,.06);color:#fff}
-    .nav-btn{
-      font-size:.84rem;font-weight:700;color:#fff;
-      background:var(--grad);
-      padding:.35rem .9rem;border-radius:7px;text-decoration:none;
-      box-shadow:0 0 12px rgba(192,88,255,.3);
-      transition:opacity .15s,box-shadow .15s;
-    }
-    .nav-btn:hover{opacity:.9;box-shadow:0 0 20px rgba(192,88,255,.5)}
-    .nav-version{font-size:.72rem;font-weight:700;background:rgba(255,255,255,.07);color:var(--text-muted);padding:.2rem .55rem;border-radius:20px;border:1px solid rgba(255,255,255,.08);letter-spacing:.02em}
+:root{
+  --nav-h:60px;
+  --sidebar-w:320px;
+  --grad:linear-gradient(135deg,#ff5858 0%,#c058ff 100%);
+  --grad-text:linear-gradient(135deg,#ff6b6b 0%,#c77dff 100%);
+  --grad-animated:linear-gradient(270deg,#ff5858,#c058ff,#38bdf8,#ff5858);
+  --glass:rgba(255,255,255,.04);
+  --glass-border:rgba(255,255,255,.08);
+  --glass-strong:rgba(255,255,255,.07);
+  --text:#e8e8f0;
+  --text-muted:#888;
+  --text-dim:#aaa;
+  --accent:#c084fc;
+  --accent2:#ff6b6b;
+  --dark-card:rgba(255,255,255,.035);
+  --success:#34d399;
+  --warning:#fbbf24;
+  --danger:#f87171;
+  --info:#38bdf8;
+}
 
-    /* ── LAYOUT ── */
-    .layout{display:flex;margin-top:var(--nav-h);min-height:calc(100vh - var(--nav-h));position:relative;z-index:1}
+/* ── PARTICLE CANVAS ── */
+#particle-canvas{
+  position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.4;
+}
 
-    /* ── SIDEBAR ── */
-    .sidebar{
-      width:var(--sidebar-w);
-      flex-shrink:0;
-      position:sticky;top:var(--nav-h);
-      height:calc(100vh - var(--nav-h));
-      overflow-y:auto;
-      border-right:1px solid rgba(255,255,255,.06);
-      padding:1.5rem 0 3rem;
-      background:rgba(7,7,15,.6);
-      backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
-    }
-    .sidebar::-webkit-scrollbar{width:3px}
-    .sidebar::-webkit-scrollbar-thumb{background:rgba(255,255,255,.12);border-radius:3px}
+/* ── TOP NAV ── */
+.topnav{
+  position:fixed;top:0;left:0;right:0;z-index:9999;
+  height:var(--nav-h);
+  background:rgba(7,7,15,.7);
+  backdrop-filter:blur(24px) saturate(180%);-webkit-backdrop-filter:blur(24px) saturate(180%);
+  border-bottom:1px solid rgba(255,255,255,.07);
+  display:flex;align-items:center;padding:0 1.5rem;gap:.75rem;
+}
+.nav-logo{display:flex;align-items:center;gap:.5rem;text-decoration:none;flex-shrink:0}
+.nav-logo-icon{width:32px;height:32px;border-radius:9px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.nav-wordmark{font-size:1rem;font-weight:800;letter-spacing:-.03em;color:#fff}
+.nav-wordmark em{font-style:normal;color:var(--dark)}
+.nav-sep{width:1px;height:16px;background:rgba(255,255,255,.1);flex-shrink:0}
+.nav-tag{font-size:.78rem;font-weight:600;color:var(--text-muted);letter-spacing:.01em}
+.nav-right{margin-left:auto;display:flex;align-items:center;gap:.5rem}
+.nav-link{font-size:.84rem;font-weight:500;color:var(--text-muted);text-decoration:none;padding:.3rem .65rem;border-radius:6px;transition:background .15s,color .15s}
+.nav-link:hover{background:rgba(255,255,255,.06);color:#fff}
+.nav-btn{
+  font-size:.84rem;font-weight:700;color:#fff;
+  background:var(--grad);
+  padding:.35rem .9rem;border-radius:7px;text-decoration:none;
+  box-shadow:0 0 12px rgba(192,88,255,.3);
+  transition:opacity .15s,box-shadow .15s;
+}
+.nav-btn:hover{opacity:.9;box-shadow:0 0 20px rgba(192,88,255,.5)}
+.nav-version{font-size:.72rem;font-weight:700;background:rgba(255,255,255,.07);color:var(--text-muted);padding:.2rem .55rem;border-radius:20px;border:1px solid rgba(255,255,255,.08);letter-spacing:.02em}
 
-    .sidenav-group{margin-bottom:1.5rem}
-    .sidenav-label{
-      font-size:.68rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;
-      color:rgba(255,255,255,.28);padding:.2rem 1.4rem .4rem;display:block;
-    }
-    .sidenav-item{
-      display:flex;align-items:center;gap:.5rem;
-      padding:.44rem 1.4rem;font-size:.9rem;font-weight:500;
-      color:rgba(255,255,255,.55);text-decoration:none;cursor:pointer;
-      border-left:2px solid transparent;
-      transition:all .15s;
-    }
-    .sidenav-item:hover{background:rgba(255,255,255,.05);color:rgba(255,255,255,.9)}
-    .sidenav-item.active{
-      background:rgba(192,88,255,.1);
-      color:#d8aaff;
-      border-left-color:#c084fc;
-      font-weight:600;
-    }
-    .method-badge{
-      font-size:.6rem;font-weight:700;letter-spacing:.05em;
-      padding:.15rem .4rem;border-radius:4px;flex-shrink:0;
-      font-family:'JetBrains Mono',monospace;
-    }
-    .badge-post{background:rgba(251,191,36,.15);color:#fbbf24;border:1px solid rgba(251,191,36,.2)}
-    .badge-get{background:rgba(52,211,153,.12);color:#34d399;border:1px solid rgba(52,211,153,.2)}
+/* ── LAYOUT ── */
+.layout{display:flex;margin-top:var(--nav-h);min-height:calc(100vh - var(--nav-h));position:relative;z-index:1}
 
-    /* ── CONTENT ── */
-    .content{flex:1;padding:3rem 4.5rem 5rem;max-width:900px;min-width:0;animation:fade-up .3s ease}
+/* ── SIDEBAR ── */
+.sidebar{
+  width:var(--sidebar-w);
+  flex-shrink:0;
+  position:sticky;top:var(--nav-h);
+  height:calc(100vh - var(--nav-h));
+  overflow-y:auto;
+  border-right:1px solid rgba(255,255,255,.06);
+  padding:1.5rem 0 3rem;
+  background:rgba(7,7,15,.6);
+  backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+}
+.sidebar::-webkit-scrollbar{width:3px}
+.sidebar::-webkit-scrollbar-thumb{background:rgba(255,255,255,.12);border-radius:3px}
 
-    /* ── HEADINGS ── */
-    .page-header{margin-bottom:2.5rem;padding-bottom:2rem;border-bottom:1px solid rgba(255,255,255,.07)}
-    .page-eyebrow{
-      font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.12em;
-      background:var(--grad-text);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;
-      margin-bottom:.65rem;display:block;
-    }
-    .page-title{
-      font-size:2.25rem;font-weight:900;letter-spacing:-.045em;line-height:1.12;
-      color:#fff;margin-bottom:.85rem;
-    }
-    .page-desc{font-size:1.05rem;color:var(--text-dim);line-height:1.7;max-width:660px}
+.sidenav-group{margin-bottom:1.5rem}
+.sidenav-label{
+  font-size:.68rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;
+  color:rgba(255,255,255,.28);padding:.2rem 1.4rem .4rem;display:block;
+}
+.sidenav-item{
+  display:flex;align-items:center;gap:.5rem;
+  padding:.44rem 1.4rem;font-size:.9rem;font-weight:500;
+  color:rgba(255,255,255,.55);text-decoration:none;cursor:pointer;
+  border-left:2px solid transparent;
+  transition:all .15s;
+}
+.sidenav-item:hover{background:rgba(255,255,255,.05);color:rgba(255,255,255,.9)}
+.sidenav-item.active{
+  background:rgba(192,88,255,.1);
+  color:#d8aaff;
+  border-left-color:#c084fc;
+  font-weight:600;
+}
+.method-badge{
+  font-size:.6rem;font-weight:700;letter-spacing:.05em;
+  padding:.15rem .4rem;border-radius:4px;flex-shrink:0;
+  font-family:'JetBrains Mono',monospace;
+}
+.badge-post{background:rgba(251,191,36,.15);color:#fbbf24;border:1px solid rgba(251,191,36,.2)}
+.badge-get{background:rgba(52,211,153,.12);color:#34d399;border:1px solid rgba(52,211,153,.2)}
 
-    h2{
-      font-size:1.3rem;font-weight:700;letter-spacing:-.025em;color:#fff;
-      margin:2.5rem 0 1rem;
-      display:flex;align-items:center;gap:.6rem;
-    }
-    h2::before{content:'';width:3px;height:18px;border-radius:3px;background:var(--grad);flex-shrink:0}
-    h3{font-size:1.05rem;font-weight:600;letter-spacing:-.02em;color:rgba(255,255,255,.9);margin:1.75rem 0 .65rem}
-    p{margin-bottom:1rem;color:var(--text-dim);font-size:1rem;line-height:1.75}
-    ul,ol{padding-left:1.4rem;margin-bottom:1rem}
-    li{margin-bottom:.4rem;font-size:1rem;color:var(--text-dim)}
-    li strong{color:#fff}
-    a{color:var(--accent);text-decoration:none;transition:color .15s}
-    a:hover{color:#d8aaff;text-decoration:underline}
-    code{
-      font-family:'JetBrains Mono',monospace;font-size:.83em;
-      background:rgba(255,255,255,.08);
-      border:1px solid rgba(255,255,255,.1);
-      padding:.15em .4em;border-radius:5px;color:#d8aaff;
-    }
-    strong{color:#fff;font-weight:600}
+/* ── CONTENT ── */
+.content{flex:1;padding:3rem 4.5rem 5rem;max-width:960px;min-width:0;animation:fade-up .3s ease}
 
-    /* ── GLASS CARD ── */
-    .glass-card{
-      background:rgba(255,255,255,.04);
-      border:1px solid rgba(255,255,255,.08);
-      border-radius:14px;
-      backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
-      box-shadow:0 4px 24px rgba(0,0,0,.3),inset 0 1px 0 rgba(255,255,255,.06);
-    }
+/* ── HEADINGS ── */
+.page-header{margin-bottom:2.5rem;padding-bottom:2rem;border-bottom:1px solid rgba(255,255,255,.07)}
+.page-eyebrow{
+  font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.12em;
+  background:var(--grad-text);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;
+  margin-bottom:.65rem;display:block;
+}
+.page-title{
+  font-size:2.25rem;font-weight:900;letter-spacing:-.045em;line-height:1.12;
+  color:#fff;margin-bottom:.85rem;
+}
+.page-desc{font-size:1.05rem;color:var(--text-dim);line-height:1.7;max-width:660px}
 
-    /* ── CARD GRID ── */
-    .card-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:.9rem;margin:1rem 0 1.75rem}
-    .card{
-      background:rgba(255,255,255,.04);
-      border:1px solid rgba(255,255,255,.07);
-      border-radius:12px;padding:1.2rem;
-      transition:border-color .2s,background .2s,box-shadow .2s;
-      backdrop-filter:blur(8px);
-    }
-    .card:hover{
-      border-color:rgba(192,88,255,.35);
-      background:rgba(192,88,255,.07);
-      box-shadow:0 0 20px rgba(192,88,255,.1);
-    }
-    .card-icon{font-size:1.4rem;margin-bottom:.6rem}
-    .card-name{font-size:.94rem;font-weight:700;color:#fff;margin-bottom:.3rem}
-    .card-desc{font-size:.84rem;color:var(--text-muted);line-height:1.6}
+h2{
+  font-size:1.3rem;font-weight:700;letter-spacing:-.025em;color:#fff;
+  margin:2.5rem 0 1rem;
+  display:flex;align-items:center;gap:.6rem;
+}
+h2::before{content:'';width:3px;height:18px;border-radius:3px;background:var(--grad);flex-shrink:0}
+h3{font-size:1.05rem;font-weight:600;letter-spacing:-.02em;color:rgba(255,255,255,.9);margin:1.75rem 0 .65rem}
+p{margin-bottom:1rem;color:var(--text-dim);font-size:1rem;line-height:1.75}
+ul,ol{padding-left:1.4rem;margin-bottom:1rem}
+li{margin-bottom:.4rem;font-size:1rem;color:var(--text-dim)}
+li strong{color:#fff}
+a{color:var(--accent);text-decoration:none;transition:color .15s}
+a:hover{color:#d8aaff;text-decoration:underline}
+code{
+  font-family:'JetBrains Mono',monospace;font-size:.83em;
+  background:rgba(255,255,255,.08);
+  border:1px solid rgba(255,255,255,.1);
+  padding:.15em .4em;border-radius:5px;color:#d8aaff;
+}
+strong{color:#fff;font-weight:600}
 
-    /* ── CODE BLOCK ── */
-    .code-block{
-      background:rgba(0,0,0,.5);
-      border:1px solid rgba(255,255,255,.08);
-      border-radius:12px;overflow:hidden;margin:1rem 0 1.5rem;
-      box-shadow:0 4px 20px rgba(0,0,0,.4),inset 0 1px 0 rgba(255,255,255,.04);
-    }
-    .code-block-header{
-      display:flex;align-items:center;justify-content:space-between;
-      padding:.6rem 1.1rem;
-      background:rgba(255,255,255,.03);
-      border-bottom:1px solid rgba(255,255,255,.06);
-    }
-    .code-block-lang{font-size:.68rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,.3);font-family:'JetBrains Mono',monospace}
-    .copy-btn{
-      font-size:.72rem;font-weight:600;color:rgba(255,255,255,.35);
-      background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.08);
-      border-radius:5px;padding:.28rem .65rem;cursor:pointer;
-      font-family:'Inter',sans-serif;transition:all .15s;
-    }
-    .copy-btn:hover{background:rgba(255,255,255,.1);color:rgba(255,255,255,.8)}
-    .copy-btn.copied{color:#4ade80;border-color:rgba(74,222,128,.3)}
-    pre{padding:1.15rem 1.3rem;overflow-x:auto;line-height:1.7}
-    pre code{background:none;padding:0;border:none;color:#d4d4d8;font-size:.875rem;border-radius:0}
-    .tk-kw{color:#c084fc}
-    .tk-str{color:#86efac}
-    .tk-cm{color:#52525b;font-style:italic}
-    .tk-fn{color:#93c5fd}
-    .tk-num{color:#fdba74}
-    .tk-key{color:#67e8f9}
-    .tk-op{color:#94a3b8}
+/* ── GLASS CARD ── */
+.glass-card{
+  background:rgba(255,255,255,.04);
+  border:1px solid rgba(255,255,255,.08);
+  border-radius:14px;
+  backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+  box-shadow:0 4px 24px rgba(0,0,0,.3),inset 0 1px 0 rgba(255,255,255,.06);
+}
 
-    /* ── CODE TABS ── */
-    .code-tabs{
-      margin:1rem 0 1.5rem;border-radius:12px;overflow:hidden;
-      border:1px solid rgba(255,255,255,.08);
-      box-shadow:0 4px 20px rgba(0,0,0,.4);
-    }
-    .tab-bar{
-      display:flex;
-      background:rgba(255,255,255,.03);
-      border-bottom:1px solid rgba(255,255,255,.07);
-    }
-    .tab-btn{
-      padding:.55rem 1.15rem;font-size:.82rem;font-weight:600;
-      font-family:'Inter',sans-serif;
-      background:none;border:none;cursor:pointer;color:rgba(255,255,255,.4);
-      border-bottom:2px solid transparent;margin-bottom:-1px;
-      transition:color .15s,border-color .15s;
-    }
-    .tab-btn.active{color:#c084fc;border-bottom-color:#c084fc}
-    .tab-btn:hover:not(.active){color:rgba(255,255,255,.7)}
-    .tab-content{display:none;background:rgba(0,0,0,.45)}
-    .tab-content.active{display:block}
-    .tab-content pre{border-radius:0;margin:0}
+/* ── CARD GRID ── */
+.card-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:.9rem;margin:1rem 0 1.75rem}
+.card{
+  background:rgba(255,255,255,.04);
+  border:1px solid rgba(255,255,255,.07);
+  border-radius:12px;padding:1.2rem;
+  transition:border-color .2s,background .2s,box-shadow .2s;
+  backdrop-filter:blur(8px);
+}
+.card:hover{
+  border-color:rgba(192,88,255,.35);
+  background:rgba(192,88,255,.07);
+  box-shadow:0 0 20px rgba(192,88,255,.1);
+}
+.card-icon{font-size:1.4rem;margin-bottom:.6rem}
+.card-name{font-size:.94rem;font-weight:700;color:#fff;margin-bottom:.3rem}
+.card-desc{font-size:.84rem;color:var(--text-muted);line-height:1.6}
 
-    /* ── CALLOUT ── */
-    .callout{
-      border-radius:11px;padding:1rem 1.2rem;margin:1.25rem 0;font-size:.95rem;
-      display:flex;gap:.8rem;align-items:flex-start;
-      backdrop-filter:blur(8px);
-    }
-    .callout-info{background:rgba(56,189,248,.07);border:1px solid rgba(56,189,248,.2);color:#7dd3fc}
-    .callout-warn{background:rgba(251,191,36,.07);border:1px solid rgba(251,191,36,.2);color:#fcd34d}
-    .callout-tip{background:rgba(52,211,153,.07);border:1px solid rgba(52,211,153,.2);color:#6ee7b7}
-    .callout-danger{background:rgba(248,113,113,.07);border:1px solid rgba(248,113,113,.2);color:#fca5a5}
-    .callout-icon{font-size:1.1rem;flex-shrink:0;margin-top:.05rem}
-    .callout p{margin:0;color:inherit;font-size:.93rem}
-    .callout strong{color:inherit}
+/* ── CODE BLOCK ── */
+.code-block{
+  background:rgba(0,0,0,.5);
+  border:1px solid rgba(255,255,255,.08);
+  border-radius:12px;overflow:hidden;margin:1rem 0 1.5rem;
+  box-shadow:0 4px 20px rgba(0,0,0,.4),inset 0 1px 0 rgba(255,255,255,.04);
+}
+.code-block-header{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:.6rem 1.1rem;
+  background:rgba(255,255,255,.03);
+  border-bottom:1px solid rgba(255,255,255,.06);
+}
+.code-block-lang{font-size:.68rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,.3);font-family:'JetBrains Mono',monospace}
+.copy-btn{
+  font-size:.72rem;font-weight:600;color:rgba(255,255,255,.35);
+  background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.08);
+  border-radius:5px;padding:.28rem .65rem;cursor:pointer;
+  font-family:'Inter',sans-serif;transition:all .15s;
+}
+.copy-btn:hover{background:rgba(255,255,255,.1);color:rgba(255,255,255,.8)}
+.copy-btn.copied{color:#4ade80;border-color:rgba(74,222,128,.3)}
+pre{padding:1.15rem 1.3rem;overflow-x:auto;line-height:1.7}
+pre code{background:none;padding:0;border:none;color:#d4d4d8;font-size:.875rem;border-radius:0}
+.tk-kw{color:#c084fc}.tk-str{color:#86efac}.tk-cm{color:#52525b;font-style:italic}
+.tk-fn{color:#93c5fd}.tk-num{color:#fdba74}.tk-key{color:#67e8f9}.tk-op{color:#94a3b8}
 
-    /* ── PARAM TABLE ── */
-    .param-table{width:100%;border-collapse:collapse;margin:1rem 0 1.5rem;font-size:.9rem}
-    .param-table th{
-      text-align:left;padding:.65rem 1rem;
-      background:rgba(255,255,255,.04);
-      font-weight:700;font-size:.72rem;text-transform:uppercase;letter-spacing:.07em;
-      color:rgba(255,255,255,.35);
-      border-bottom:1px solid rgba(255,255,255,.07);
-    }
-    .param-table td{padding:.7rem 1rem;border-bottom:1px solid rgba(255,255,255,.05);vertical-align:top;color:var(--text-dim)}
-    .param-table tr:last-child td{border-bottom:none}
-    .param-table code{font-size:.8rem}
-    .param-table tr:hover td{background:rgba(255,255,255,.02)}
-    .param-req{font-size:.67rem;font-weight:700;padding:.18rem .44rem;border-radius:4px;background:rgba(248,113,113,.15);color:#fca5a5;border:1px solid rgba(248,113,113,.2);letter-spacing:.03em}
-    .param-opt{font-size:.67rem;font-weight:700;padding:.18rem .44rem;border-radius:4px;background:rgba(255,255,255,.07);color:rgba(255,255,255,.4);border:1px solid rgba(255,255,255,.08);letter-spacing:.03em}
+/* ── CODE TABS ── */
+.code-tabs{
+  margin:1rem 0 1.5rem;border-radius:12px;overflow:hidden;
+  border:1px solid rgba(255,255,255,.08);
+  box-shadow:0 4px 20px rgba(0,0,0,.4);
+}
+.tab-bar{display:flex;background:rgba(255,255,255,.03);border-bottom:1px solid rgba(255,255,255,.07);overflow-x:auto}
+.tab-btn{
+  padding:.55rem 1.15rem;font-size:.82rem;font-weight:600;
+  font-family:'Inter',sans-serif;
+  background:none;border:none;cursor:pointer;color:rgba(255,255,255,.4);
+  border-bottom:2px solid transparent;margin-bottom:-1px;
+  transition:color .15s,border-color .15s;white-space:nowrap;
+}
+.tab-btn.active{color:#c084fc;border-bottom-color:#c084fc}
+.tab-btn:hover:not(.active){color:rgba(255,255,255,.7)}
+.tab-content{display:none;background:rgba(0,0,0,.45)}
+.tab-content.active{display:block}
+.tab-content pre{border-radius:0;margin:0}
 
-    /* ── ENDPOINT ── */
-    .endpoint{
-      border:1px solid rgba(255,255,255,.08);
-      border-radius:14px;overflow:hidden;margin:1.5rem 0 2.5rem;
-      box-shadow:0 4px 24px rgba(0,0,0,.3);
-      backdrop-filter:blur(8px);
-    }
-    .endpoint-header{
-      display:flex;align-items:center;gap:.75rem;
-      padding:1rem 1.3rem;
-      background:rgba(255,255,255,.04);
-      border-bottom:1px solid rgba(255,255,255,.07);
-    }
-    .endpoint-method{font-family:'JetBrains Mono',monospace;font-size:.78rem;font-weight:700;padding:.3rem .75rem;border-radius:6px;letter-spacing:.05em}
-    .method-post{background:rgba(251,191,36,.15);color:#fbbf24;border:1px solid rgba(251,191,36,.2)}
-    .method-get{background:rgba(52,211,153,.12);color:#34d399;border:1px solid rgba(52,211,153,.2)}
-    .endpoint-path{font-family:'JetBrains Mono',monospace;font-size:.92rem;font-weight:500;color:#fff}
-    .endpoint-desc{font-size:.83rem;color:var(--text-muted);margin-left:auto}
-    .endpoint-body{padding:1.4rem}
-    .endpoint-body h4{font-size:.74rem;font-weight:700;text-transform:uppercase;letter-spacing:.09em;color:rgba(255,255,255,.3);margin-bottom:.85rem;margin-top:1.4rem}
-    .endpoint-body h4:first-child{margin-top:0}
+/* ── CALLOUT ── */
+.callout{
+  border-radius:11px;padding:1rem 1.2rem;margin:1.25rem 0;font-size:.95rem;
+  display:flex;gap:.8rem;align-items:flex-start;
+  backdrop-filter:blur(8px);
+}
+.callout-info{background:rgba(56,189,248,.07);border:1px solid rgba(56,189,248,.2);color:#7dd3fc}
+.callout-warn{background:rgba(251,191,36,.07);border:1px solid rgba(251,191,36,.2);color:#fcd34d}
+.callout-tip{background:rgba(52,211,153,.07);border:1px solid rgba(52,211,153,.2);color:#6ee7b7}
+.callout-danger{background:rgba(248,113,113,.07);border:1px solid rgba(248,113,113,.2);color:#fca5a5}
+.callout-icon{font-size:1.1rem;flex-shrink:0;margin-top:.05rem}
+.callout p{margin:0;color:inherit;font-size:.93rem}
+.callout strong{color:inherit}
 
-    /* ── STEP LIST ── */
-    .step-list{list-style:none;padding:0;counter-reset:step;margin:1rem 0}
-    .step-list li{counter-increment:step;display:flex;gap:1rem;margin-bottom:1.4rem;align-items:flex-start}
-    .step-list li::before{
-      content:counter(step);
-      width:30px;height:30px;border-radius:50%;
-      background:var(--grad);
-      color:#fff;font-size:.78rem;font-weight:800;
-      display:flex;align-items:center;justify-content:center;
-      flex-shrink:0;margin-top:.05rem;
-      box-shadow:0 0 12px rgba(192,88,255,.3);
-    }
-    .step-body{flex:1}
-    .step-title{font-weight:700;color:#fff;margin-bottom:.3rem;font-size:.97rem}
-    .step-desc{font-size:.91rem;color:var(--text-muted);line-height:1.6}
+/* ── PARAM TABLE ── */
+.param-table{width:100%;border-collapse:collapse;margin:1rem 0 1.5rem;font-size:.9rem}
+.param-table th{
+  text-align:left;padding:.65rem 1rem;
+  background:rgba(255,255,255,.04);
+  font-weight:700;font-size:.72rem;text-transform:uppercase;letter-spacing:.07em;
+  color:rgba(255,255,255,.35);
+  border-bottom:1px solid rgba(255,255,255,.07);
+}
+.param-table td{padding:.7rem 1rem;border-bottom:1px solid rgba(255,255,255,.05);vertical-align:top;color:var(--text-dim)}
+.param-table tr:last-child td{border-bottom:none}
+.param-table code{font-size:.8rem}
+.param-table tr:hover td{background:rgba(255,255,255,.02)}
+.param-req{font-size:.67rem;font-weight:700;padding:.18rem .44rem;border-radius:4px;background:rgba(248,113,113,.15);color:#fca5a5;border:1px solid rgba(248,113,113,.2);letter-spacing:.03em}
+.param-opt{font-size:.67rem;font-weight:700;padding:.18rem .44rem;border-radius:4px;background:rgba(255,255,255,.07);color:rgba(255,255,255,.4);border:1px solid rgba(255,255,255,.08);letter-spacing:.03em}
 
-    /* ── ARCH DIAGRAM ── */
-    .arch{
-      display:flex;flex-direction:column;gap:.75rem;
-      margin:1.5rem 0;padding:1.5rem;
-      background:rgba(255,255,255,.03);
-      border:1px solid rgba(255,255,255,.07);
-      border-radius:14px;
-      backdrop-filter:blur(12px);
-    }
-    .arch-row{display:flex;align-items:center;gap:.6rem;flex-wrap:wrap}
-    .arch-box{padding:.45rem .95rem;border-radius:8px;font-size:.8rem;font-weight:600;border:1px solid;white-space:nowrap;backdrop-filter:blur(4px)}
-    .arch-arrow{color:rgba(255,255,255,.3);font-size:1rem;flex-shrink:0}
-    .arch-label{font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.09em;color:rgba(255,255,255,.25);flex-shrink:0;min-width:90px}
+/* ── ENDPOINT ── */
+.endpoint{
+  border:1px solid rgba(255,255,255,.08);
+  border-radius:14px;overflow:hidden;margin:1.5rem 0 2.5rem;
+  box-shadow:0 4px 24px rgba(0,0,0,.3);
+  backdrop-filter:blur(8px);
+}
+.endpoint-header{
+  display:flex;align-items:center;gap:.75rem;
+  padding:1rem 1.3rem;
+  background:rgba(255,255,255,.04);
+  border-bottom:1px solid rgba(255,255,255,.07);
+}
+.endpoint-method{font-family:'JetBrains Mono',monospace;font-size:.78rem;font-weight:700;padding:.3rem .75rem;border-radius:6px;letter-spacing:.05em}
+.method-post{background:rgba(251,191,36,.15);color:#fbbf24;border:1px solid rgba(251,191,36,.2)}
+.method-get{background:rgba(52,211,153,.12);color:#34d399;border:1px solid rgba(52,211,153,.2)}
+.endpoint-path{font-family:'JetBrains Mono',monospace;font-size:.92rem;font-weight:500;color:#fff}
+.endpoint-desc{font-size:.83rem;color:var(--text-muted);margin-left:auto}
+.endpoint-body{padding:1.4rem}
+.endpoint-body h4{font-size:.74rem;font-weight:700;text-transform:uppercase;letter-spacing:.09em;color:rgba(255,255,255,.3);margin-bottom:.85rem;margin-top:1.4rem}
+.endpoint-body h4:first-child{margin-top:0}
 
-    /* ── RESPONSE BOX ── */
-    .response-box{
-      background:rgba(0,0,0,.45);border:1px solid rgba(255,255,255,.07);
-      border-radius:10px;padding:1rem 1.2rem;margin:.75rem 0;
-    }
-    .response-status{font-family:'JetBrains Mono',monospace;font-size:.78rem;font-weight:700;margin-bottom:.5rem}
-    .status-200{color:#34d399}
-    .status-400{color:#fbbf24}
-    .status-401{color:#fb923c}
-    .status-500{color:#f87171}
+/* ── STEP LIST ── */
+.step-list{list-style:none;padding:0;counter-reset:step;margin:1rem 0}
+.step-list li{counter-increment:step;display:flex;gap:1rem;margin-bottom:1.4rem;align-items:flex-start}
+.step-list li::before{
+  content:counter(step);
+  width:30px;height:30px;border-radius:50%;
+  background:var(--grad);
+  color:#fff;font-size:.78rem;font-weight:800;
+  display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;margin-top:.05rem;
+  box-shadow:0 0 12px rgba(192,88,255,.3);
+}
+.step-body{flex:1}
+.step-title{font-weight:700;color:#fff;margin-bottom:.3rem;font-size:.97rem}
+.step-desc{font-size:.91rem;color:var(--text-muted);line-height:1.6}
 
-    /* ── FEATURE LIST ── */
-    .feature-list{list-style:none;padding:0;display:grid;grid-template-columns:1fr 1fr;gap:.6rem;margin:1rem 0}
-    .feature-list li{
-      display:flex;align-items:flex-start;gap:.6rem;font-size:.9rem;color:var(--text-dim);
-      background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);
-      border-radius:9px;padding:.65rem .9rem;
-    }
-    .feature-list li::before{content:'✦';color:var(--accent);font-size:.7rem;margin-top:.2rem;flex-shrink:0}
+/* ── ARCH DIAGRAM (ENHANCED) ── */
+.arch{
+  display:flex;flex-direction:column;gap:.75rem;
+  margin:1.5rem 0;padding:1.5rem;
+  background:rgba(255,255,255,.03);
+  border:1px solid rgba(255,255,255,.07);
+  border-radius:14px;
+  backdrop-filter:blur(12px);
+}
+.arch-row{display:flex;align-items:center;gap:.6rem;flex-wrap:wrap}
+.arch-box{padding:.45rem .95rem;border-radius:8px;font-size:.8rem;font-weight:600;border:1px solid;white-space:nowrap;backdrop-filter:blur(4px);transition:all .2s}
+.arch-box:hover{transform:translateY(-2px);box-shadow:0 4px 12px rgba(0,0,0,.3)}
+.arch-arrow{color:rgba(255,255,255,.3);font-size:1rem;flex-shrink:0}
+.arch-label{font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.09em;color:rgba(255,255,255,.25);flex-shrink:0;min-width:90px}
 
-    /* ── PREV / NEXT ── */
-    .pagination{display:flex;gap:1rem;margin-top:3.5rem;padding-top:2rem;border-top:1px solid rgba(255,255,255,.07)}
-    .page-nav{
-      flex:1;padding:1.1rem 1.3rem;
-      border:1px solid rgba(255,255,255,.08);
-      border-radius:12px;cursor:pointer;
-      background:rgba(255,255,255,.03);
-      text-decoration:none;
-      transition:border-color .15s,background .15s,box-shadow .15s;display:block;
-      backdrop-filter:blur(8px);
-    }
-    .page-nav:hover{
-      border-color:rgba(192,88,255,.4);
-      background:rgba(192,88,255,.07);
-      box-shadow:0 0 20px rgba(192,88,255,.12);
-      text-decoration:none;
-    }
-    .page-nav.prev{text-align:left}
-    .page-nav.next{text-align:right}
-    .page-nav-label{font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.09em;color:var(--text-muted);margin-bottom:.3rem}
-    .page-nav-title{font-size:.95rem;font-weight:700;color:#fff}
-    .page-nav-arrow{color:var(--accent)}
-    .page-nav-spacer{flex:1}
+/* ── RESPONSE BOX ── */
+.response-box{
+  background:rgba(0,0,0,.45);border:1px solid rgba(255,255,255,.07);
+  border-radius:10px;padding:1rem 1.2rem;margin:.75rem 0;
+}
+.response-status{font-family:'JetBrains Mono',monospace;font-size:.78rem;font-weight:700;margin-bottom:.5rem}
+.status-200{color:#34d399}.status-400{color:#fbbf24}.status-401{color:#fb923c}.status-500{color:#f87171}
 
-    /* ── INLINE CODE IN TABLES ── */
-    td code{color:#d8aaff}
+/* ── FEATURE LIST ── */
+.feature-list{list-style:none;padding:0;display:grid;grid-template-columns:1fr 1fr;gap:.6rem;margin:1rem 0}
+.feature-list li{
+  display:flex;align-items:flex-start;gap:.6rem;font-size:.9rem;color:var(--text-dim);
+  background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);
+  border-radius:9px;padding:.65rem .9rem;
+}
+.feature-list li::before{content:'✦';color:var(--accent);font-size:.7rem;margin-top:.2rem;flex-shrink:0}
 
-    /* ── HAMBURGER BUTTON ── */
-    .hamburger{
-      display:none;flex-direction:column;justify-content:center;gap:5px;
-      width:36px;height:36px;border-radius:8px;border:1px solid rgba(255,255,255,.1);
-      background:rgba(255,255,255,.05);cursor:pointer;padding:8px;
-      flex-shrink:0;transition:background .15s,border-color .15s;
-    }
-    .hamburger:hover{background:rgba(255,255,255,.09);border-color:rgba(255,255,255,.18)}
-    .hamburger span{
-      display:block;height:1.5px;border-radius:2px;background:#fff;
-      transition:transform .25s,opacity .25s,width .25s;
-      transform-origin:center;
-    }
-    .hamburger.open span:nth-child(1){transform:translateY(6.5px) rotate(45deg)}
-    .hamburger.open span:nth-child(2){opacity:0;transform:scaleX(0)}
-    .hamburger.open span:nth-child(3){transform:translateY(-6.5px) rotate(-45deg)}
+/* ── PREV / NEXT ── */
+.pagination{display:flex;gap:1rem;margin-top:3.5rem;padding-top:2rem;border-top:1px solid rgba(255,255,255,.07)}
+.page-nav{
+  flex:1;padding:1.1rem 1.3rem;
+  border:1px solid rgba(255,255,255,.08);
+  border-radius:12px;cursor:pointer;
+  background:rgba(255,255,255,.03);
+  text-decoration:none;
+  transition:border-color .15s,background .15s,box-shadow .15s;display:block;
+  backdrop-filter:blur(8px);
+}
+.page-nav:hover{
+  border-color:rgba(192,88,255,.4);
+  background:rgba(192,88,255,.07);
+  box-shadow:0 0 20px rgba(192,88,255,.12);
+  text-decoration:none;
+}
+.page-nav.prev{text-align:left}.page-nav.next{text-align:right}
+.page-nav-label{font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.09em;color:var(--text-muted);margin-bottom:.3rem}
+.page-nav-title{font-size:.95rem;font-weight:700;color:#fff}
+.page-nav-arrow{color:var(--accent)}
+.page-nav-spacer{flex:1}
 
-    /* ── MOBILE OVERLAY ── */
-    .sidebar-overlay{
-      display:none;position:fixed;inset:0;z-index:8888;
-      background:rgba(0,0,0,.6);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);
-      opacity:0;transition:opacity .25s;
-    }
-    .sidebar-overlay.visible{opacity:1}
+/* ── MERMAID OVERRIDES ── */
+.mermaid{
+  background:rgba(0,0,0,.3)!important;
+  border:1px solid rgba(255,255,255,.07)!important;
+  border-radius:14px!important;
+  padding:1.5rem!important;
+  margin:1.5rem 0!important;
+  display:flex!important;
+  justify-content:center!important;
+  overflow-x:auto!important;
+}
+.mermaid svg{max-width:100%!important;height:auto!important}
 
-    @media(max-width:900px){
-      .hamburger{display:flex}
-      .nav-link,.nav-sep,.nav-tag{display:none}
+/* ── INTERACTIVE PIPELINE ── */
+.pipeline-container{
+  position:relative;margin:2rem 0;padding:1.5rem;
+  background:rgba(255,255,255,.02);
+  border:1px solid rgba(255,255,255,.07);
+  border-radius:16px;overflow:hidden;
+}
+.pipeline-track{
+  display:flex;align-items:center;gap:0;padding:1rem 0;
+  overflow-x:auto;position:relative;
+}
+.pipeline-node{
+  display:flex;flex-direction:column;align-items:center;gap:.5rem;
+  padding:.75rem 1rem;min-width:100px;cursor:pointer;
+  transition:all .3s;position:relative;z-index:2;
+}
+.pipeline-node:hover{transform:translateY(-4px)}
+.pipeline-node.active .node-icon{
+  animation:node-activate 1.5s ease infinite;
+  border-color:var(--accent);
+  box-shadow:0 0 20px rgba(192,88,255,.4);
+}
+.pipeline-node.completed .node-icon{
+  border-color:var(--success);
+  background:rgba(52,211,153,.15);
+}
+.node-icon{
+  width:48px;height:48px;border-radius:12px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:1.3rem;border:2px solid rgba(255,255,255,.15);
+  background:rgba(255,255,255,.05);
+  transition:all .3s;
+}
+.node-label{font-size:.7rem;font-weight:600;color:var(--text-muted);text-align:center;white-space:nowrap}
+.pipeline-connector{
+  flex:1;height:2px;min-width:30px;
+  background:linear-gradient(90deg,rgba(255,255,255,.1),rgba(255,255,255,.05));
+  position:relative;overflow:hidden;
+}
+.pipeline-connector.active::after{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(90deg,var(--accent),var(--success));
+  animation:data-flow 1.5s linear forwards;
+}
+.pipeline-detail{
+  margin-top:1rem;padding:1.25rem;
+  background:rgba(0,0,0,.3);
+  border:1px solid rgba(255,255,255,.06);
+  border-radius:12px;
+  display:none;
+  animation:fade-up .3s ease;
+}
+.pipeline-detail.visible{display:block}
+.pipeline-controls{
+  display:flex;gap:.5rem;margin-top:1rem;flex-wrap:wrap;
+}
+.pipe-btn{
+  padding:.4rem 1rem;border-radius:8px;border:1px solid rgba(255,255,255,.1);
+  background:rgba(255,255,255,.05);color:var(--text-dim);
+  font-size:.8rem;font-weight:600;cursor:pointer;
+  transition:all .15s;font-family:'Inter',sans-serif;
+}
+.pipe-btn:hover{background:rgba(255,255,255,.1);color:#fff}
+.pipe-btn.primary{
+  background:var(--grad);color:#fff;border:none;
+  box-shadow:0 0 12px rgba(192,88,255,.3);
+}
 
-      .sidebar{
-        position:fixed;top:var(--nav-h);left:0;
-        height:calc(100vh - var(--nav-h));
-        z-index:8999;
-        transform:translateX(-100%);
-        transition:transform .28s cubic-bezier(.4,0,.2,1);
-        border-right:1px solid rgba(255,255,255,.1);
-        box-shadow:8px 0 40px rgba(0,0,0,.5);
-      }
-      .sidebar.open{transform:translateX(0)}
-      .sidebar-overlay{display:block}
+/* ── 3D SCENE CONTAINER ── */
+.scene-3d{
+  width:100%;height:300px;border-radius:14px;overflow:hidden;
+  border:1px solid rgba(255,255,255,.07);
+  margin:1.5rem 0;position:relative;
+  background:radial-gradient(ellipse at center,rgba(120,40,255,.08) 0%,transparent 70%);
+}
+.scene-3d canvas{width:100%!important;height:100%!important}
+.scene-overlay{
+  position:absolute;bottom:0;left:0;right:0;
+  padding:1rem 1.2rem;
+  background:linear-gradient(transparent,rgba(0,0,0,.7));
+  font-size:.75rem;color:var(--text-muted);
+  display:flex;justify-content:space-between;align-items:flex-end;
+}
 
-      .content{padding:2rem 1.25rem}
-      .feature-list{grid-template-columns:1fr}
-      .card-grid{grid-template-columns:1fr}
-      .endpoint-header{flex-wrap:wrap;gap:.5rem}
-      .endpoint-desc{margin-left:0;width:100%}
-      .pagination{flex-direction:column}
-      .page-nav-spacer{display:none}
-    }
+/* ── STATS COUNTER ── */
+.stats-row{
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
+  gap:1rem;margin:1.5rem 0;
+}
+.stat-card{
+  text-align:center;padding:1.25rem;
+  background:rgba(255,255,255,.03);
+  border:1px solid rgba(255,255,255,.07);
+  border-radius:12px;
+  transition:all .2s;
+}
+.stat-card:hover{
+  border-color:rgba(192,88,255,.3);
+  background:rgba(192,88,255,.05);
+  transform:translateY(-2px);
+}
+.stat-number{
+  font-size:1.8rem;font-weight:900;
+  background:var(--grad-text);
+  -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;
+  line-height:1.2;
+}
+.stat-label{font-size:.72rem;color:var(--text-muted);font-weight:600;text-transform:uppercase;letter-spacing:.06em;margin-top:.3rem}
+
+/* ── COMPARISON TABLE ── */
+.compare-table{width:100%;border-collapse:separate;border-spacing:0;margin:1.5rem 0;font-size:.88rem;border-radius:12px;overflow:hidden;border:1px solid rgba(255,255,255,.07)}
+.compare-table th{
+  text-align:left;padding:.75rem 1rem;
+  background:rgba(255,255,255,.05);
+  font-weight:700;font-size:.7rem;text-transform:uppercase;letter-spacing:.08em;
+  color:rgba(255,255,255,.4);
+  border-bottom:1px solid rgba(255,255,255,.08);
+}
+.compare-table td{padding:.8rem 1rem;border-bottom:1px solid rgba(255,255,255,.04);vertical-align:middle;color:var(--text-dim);transition:background .15s}
+.compare-table tr:last-child td{border-bottom:none}
+.compare-table tr:hover td{background:rgba(255,255,255,.03)}
+.compare-table td:first-child{font-weight:600;color:#fff}
+.compare-check{color:var(--success);font-weight:700}
+.compare-cross{color:var(--danger);font-weight:700}
+.compare-na{color:var(--text-muted)}
+
+/* ── INTERACTIVE DEMO BOX ── */
+.demo-box{
+  border:1px solid rgba(192,88,255,.25);
+  border-radius:14px;overflow:hidden;margin:1.5rem 0;
+  background:rgba(192,88,255,.03);
+}
+.demo-header{
+  display:flex;align-items:center;gap:.5rem;
+  padding:.75rem 1.2rem;
+  background:rgba(192,88,255,.08);
+  border-bottom:1px solid rgba(192,88,255,.15);
+}
+.demo-dot{width:8px;height:8px;border-radius:50%;background:var(--success);animation:pulse-dot 2s ease infinite}
+.demo-title{font-size:.8rem;font-weight:700;color:#d8aaff;flex:1}
+.demo-body{padding:1.25rem}
+.demo-output{
+  background:rgba(0,0,0,.4);
+  border:1px solid rgba(255,255,255,.06);
+  border-radius:8px;padding:1rem;
+  margin-top:.75rem;
+  font-family:'JetBrains Mono',monospace;
+  font-size:.82rem;color:#d4d4d8;
+  max-height:300px;overflow-y:auto;
+  white-space:pre-wrap;word-break:break-all;
+}
+.demo-output:empty::before{content:'Click "Run" to see output...';color:var(--text-muted);font-style:italic}
+
+/* ── TIMELINE ── */
+.timeline{position:relative;padding-left:2rem;margin:1.5rem 0}
+.timeline::before{
+  content:'';position:absolute;left:7px;top:0;bottom:0;
+  width:2px;background:linear-gradient(to bottom,var(--accent),var(--success),transparent);
+}
+.timeline-item{position:relative;padding-bottom:1.5rem}
+.timeline-item::before{
+  content:'';position:absolute;left:-21px;top:4px;
+  width:12px;height:12px;border-radius:50%;
+  background:var(--accent);border:2px solid #07070f;
+  box-shadow:0 0 8px rgba(192,88,255,.4);
+}
+.timeline-item:last-child{padding-bottom:0}
+.timeline-time{font-size:.72rem;font-weight:700;color:var(--accent);margin-bottom:.2rem}
+.timeline-content{font-size:.93rem;color:var(--text-dim);line-height:1.6}
+
+/* ── FLOW CHART (CSS) ── */
+.flow-chart{
+  display:flex;flex-direction:column;gap:0;
+  margin:1.5rem 0;
+}
+.flow-row{
+  display:flex;align-items:center;justify-content:center;gap:0;
+}
+.flow-box{
+  padding:.6rem 1.2rem;border-radius:10px;
+  font-size:.82rem;font-weight:600;
+  border:1px solid;text-align:center;
+  min-width:120px;transition:all .2s;
+}
+.flow-box:hover{transform:scale(1.03)}
+.flow-arrow-down{
+  width:2px;height:24px;background:rgba(255,255,255,.15);
+  margin:0 auto;position:relative;
+}
+.flow-arrow-down::after{
+  content:'';position:absolute;bottom:-4px;left:-4px;
+  width:10px;height:10px;border-right:2px solid rgba(255,255,255,.15);
+  border-bottom:2px solid rgba(255,255,255,.15);
+  transform:rotate(45deg);
+}
+.flow-arrow-right{color:rgba(255,255,255,.2);font-size:1.2rem;padding:0 .5rem}
+.flow-parallel{display:flex;gap:1rem;align-items:flex-start}
+
+/* ── TAGS ── */
+.tag{
+  display:inline-flex;align-items:center;gap:.3rem;
+  padding:.2rem .6rem;border-radius:6px;font-size:.7rem;font-weight:700;
+  border:1px solid;
+}
+.tag-purple{background:rgba(192,88,255,.1);border-color:rgba(192,88,255,.25);color:#c084fc}
+.tag-green{background:rgba(52,211,153,.1);border-color:rgba(52,211,153,.25);color:#34d399}
+.tag-blue{background:rgba(56,189,248,.1);border-color:rgba(56,189,248,.25);color:#38bdf8}
+.tag-orange{background:rgba(251,191,36,.1);border-color:rgba(251,191,36,.25);color:#fbbf24}
+.tag-red{background:rgba(248,113,113,.1);border-color:rgba(248,113,113,.25);color:#f87171}
+
+/* ── HAMBURGER ── */
+.hamburger{
+  display:none;flex-direction:column;justify-content:center;gap:5px;
+  width:36px;height:36px;border-radius:8px;border:1px solid rgba(255,255,255,.1);
+  background:rgba(255,255,255,.05);cursor:pointer;padding:8px;
+  flex-shrink:0;transition:background .15s,border-color .15s;
+}
+.hamburger:hover{background:rgba(255,255,255,.09);border-color:rgba(255,255,255,.18)}
+.hamburger span{
+  display:block;height:1.5px;border-radius:2px;background:#fff;
+  transition:transform .25s,opacity .25s,width .25s;
+  transform-origin:center;
+}
+.hamburger.open span:nth-child(1){transform:translateY(6.5px) rotate(45deg)}
+.hamburger.open span:nth-child(2){opacity:0;transform:scaleX(0)}
+.hamburger.open span:nth-child(3){transform:translateY(-6.5px) rotate(-45deg)}
+
+.sidebar-overlay{
+  display:none;position:fixed;inset:0;z-index:8888;
+  background:rgba(0,0,0,.6);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);
+  opacity:0;transition:opacity .25s;
+}
+.sidebar-overlay.visible{opacity:1}
+
+/* ── RESPONSIVE ── */
+@media(max-width:900px){
+  .hamburger{display:flex}
+  .nav-link,.nav-sep,.nav-tag{display:none}
+  .sidebar{
+    position:fixed;top:var(--nav-h);left:0;
+    height:calc(100vh - var(--nav-h));
+    z-index:8999;
+    transform:translateX(-100%);
+    transition:transform .28s cubic-bezier(.4,0,.2,1);
+    border-right:1px solid rgba(255,255,255,.1);
+    box-shadow:8px 0 40px rgba(0,0,0,.5);
+  }
+  .sidebar.open{transform:translateX(0)}
+  .sidebar-overlay{display:block}
+  .content{padding:2rem 1.25rem}
+  .feature-list{grid-template-columns:1fr}
+  .card-grid{grid-template-columns:1fr}
+  .endpoint-header{flex-wrap:wrap;gap:.5rem}
+  .endpoint-desc{margin-left:0;width:100%}
+  .pagination{flex-direction:column}
+  .page-nav-spacer{display:none}
+  .stats-row{grid-template-columns:1fr 1fr}
+  .compare-table{font-size:.78rem}
+  .compare-table th,.compare-table td{padding:.5rem .6rem}
+}
+
   </style>
 </head>
 <body>
 
+<canvas id="particle-canvas"></canvas>
 <div class="sidebar-overlay" id="overlay" onclick="closeSidebar()"></div>
 
 <nav class="topnav">
@@ -455,11 +693,209 @@
 </div>
 
 <script>
+
+// ─── MERMAID INIT ─────────────────────────────────────────────────────────────
+mermaid.initialize({
+  startOnLoad: false,
+  theme: 'dark',
+  themeVariables: {
+    primaryColor: '#7c3aed',
+    primaryTextColor: '#e8e8f0',
+    primaryBorderColor: '#7c3aed',
+    lineColor: '#6b7280',
+    secondaryColor: '#1e1b4b',
+    tertiaryColor: '#0f0f23',
+    background: '#07070f',
+    mainBkg: 'rgba(124,58,237,0.1)',
+    nodeBorder: 'rgba(124,58,237,0.4)',
+    clusterBkg: 'rgba(124,58,237,0.05)',
+    titleColor: '#e8e8f0',
+    edgeLabelBackground: 'rgba(0,0,0,0.5)',
+    fontFamily: 'Inter, sans-serif',
+  },
+  flowchart: { curve: 'basis', padding: 20 },
+  sequence: { diagramMarginX: 50, diagramMarginY: 10, actorMargin: 50, width: 150, height: 65 },
+});
+
+// ─── PARTICLE SYSTEM ──────────────────────────────────────────────────────────
+(function(){
+  const canvas = document.getElementById('particle-canvas');
+  const ctx = canvas.getContext('2d');
+  let w, h, particles = [];
+  function resize(){ w = canvas.width = window.innerWidth; h = canvas.height = window.innerHeight; }
+  resize();
+  window.addEventListener('resize', resize);
+  for(let i=0;i<60;i++){
+    particles.push({
+      x: Math.random()*w, y: Math.random()*h,
+      vx: (Math.random()-.5)*.3, vy: (Math.random()-.5)*.3,
+      r: Math.random()*1.5+.5, o: Math.random()*.4+.1,
+    });
+  }
+  function draw(){
+    ctx.clearRect(0,0,w,h);
+    particles.forEach(p=>{
+      p.x+=p.vx; p.y+=p.vy;
+      if(p.x<0)p.x=w; if(p.x>w)p.x=0; if(p.y<0)p.y=h; if(p.y>h)p.y=0;
+      ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+      ctx.fillStyle=`rgba(192,88,255,${p.o})`; ctx.fill();
+    });
+    // Draw connections
+    for(let i=0;i<particles.length;i++){
+      for(let j=i+1;j<particles.length;j++){
+        const dx=particles[i].x-particles[j].x, dy=particles[i].y-particles[j].y;
+        const dist=Math.sqrt(dx*dx+dy*dy);
+        if(dist<150){
+          ctx.beginPath(); ctx.moveTo(particles[i].x,particles[i].y);
+          ctx.lineTo(particles[j].x,particles[j].y);
+          ctx.strokeStyle=`rgba(192,88,255,${0.06*(1-dist/150)})`;
+          ctx.lineWidth=.5; ctx.stroke();
+        }
+      }
+    }
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+// ─── 3D SCENE (THREE.JS) ─────────────────────────────────────────────────────
+async function init3DScene(containerId, type){
+  const { Scene, PerspectiveCamera, WebGLRenderer, Mesh, SphereGeometry, BoxGeometry, CylinderGeometry, TorusGeometry, MeshStandardMaterial, PointLight, AmbientLight, Group, CatmullRomCurve3, Vector3, TubeGeometry, Float32BufferAttribute } = await import('three');
+  
+  const container = document.getElementById(containerId);
+  if(!container) return;
+  const w = container.clientWidth, h = container.clientHeight;
+  
+  const scene = new Scene();
+  const camera = new PerspectiveCamera(50, w/h, .1, 1000);
+  camera.position.set(0, 3, 8); camera.lookAt(0,0,0);
+  
+  const renderer = new WebGLRenderer({ antialias: true, alpha: true });
+  renderer.setSize(w, h); renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  renderer.setClearColor(0x000000, 0);
+  container.appendChild(renderer.domElement);
+  
+  scene.add(new AmbientLight(0x404060, 1.5));
+  const pl1 = new PointLight(0xc084fc, 2, 50); pl1.position.set(5, 5, 5); scene.add(pl1);
+  const pl2 = new PointLight(0x38bdf8, 1.5, 50); pl2.position.set(-5, 3, -5); scene.add(pl2);
+  
+  if(type === 'pipeline'){
+    // Floating pipeline nodes
+    const nodes = [];
+    const labels = ['User', 'FastAPI', 'Kie.AI', 'Suno v4', 'CrewAI', 'Groq', 'Storage'];
+    const colors = [0x8b5cf6, 0xfbbf24, 0x34d399, 0x38bdf8, 0xf87171, 0xc084fc, 0x6b7280];
+    const group = new Group();
+    
+    for(let i=0;i<labels.length;i++){
+      const angle = (i / labels.length) * Math.PI * 2;
+      const radius = 3;
+      const geo = new SphereGeometry(.35, 32, 32);
+      const mat = new MeshStandardMaterial({ color: colors[i], metalness: .3, roughness: .4, emissive: colors[i], emissiveIntensity: .2 });
+      const mesh = new Mesh(geo, mat);
+      mesh.position.set(Math.cos(angle)*radius, Math.sin(angle)*.5, Math.sin(angle)*radius);
+      mesh.userData = { baseY: mesh.position.y, speed: .5 + Math.random()*.5, phase: Math.random()*Math.PI*2 };
+      nodes.push(mesh); group.add(mesh);
+      
+      // Glow ring
+      const ringGeo = new TorusGeometry(.5, .03, 8, 32);
+      const ringMat = new MeshStandardMaterial({ color: colors[i], emissive: colors[i], emissiveIntensity: .5, transparent: true, opacity: .4 });
+      const ring = new Mesh(ringGeo, ringMat);
+      ring.position.copy(mesh.position); ring.rotation.x = Math.PI/2;
+      group.add(ring);
+    }
+    
+    // Connection lines
+    for(let i=0;i<nodes.length;i++){
+      const next = nodes[(i+1)%nodes.length];
+      const points = [];
+      for(let t=0;t<=1;t+=.05){
+        const p = new Vector3().lerpVectors(nodes[i].position, next.position, t);
+        p.y += Math.sin(t * Math.PI) * .3;
+        points.push(p);
+      }
+      const curve = new CatmullRomCurve3(points);
+      const tubeGeo = new TubeGeometry(curve, 20, .02, 8, false);
+      const tubeMat = new MeshStandardMaterial({ color: 0x6b7280, transparent: true, opacity: .3 });
+      group.add(new Mesh(tubeGeo, tubeMat));
+    }
+    
+    scene.add(group);
+    
+    function animate(){
+      requestAnimationFrame(animate);
+      const time = Date.now() * .001;
+      nodes.forEach(n=>{
+        n.position.y = n.userData.baseY + Math.sin(time * n.userData.speed + n.userData.phase) * .2;
+      });
+      group.rotation.y = time * .1;
+      camera.position.x = Math.sin(time * .2) * 1;
+      camera.lookAt(0,0,0);
+      renderer.render(scene, camera);
+    }
+    animate();
+  }
+  
+  if(type === 'architecture'){
+    // Layered architecture blocks
+    const layers = [
+      { label: 'Frontend', y: 2, color: 0x8b5cf6, w: 5, h: .4, d: 1.5 },
+      { label: 'FastAPI', y: .8, color: 0xfbbf24, w: 5, h: .4, d: 1.5 },
+      { label: 'AI Services', y: -.4, color: 0x34d399, w: 5, h: .4, d: 1.5 },
+      { label: 'Storage', y: -1.6, color: 0x38bdf8, w: 5, h: .4, d: 1.5 },
+    ];
+    const group = new Group();
+    layers.forEach(l=>{
+      const geo = new BoxGeometry(l.w, l.h, l.d);
+      const mat = new MeshStandardMaterial({ color: l.color, metalness: .2, roughness: .5, transparent: true, opacity: .7 });
+      const mesh = new Mesh(geo, mat);
+      mesh.position.y = l.y;
+      group.add(mesh);
+      
+      // Edge glow
+      const edgeGeo = new BoxGeometry(l.w+.05, l.h+.05, l.d+.05);
+      const edgeMat = new MeshStandardMaterial({ color: l.color, wireframe: true, transparent: true, opacity: .15 });
+      const edge = new Mesh(edgeGeo, edgeMat);
+      edge.position.y = l.y;
+      group.add(edge);
+    });
+    
+    // Vertical connectors
+    for(let i=0;i<layers.length-1;i++){
+      const cylGeo = new CylinderGeometry(.03, .03, 1.2, 8);
+      const cylMat = new MeshStandardMaterial({ color: 0x6b7280, transparent: true, opacity: .4 });
+      const cyl = new Mesh(cylGeo, cylMat);
+      cyl.position.y = (layers[i].y + layers[i+1].y) / 2;
+      cyl.position.x = -2;
+      group.add(cyl);
+      const cyl2 = cyl.clone(); cyl2.position.x = 2; group.add(cyl2);
+    }
+    
+    scene.add(group);
+    function animate(){
+      requestAnimationFrame(animate);
+      group.rotation.y = Date.now() * .0003;
+      camera.position.x = Math.sin(Date.now() * .0002) * 2;
+      camera.lookAt(0,0,0);
+      renderer.render(scene, camera);
+    }
+    animate();
+  }
+  
+  // Handle resize
+  const ro = new ResizeObserver(() => {
+    const nw = container.clientWidth, nh = container.clientHeight;
+    camera.aspect = nw/nh; camera.updateProjectionMatrix();
+    renderer.setSize(nw, nh);
+  });
+  ro.observe(container);
+}
+
 // ─── ROUTE TABLE ─────────────────────────────────────────────────────────────
 const NAV = [
   { group: 'Introduction' },
   { label: 'Overview',              path: '/docs' },
   { label: 'How It Works',          path: '/docs/how-it-works' },
+  { label: 'Generation Pipeline',   path: '/docs/pipeline' },
   { group: 'Setup' },
   { label: 'Tech Stack',            path: '/docs/tech-stack' },
   { label: 'Getting Started',       path: '/docs/getting-started' },
@@ -533,6 +969,157 @@ function doCopy(btn) {
   });
 }
 
+function mermaidDiagram(code) {
+  return `<div class="mermaid">${code}</div>`;
+}
+
+// ─── INTERACTIVE PIPELINE ────────────────────────────────────────────────────
+function pipelineHTML(steps) {
+  const id = 'pipe_' + Math.random().toString(36).slice(2,7);
+  const nodes = steps.map((s,i) => `
+    <div class="pipeline-node" id="${id}_node_${i}" onclick="pipelineStep('${id}',${i})">
+      <div class="node-icon">${s.icon}</div>
+      <div class="node-label">${s.label}</div>
+    </div>
+    ${i < steps.length-1 ? `<div class="pipeline-connector" id="${id}_conn_${i}"></div>` : ''}
+  `).join('');
+  
+  const details = steps.map((s,i) => `
+    <div class="pipeline-detail" id="${id}_detail_${i}">
+      <h3 style="color:#fff;margin-bottom:.5rem;display:flex;align-items:center;gap:.5rem"><span style="font-size:1.3rem">${s.icon}</span> ${s.label}</h3>
+      <p style="color:var(--text-dim);line-height:1.7">${s.detail}</p>
+      ${s.code ? cb(s.lang||'text', s.code) : ''}
+    </div>
+  `).join('');
+  
+  return `
+  <div class="pipeline-container">
+    <div class="pipeline-track" id="${id}">${nodes}</div>
+    ${details}
+    <div class="pipeline-controls">
+      <button class="pipe-btn primary" onclick="pipelinePrev('${id}',${steps.length})">← Previous</button>
+      <button class="pipe-btn primary" onclick="pipelineNext('${id}',${steps.length})">Next →</button>
+      <button class="pipe-btn" onclick="pipelineAuto('${id}',${steps.length})">▶ Auto Play</button>
+      <button class="pipe-btn" onclick="pipelineReset('${id}',${steps.length})">↺ Reset</button>
+    </div>
+  </div>`;
+}
+
+function pipelineStep(id, idx) {
+  const container = document.getElementById(id);
+  container.querySelectorAll('.pipeline-node').forEach((n,i) => {
+    n.classList.toggle('active', i===idx);
+    n.classList.toggle('completed', i<idx);
+  });
+  container.querySelectorAll('.pipeline-connector').forEach((c,i) => {
+    c.classList.toggle('active', i<idx);
+  });
+  container.querySelectorAll('.pipeline-detail').forEach((d,i) => {
+    d.classList.toggle('visible', i===idx);
+  });
+}
+
+function pipelineNext(id, total) {
+  const container = document.getElementById(id);
+  const active = container.querySelector('.pipeline-node.active');
+  const nodes = container.querySelectorAll('.pipeline-node');
+  let idx = Array.from(nodes).indexOf(active);
+  if(idx < total-1) pipelineStep(id, idx+1);
+}
+
+function pipelinePrev(id, total) {
+  const container = document.getElementById(id);
+  const active = container.querySelector('.pipeline-node.active');
+  const nodes = container.querySelectorAll('.pipeline-node');
+  let idx = Array.from(nodes).indexOf(active);
+  if(idx > 0) pipelineStep(id, idx-1);
+}
+
+let pipelineIntervals = {};
+function pipelineAuto(id, total) {
+  pipelineReset(id, total);
+  pipelineStep(id, 0);
+  let i = 0;
+  pipelineIntervals[id] = setInterval(() => {
+    i++;
+    if(i >= total) { clearInterval(pipelineIntervals[id]); return; }
+    pipelineStep(id, i);
+  }, 2000);
+}
+
+function pipelineReset(id, total) {
+  if(pipelineIntervals[id]) clearInterval(pipelineIntervals[id]);
+  const container = document.getElementById(id);
+  container.querySelectorAll('.pipeline-node').forEach(n => {
+    n.classList.remove('active','completed');
+  });
+  container.querySelectorAll('.pipeline-connector').forEach(c => c.classList.remove('active'));
+  container.querySelectorAll('.pipeline-detail').forEach(d => d.classList.remove('visible'));
+}
+
+// ─── DEMO RUNNER ─────────────────────────────────────────────────────────────
+async function runDemo(btn, endpoint, body) {
+  const box = btn.closest('.demo-box');
+  const output = box.querySelector('.demo-output');
+  const title = box.querySelector('.demo-title');
+  const dot = box.querySelector('.demo-dot');
+  
+  btn.disabled = true; btn.textContent = '⏳ Running...';
+  dot.style.background = 'var(--warning)';
+  output.textContent = 'Sending request...';
+  
+  try {
+    const res = await fetch(endpoint, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body)
+    });
+    const data = await res.json();
+    output.textContent = `HTTP ${res.status} ${res.statusText}\n\n${JSON.stringify(data, null, 2)}`;
+    dot.style.background = res.ok ? 'var(--success)' : 'var(--danger)';
+  } catch(e) {
+    output.textContent = `Error: ${e.message}`;
+    dot.style.background = 'var(--danger)';
+  }
+  
+  btn.disabled = false; btn.textContent = '▶ Run';
+}
+
+function demoBox(title, endpoint, body) {
+  const id = 'demo_' + Math.random().toString(36).slice(2,7);
+  return `
+  <div class="demo-box">
+    <div class="demo-header">
+      <div class="demo-dot"></div>
+      <span class="demo-title">${title}</span>
+      <span class="tag tag-purple">LIVE</span>
+    </div>
+    <div class="demo-body">
+      <p style="color:var(--text-dim);font-size:.85rem;margin-bottom:.75rem">Try this endpoint directly from your browser. Click Run to send a real request.</p>
+      ${tabs([{ l: 'Request', c: `POST ${endpoint}\nContent-Type: application/json\n\n${JSON.stringify(body, null, 2)}` }])}
+      <button class="pipe-btn primary" style="margin-top:.75rem" onclick="runDemo(this,'${endpoint}',${JSON.stringify(body).replace(/"/g, '&quot;')})">▶ Run</button>
+      <div class="demo-output" id="${id}"></div>
+    </div>
+  </div>`;
+}
+
+// ─── STATS COUNTER ANIMATION ─────────────────────────────────────────────────
+function animateCounters() {
+  document.querySelectorAll('.stat-number[data-target]').forEach(el => {
+    const target = parseInt(el.dataset.target);
+    const duration = 1500;
+    const start = performance.now();
+    function update(now) {
+      const elapsed = now - start;
+      const progress = Math.min(elapsed / duration, 1);
+      const eased = 1 - Math.pow(1 - progress, 3);
+      el.textContent = Math.round(eased * target);
+      if(progress < 1) requestAnimationFrame(update);
+    }
+    requestAnimationFrame(update);
+  });
+}
+
 // ─── PAGES ───────────────────────────────────────────────────────────────────
 const P = {
 
@@ -543,49 +1130,151 @@ const P = {
   <p class="page-desc">Echo Echo is an AI-powered songwriting tool that generates professional-quality 30-second instrumental sketches, writes matching lyrics, and checks copyright safety — all from a mood, genre, and theme you choose.</p>
 </div>
 
+<div class="stats-row">
+  <div class="stat-card"><div class="stat-number" data-target="3">0</div><div class="stat-label">AI Models</div></div>
+  <div class="stat-card"><div class="stat-number" data-target="15">0</div><div class="stat-label">API Endpoints</div></div>
+  <div class="stat-card"><div class="stat-number" data-target="3">0</div><div class="stat-label">Music Modes</div></div>
+  <div class="stat-card"><div class="stat-number" data-target="2">0</div><div class="stat-label">AI Agents</div></div>
+</div>
+
+<div class="scene-3d" id="hero-scene"></div>
+<div style="display:flex;justify-content:space-between;font-size:.72rem;color:var(--text-muted);margin-top:.5rem">
+  <span>🔄 Interactive 3D Pipeline</span><span>Hover to explore</span>
+</div>
+<script>setTimeout(()=>init3DScene('hero-scene','pipeline'),100)<\/script>
+
 <h2>What can Echo Echo do?</h2>
 <div class="card-grid">
-  <div class="card"><div class="card-icon">🎵</div><div class="card-name">Generate Music</div><div class="card-desc">30-second instrumental sketches via Kie.AI (Suno v4). Professional quality in 30–90 seconds — no DAW required.</div></div>
-  <div class="card"><div class="card-icon">✍️</div><div class="card-name">Write Lyrics</div><div class="card-desc">A CrewAI + Groq agent writes verse/pre-chorus/chorus/bridge lyrics tuned to your exact mood, style, and energy.</div></div>
-  <div class="card"><div class="card-icon">🛡️</div><div class="card-name">Copyright Safety</div><div class="card-desc">An AI agent scans generated lyrics for similarity to known songs and returns a safety verdict with confidence score.</div></div>
-  <div class="card"><div class="card-icon">📚</div><div class="card-name">Song Library</div><div class="card-desc">Every track you generate is saved with its lyrics, copyright result, and audio. Browse, replay, download, and trim.</div></div>
-  <div class="card"><div class="card-icon">⚡</div><div class="card-name">Instant API</div><div class="card-desc">All features accessible via a clean REST API. Build your own frontend, integrate into your workflow, automate generation.</div></div>
-  <div class="card"><div class="card-icon">🔐</div><div class="card-name">Invite-Only Auth</div><div class="card-desc">Lightweight email/password auth with a token stored in localStorage. Toggle public sign-ups with one env var.</div></div>
+  <div class="card"><div class="card-icon">🎵</div><div class="card-name">Generate Music</div><div class="card-desc">30-second instrumental sketches via Kie.AI (Suno v4). Professional quality in 30–90 seconds.</div></div>
+  <div class="card"><div class="card-icon">🎤</div><div class="card-name">Vocal Generation</div><div class="card-desc">Full singing tracks with AI lyrics via ACE-Step. Verse, chorus, bridge with real vocals.</div></div>
+  <div class="card"><div class="card-icon">✍️</div><div class="card-name">Write Lyrics</div><div class="card-desc">CrewAI + Groq agent writes verse/pre-chorus/chorus/bridge lyrics tuned to your mood.</div></div>
+  <div class="card"><div class="card-icon">🛡️</div><div class="card-name">Copyright Safety</div><div class="card-desc">Multi-agent AI pipeline scans lyrics for similarity to known songs with confidence score.</div></div>
+  <div class="card"><div class="card-icon">📚</div><div class="card-name">Song Library</div><div class="card-desc">Every track saved with lyrics, copyright, and audio. Browse, replay, download, trim.</div></div>
+  <div class="card"><div class="card-icon">⚡</div><div class="card-name">Instant API</div><div class="card-desc">All features via clean REST API. Build your own frontend, integrate, automate.</div></div>
+</div>
+
+<h2>System Architecture</h2>
+<p>Echo Echo chains multiple AI services into a single pipeline. Here is the complete data flow:</p>
+
+${mermaidDiagram(`flowchart TD
+    subgraph Client["🌐 Client Layer"]
+        FE["Vanilla HTML/CSS/JS"]
+        THREE["Three.js Wave BG"]
+    end
+    subgraph API["⚡ FastAPI Server"]
+        ROUTES["Route Handlers"]
+        AUTH["Auth Module"]
+        COMP["Composer"]
+        GEN["API Generator"]
+    end
+    subgraph Music["🎵 Music Generation"]
+        KIE["Kie.AI API"]
+        SUNO["Suno v4"]
+        MG["MusicGen Local"]
+        ACE["ACE-Step HF"]
+    end
+    subgraph AI["🤖 AI Agents"]
+        CREWAI["CrewAI"]
+        LYRICS["Lyrics Agent"]
+        COPY["Copyright Agent"]
+        GROQ["Groq Llama 3.1"]
+    end
+    subgraph Storage["💾 Storage"]
+        HISTORY["song_history.json"]
+        AUDIO["generated/"]
+        USERS["users.json"]
+    end
+
+    FE --> ROUTES
+    ROUTES --> AUTH
+    ROUTES --> COMP
+    ROUTES --> GEN
+    GEN --> KIE --> SUNO
+    GEN --> MG
+    GEN --> ACE
+    ROUTES --> CREWAI
+    CREWAI --> LYRICS --> GROQ
+    CREWAI --> COPY --> GROQ
+    ROUTES --> HISTORY
+    ROUTES --> AUDIO
+    AUTH --> USERS
+
+    style FE fill:rgba(139,92,246,.15),stroke:rgba(139,92,246,.4),color:#e8e8f0
+    style ROUTES fill:rgba(251,191,36,.15),stroke:rgba(251,191,36,.4),color:#e8e8f0
+    style KIE fill:rgba(52,211,153,.15),stroke:rgba(52,211,153,.4),color:#e8e8f0
+    style CREWAI fill:rgba(248,113,113,.15),stroke:rgba(248,113,113,.4),color:#e8e8f0
+    style GROQ fill:rgba(192,88,255,.15),stroke:rgba(192,88,255,.4),color:#e8e8f0
+`)}
+
+<h2>Data Flow Sequence</h2>
+<p>Complete request lifecycle when a user generates a song:</p>
+
+${mermaidDiagram(`sequenceDiagram
+    actor U as 👤 User
+    participant F as 🌐 Frontend
+    participant A as ⚡ FastAPI
+    participant K as 🎵 Kie.AI
+    participant S as 🎼 Suno v4
+    participant C as 🤖 CrewAI
+    participant G as 🧠 Groq
+    participant D as 💾 Storage
+
+    U->>F: Select mood, genre, theme
+    F->>A: POST /api/generate
+    Note over A: Pydantic validation
+    A->>A: Build prompt
+    A->>K: Submit task
+    K->>S: Queue with Suno v4
+    Note over S: Rendering 30-90s
+    S-->>K: Audio ready
+    K-->>A: Callback + CDN URL
+    A->>D: Download MP3
+    A->>C: Generate lyrics
+    C->>G: Llama 3.1
+    G-->>C: Lyrics text
+    C->>G: Copyright check
+    G-->>C: Risk assessment
+    A->>D: Save record
+    A-->>F: Full JSON response
+    F->>U: Play + display
+`)}
+
+<h2>Technology Overview</h2>
+<div class="flow-chart">
+  <div class="flow-row"><div class="flow-box" style="background:rgba(139,92,246,.1);border-color:rgba(139,92,246,.3);color:#c4b5fd">🌐 Vanilla JS</div></div>
+  <div class="flow-row"><div class="flow-arrow-down"></div></div>
+  <div class="flow-row"><div class="flow-box" style="background:rgba(251,191,36,.1);border-color:rgba(251,191,36,.3);color:#fcd34d">⚡ FastAPI</div><span class="flow-arrow-right">→</span><div class="flow-box" style="background:rgba(52,211,153,.1);border-color:rgba(52,211,153,.3);color:#6ee7b7">🎵 Kie.AI</div></div>
+  <div class="flow-row"><div class="flow-arrow-down" style="height:12px"></div></div>
+  <div class="flow-row"><div class="flow-box" style="background:rgba(248,113,113,.1);border-color:rgba(248,113,113,.3);color:#fca5a5">🤖 CrewAI</div><span class="flow-arrow-right">→</span><div class="flow-box" style="background:rgba(192,88,255,.1);border-color:rgba(192,88,255,.3);color:#d8b4fe">🧠 Groq</div></div>
+  <div class="flow-row"><div class="flow-arrow-down" style="height:12px"></div></div>
+  <div class="flow-row"><div class="flow-box" style="background:rgba(56,189,248,.1);border-color:rgba(56,189,248,.3);color:#7dd3fc">💾 JSON Storage</div></div>
 </div>
 
 <h2>Quick start</h2>
 <ol class="step-list">
   <li><div class="step-body"><div class="step-title">Clone and install</div><div class="step-desc">Pull from GitHub, create a venv, and run <code>pip install -r requirements-deploy.txt</code>.</div></div></li>
-  <li><div class="step-body"><div class="step-title">Add your Groq API key</div><div class="step-desc">Create <code>.env</code> with <code>GROQ_API_KEY=gsk_...</code>. This powers lyrics and copyright checking.</div></div></li>
-  <li><div class="step-body"><div class="step-title">Start the server</div><div class="step-desc"><code>uvicorn backend.main:app --reload --port 8000</code> — one command runs everything.</div></div></li>
-  <li><div class="step-body"><div class="step-title">Open the app</div><div class="step-desc">Go to <code>http://localhost:8000</code>, create an account, and generate your first track.</div></div></li>
+  <li><div class="step-body"><div class="step-title">Add your Groq API key</div><div class="step-desc">Create <code>.env</code> with <code>GROQ_API_KEY=gsk_...</code>.</div></div></li>
+  <li><div class="step-body"><div class="step-title">Start the server</div><div class="step-desc"><code>uvicorn backend.main:app --reload --port 8000</code></div></div></li>
+  <li><div class="step-body"><div class="step-title">Open the app</div><div class="step-desc">Go to <code>http://localhost:8000</code>, sign up, and generate.</div></div></li>
 </ol>
 
-<div class="callout callout-info">
-  <span class="callout-icon">ℹ️</span>
-  <p><strong>Architecture note:</strong> Echo Echo is a single FastAPI service. The backend serves all HTML pages via <code>FileResponse</code> — you don't need a separate frontend host. One server, one deploy, zero build step.</p>
-</div>
+<div class="callout callout-info"><span class="callout-icon">ℹ️</span><p><strong>Architecture note:</strong> Echo Echo is a single FastAPI service. Backend serves all HTML pages via <code>FileResponse</code> — one server, one deploy, zero build step.</p></div>
 
 <h2>Base URL</h2>
-<p>All endpoints are served from the same origin as the frontend. In development that's <code>localhost:8000</code>; in production it's your Render URL.</p>
 ${cb('text', 'Local       http://localhost:8000\nProduction  https://consolidated-echoecho.onrender.com')}
 
 <h2>Response format</h2>
-<p>All API responses are JSON. Successful responses include an <code>"ok": true</code> or <code>"success": true</code> field. Errors follow FastAPI's default <code>{"detail": "..."}</code> shape.</p>
-${cb('json', `// Success
-{ "ok": true, "song_id": "XKPQ", "audio_url": "/generated/ECHO_XKPQ_original.mp3" }
-
-// Error
-{ "detail": "Song not found" }   // HTTP 404
-{ "detail": "MusicGen is still loading." }  // HTTP 503`)}
+${cb('json', `{ "ok": true, "song_id": "XKPQ", "audio_url": "/generated/ECHO_XKPQ_original.mp3" }`)}
 `,
-
 '/docs/how-it-works': () => `
 <div class="page-header">
   <span class="page-eyebrow">Introduction</span>
   <h1 class="page-title">How It Works</h1>
-  <p class="page-desc">Echo Echo chains three AI systems — music generation, lyrics writing, and copyright checking — into a single seamless pipeline coordinated by a FastAPI server.</p>
+  <p class="page-desc">Echo Echo chains three AI systems — music generation, lyrics writing, and copyright checking — into a single seamless pipeline.</p>
 </div>
+
+<div class="scene-3d" id="arch-scene" style="height:350px"></div>
+<script>setTimeout(()=>init3DScene('arch-scene','architecture'),100)<\/script>
 
 <h2>System architecture</h2>
 <div class="arch">
@@ -597,39 +1286,76 @@ ${cb('json', `// Success
   <div class="arch-row"><span class="arch-label">Storage</span><div class="arch-box" style="background:rgba(56,189,248,.1);border-color:rgba(56,189,248,.3);color:#7dd3fc">song_history.json</div><span class="arch-arrow">+</span><div class="arch-box" style="background:rgba(56,189,248,.1);border-color:rgba(56,189,248,.3);color:#7dd3fc">backend/generated/</div></div>
 </div>
 
-<h2>Generation pipeline — step by step</h2>
-<ol class="step-list">
-  <li><div class="step-body"><div class="step-title">Request received at <code>POST /api/generate</code></div><div class="step-desc">The browser sends a JSON body with <code>moods</code>, <code>genres</code>, <code>themes</code>, <code>instruments</code>, <code>tempo</code>, <code>energy</code>, and <code>complexity</code>. Pydantic validates every field with type-safe defaults.</div></div></li>
-  <li><div class="step-body"><div class="step-title">Prompt construction via <code>composer.py</code></div><div class="step-desc">Your inputs are merged into a natural-language descriptor: <em>"melancholic lo-fi piano, slow 72bpm, rainy day nostalgic atmosphere, moderate complexity"</em>. This descriptor is what gets sent to both Kie.AI and the lyrics agent.</div></div></li>
-  <li><div class="step-body"><div class="step-title">Submission to Kie.AI</div><div class="step-desc"><code>api_generator.py</code> POSTs the prompt to Kie.AI's task creation endpoint using HTTPX (async). A webhook callback URL pointing back to <code>/api/kieai/callback</code> is registered so Kie.AI can notify your server when the audio is done rendering.</div></div></li>
-  <li><div class="step-body"><div class="step-title">Suno v4 renders the audio</div><div class="step-desc">Kie.AI's infrastructure queues your request with Suno v4. Render time is typically 30–90 seconds for a 30-second clip. Your server polls for completion and downloads the MP3 via a CDN URL once available.</div></div></li>
-  <li><div class="step-body"><div class="step-title">MP3 saved to <code>backend/generated/</code></div><div class="step-desc">The audio file is downloaded via HTTPX streaming and saved as <code>ECHO_{ID}_original.mp3</code> where <code>ID</code> is a random 4-letter code (e.g. <code>XKPQ</code>). The ID is guaranteed unique against all existing history and files.</div></div></li>
-  <li><div class="step-body"><div class="step-title">Lyrics agent runs (CrewAI + Groq)</div><div class="step-desc">A CrewAI <code>Agent</code> configured as "Professional Lyricist" receives the full generation context and writes a complete song with verse, pre-chorus, chorus, and bridge. The agent uses Llama 3.1 8B Instant via Groq — typically completes in 2–5 seconds.</div></div></li>
-  <li><div class="step-body"><div class="step-title">Copyright check agent runs</div><div class="step-desc">A second CrewAI agent receives the generated lyrics and evaluates similarity against known copyrighted works. It returns a structured verdict: <code>status</code> (safe/risky), <code>similarity_score</code> (0–1), and notes.</div></div></li>
-  <li><div class="step-body"><div class="step-title">Record persisted to <code>song_history.json</code></div><div class="step-desc">Everything — song ID, filename, mood/theme/style, prompt, generation time, lyrics, and copyright result — is appended as a JSON record. This file is the source of truth for the library.</div></div></li>
-</ol>
+<h2>State Machine — Song Generation</h2>
+${mermaidDiagram(`stateDiagram-v2
+    [*] --> Idle
+    Idle --> Validating: User clicks Generate
+    Validating --> Submitting: Pydantic OK
+    Validating --> Error: Validation Failed
+    Error --> Idle: Fix & Retry
+    Submitting --> Polling: Task ID received
+    Polling --> Rendering: Progress increases
+    Rendering --> Downloading: Suno callback
+    Downloading --> LyricsGen: MP3 saved
+    LyricsGen --> CopyrightCheck: Lyrics written
+    CopyrightCheck --> Saving: Risk assessed
+    Saving --> Complete: Record persisted
+    Complete --> [*]
+`)}
 
-<h2>Two generation backends</h2>
-<table class="param-table">
-  <tr><th>Mode</th><th>Backend</th><th>Audio quality</th><th>Latency</th><th>Requirement</th></tr>
-  <tr><td><code>api</code></td><td>Kie.AI → Suno v4</td><td>Professional (commercial grade)</td><td>30–90s</td><td><code>KIEAI_API_KEY</code> + public webhook URL</td></tr>
-  <tr><td><code>musicgen</code></td><td>Facebook MusicGen (local)</td><td>Research-grade</td><td>2–10 min</td><td>Local GPU / high-end CPU, ~4GB VRAM</td></tr>
+<h2>Generation pipeline — step by step</h2>
+${pipelineHTML([
+  { icon: '📝', label: 'Request', detail: 'The browser sends a JSON body with moods, genres, themes, instruments, tempo, energy, and complexity. Pydantic validates every field with type-safe defaults.', code: '{\n  "moods": ["melancholic", "dreamy"],\n  "genres": ["lo-fi", "ambient"],\n  "tempo": 72,\n  "energy": 3\n}', lang: 'json' },
+  { icon: '🏗️', label: 'Compose', detail: 'Inputs are merged into a natural-language descriptor: "melancholic lo-fi piano, slow 72bpm, rainy day nostalgic atmosphere". Sent to both Kie.AI and the lyrics agent.' },
+  { icon: '📡', label: 'Submit', detail: 'api_generator.py POSTs the prompt to Kie.AI with a webhook callback URL for async completion notification.' },
+  { icon: '🎼', label: 'Suno v4', detail: 'Kie.AI queues your request with Suno v4. Render time is typically 30–90 seconds for a 30-second clip.' },
+  { icon: '💾', label: 'Download', detail: 'Audio downloaded and saved as ECHO_{ID}_original.mp3. ID is a random 4-letter code guaranteed unique.' },
+  { icon: '🤖', label: 'Lyrics', detail: 'CrewAI "Professional Lyricist" agent writes complete song. Uses Llama 3.1 8B via Groq — 2–5 seconds.' },
+  { icon: '🛡️', label: 'Copyright', detail: 'Multi-agent pipeline: public domain check → web search → evidence extraction → LLM judge → risk scoring.', code: '{\n  "status": "safe",\n  "similarity_score": 0.09,\n  "risk": "low"\n}', lang: 'json' },
+  { icon: '📦', label: 'Persist', detail: 'Everything saved as JSON record: song ID, filename, prompt, generation time, lyrics, copyright result.' },
+])}
+
+<h2>Three Generation Backends</h2>
+<table class="compare-table">
+  <tr><th>Feature</th><th><code>api</code> Mode</th><th><code>musicgen</code> Mode</th><th><code>ace-step</code> Mode</th></tr>
+  <tr><td>Backend</td><td>Kie.AI → Suno v4</td><td>Facebook MusicGen</td><td>ACE-Step (HF)</td></tr>
+  <tr><td>Quality</td><td class="compare-check">★ Professional</td><td class="compare-check">● Research</td><td class="compare-check">★ Professional</td></tr>
+  <tr><td>Latency</td><td class="compare-check">30–90s</td><td class="compare-cross">2–10 min</td><td class="compare-check">60–180s</td></tr>
+  <tr><td>Vocals</td><td class="compare-na">Instrumental</td><td class="compare-na">Instrumental</td><td class="compare-check">✓ Full vocals</td></tr>
+  <tr><td>Requirements</td><td>KIE_API_KEY + webhook</td><td>Local GPU ~4GB VRAM</td><td>HF Space</td></tr>
+  <tr><td>Render</td><td class="compare-check">✓</td><td class="compare-cross">✗ Too heavy</td><td class="compare-check">✓</td></tr>
 </table>
 
-<div class="callout callout-warn">
-  <span class="callout-icon">⚠️</span>
-  <p>MusicGen (<code>facebook/musicgen-small</code>) is intentionally excluded from <code>requirements-deploy.txt</code>. It requires <code>torch</code> and <code>transformers</code> — adding those would make the Render build ~3GB. On Render, only <code>api</code> mode is available.</p>
-</div>
+<div class="callout callout-warn"><span class="callout-icon">⚠️</span><p>MusicGen is excluded from <code>requirements-deploy.txt</code> — it requires torch/transformers (~3GB build).</p></div>
 
-<h2>Webhook flow (Kie.AI)</h2>
-<p>Because music generation is async, Echo Echo uses webhooks instead of long-polling the Kie.AI API:</p>
-${cb('text', `1. POST /api/generate  →  Echo Echo submits task to Kie.AI with callback URL
-2. Kie.AI renders audio  →  (30–90 seconds in background)
-3. Kie.AI POSTs to /api/kieai/callback  →  payload includes task_id + audio CDN URL
-4. Echo Echo downloads MP3, saves to disk, updates history record
-5. GET /generation-status  →  frontend polls this every 2s to show progress bar`)}
+<h2>Webhook Flow</h2>
+${mermaidDiagram(`sequenceDiagram
+    participant FE as Frontend
+    participant API as FastAPI
+    participant KIE as Kie.AI
+    participant SUNO as Suno v4
+    participant CDN as Audio CDN
+
+    FE->>API: POST /api/generate
+    API->>KIE: POST /api/v1/generate
+    KIE-->>API: 200 {taskId}
+    KIE->>SUNO: Queue generation
+    Note over SUNO: Rendering 30-90s
+    SUNO-->>KIE: Audio ready
+    KIE->>API: POST /api/kieai/callback
+    API->>CDN: Download MP3
+    API->>API: Save + update history
+    API-->>FE: 200 {song_id, audio_url, lyrics, copyright}
+`)}
+
+<h2>Graceful Degradation</h2>
+<table class="param-table">
+  <tr><th>Service</th><th>If Missing</th><th>Impact</th></tr>
+  <tr><td><code>GROQ_API_KEY</code></td><td>Not set</td><td>Lyrics return fallback; copyright returns "unavailable"</td></tr>
+  <tr><td><code>KIEAI_API_KEY</code></td><td>Not set</td><td>API mode returns HTTP 500; other modes still work</td></tr>
+  <tr><td>FFmpeg</td><td>Not on PATH</td><td>Trim endpoint returns HTTP 500</td></tr>
+</table>
 `,
-
 '/docs/tech-stack': () => `
 <div class="page-header">
   <span class="page-eyebrow">Setup</span>
@@ -1800,7 +2526,6 @@ ${cb('json', `{"detail": "Sign-ups are temporarily closed — Echo Echo is in in
 `,
 
 };
-
 // ─── RENDER ──────────────────────────────────────────────────────────────────
 function render(rawPath) {
   const path = rawPath.replace(/\/$/, '') || '/docs';
@@ -1810,6 +2535,14 @@ function render(rawPath) {
   document.getElementById('content').innerHTML = page() + paginationHTML(path);
   renderSidebar(path);
   window.scrollTo(0, 0);
+  
+  // Re-initialize mermaid for new content
+  setTimeout(() => {
+    mermaid.run({ querySelector: '.mermaid' });
+  }, 100);
+  
+  // Animate counters
+  setTimeout(animateCounters, 200);
 }
 
 render(location.pathname);
@@ -1832,14 +2565,12 @@ function closeSidebar() {
   document.body.style.overflow = '';
 }
 
-// Close sidebar on nav item click (mobile)
 document.getElementById('sidenav').addEventListener('click', e => {
   if (e.target.classList.contains('sidenav-item') && window.innerWidth <= 900) {
     closeSidebar();
   }
 });
 
-// Close on Escape
 document.addEventListener('keydown', e => { if (e.key === 'Escape') closeSidebar(); });
 </script>
 </body>
