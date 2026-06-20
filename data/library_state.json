@@ -600,7 +600,7 @@
         "mood": "Selected mood",
         "genre": "Selected style",
         "bpm": 90,
-        "key": "F",
+        "key": "A",
         "chords": [
           "C",
           "Am",
@@ -623,21 +623,21 @@
         "F",
         "G"
       ],
-      "key": "F",
+      "key": "A",
       "timeSignature": "4/4",
-      "chordSheet": "CHORD SHEET\nKey: F \u00b7 BPM: 90 \u00b7 Time Signature: 4/4\n\n[Intro]\n| C | Am | F | G |\n\n[Verse]\n| C | Am | F | G |\n| Am | F | G | C |\n\n[Hook]\n| F | G | C | Am |\n| G | C | Am | F |\n\nPerformance Notes:\nKeep the feel selected mood and let the Selected style groove breathe.",
+      "chordSheet": "CHORD SHEET\nKey: A \u00b7 BPM: 90 \u00b7 Time Signature: 4/4\n\n[Intro]\n| C | Am | F | G |\n\n[Verse]\n| C | Am | F | G |\n| Am | F | G | C |\n\n[Hook]\n| F | G | C | Am |\n| G | C | Am | F |\n\nPerformance Notes:\nKeep the feel selected mood and let the Selected style groove breathe.",
       "musicSheet": {
         "title": "First User Song",
-        "key": "F",
+        "key": "A",
         "bpm": 90,
         "timeSignature": "4/4",
-        "scale": "F major/minor modal color",
+        "scale": "A major/minor modal color",
         "mood": "Selected mood",
         "genre": "Selected style",
         "melodySketch": [
-          "Bar 1: F - A - D - A",
-          "Bar 2: G - A - C",
-          "Bar 3: D - C - A - G"
+          "Bar 1: A - C - G - C",
+          "Bar 2: B - C - E",
+          "Bar 3: G - E - C - B"
         ],
         "arrangement": [
           "Piano/Synth: Main harmonic bed using C, Am, F, G",
@@ -689,19 +689,19 @@
       "instrumental": null,
       "vocalsEnabled": null,
       "vocalMode": "",
-      "chord_sheet": "CHORD SHEET\nKey: F \u00b7 BPM: 90 \u00b7 Time Signature: 4/4\n\n[Intro]\n| C | Am | F | G |\n\n[Verse]\n| C | Am | F | G |\n| Am | F | G | C |\n\n[Hook]\n| F | G | C | Am |\n| G | C | Am | F |\n\nPerformance Notes:\nKeep the feel selected mood and let the Selected style groove breathe.",
+      "chord_sheet": "CHORD SHEET\nKey: A \u00b7 BPM: 90 \u00b7 Time Signature: 4/4\n\n[Intro]\n| C | Am | F | G |\n\n[Verse]\n| C | Am | F | G |\n| Am | F | G | C |\n\n[Hook]\n| F | G | C | Am |\n| G | C | Am | F |\n\nPerformance Notes:\nKeep the feel selected mood and let the Selected style groove breathe.",
       "music_sheet": {
         "title": "First User Song",
-        "key": "F",
+        "key": "A",
         "bpm": 90,
         "timeSignature": "4/4",
-        "scale": "F major/minor modal color",
+        "scale": "A major/minor modal color",
         "mood": "Selected mood",
         "genre": "Selected style",
         "melodySketch": [
-          "Bar 1: F - A - D - A",
-          "Bar 2: G - A - C",
-          "Bar 3: D - C - A - G"
+          "Bar 1: A - C - G - C",
+          "Bar 2: B - C - E",
+          "Bar 3: G - E - C - B"
         ],
         "arrangement": [
           "Piano/Synth: Main harmonic bed using C, Am, F, G",
@@ -717,16 +717,16 @@
       },
       "sheetMusic": {
         "title": "First User Song",
-        "key": "F",
+        "key": "A",
         "bpm": 90,
         "timeSignature": "4/4",
-        "scale": "F major/minor modal color",
+        "scale": "A major/minor modal color",
         "mood": "Selected mood",
         "genre": "Selected style",
         "melodySketch": [
-          "Bar 1: F - A - D - A",
-          "Bar 2: G - A - C",
-          "Bar 3: D - C - A - G"
+          "Bar 1: A - C - G - C",
+          "Bar 2: B - C - E",
+          "Bar 3: G - E - C - B"
         ],
         "arrangement": [
           "Piano/Synth: Main harmonic bed using C, Am, F, G",
@@ -797,7 +797,7 @@
         "mood": "Calm",
         "genre": "Piano",
         "bpm": 90,
-        "key": "Bb",
+        "key": "Eb",
         "chords": [
           "C",
           "Am",
@@ -820,21 +820,21 @@
         "F",
         "G"
       ],
-      "key": "Bb",
+      "key": "Eb",
       "timeSignature": "4/4",
-      "chordSheet": "CHORD SHEET\nKey: Bb \u00b7 BPM: 90 \u00b7 Time Signature: 4/4\n\n[Intro]\n| C | Am | F | G |\n\n[Verse]\n| C | Am | F | G |\n| Am | F | G | C |\n\n[Hook]\n| F | G | C | Am |\n| G | C | Am | F |\n\nPerformance Notes:\nKeep the feel calm and let the Piano groove breathe.",
+      "chordSheet": "CHORD SHEET\nKey: Eb \u00b7 BPM: 90 \u00b7 Time Signature: 4/4\n\n[Intro]\n| C | Am | F | G |\n\n[Verse]\n| C | Am | F | G |\n| Am | F | G | C |\n\n[Hook]\n| F | G | C | Am |\n| G | C | Am | F |\n\nPerformance Notes:\nKeep the feel calm and let the Piano groove breathe.",
       "musicSheet": {
         "title": "Inspiration WXYZ",
-        "key": "Bb",
+        "key": "Eb",
         "bpm": 90,
         "timeSignature": "4/4",
-        "scale": "Bb major/minor modal color",
+        "scale": "Eb major/minor modal color",
         "mood": "Calm",
         "genre": "Piano",
         "melodySketch": [
-          "Bar 1: B - D# - G# - D#",
-          "Bar 2: C# - D# - F#",
-          "Bar 3: G# - F# - D# - C#"
+          "Bar 1: E - G - C - G",
+          "Bar 2: F# - G - B",
+          "Bar 3: C - B - G - F#"
         ],
         "arrangement": [
           "Piano/Synth: Main harmonic bed using C, Am, F, G",
@@ -872,19 +872,19 @@
       "instrumental": null,
       "vocalsEnabled": null,
       "vocalMode": "",
-      "chord_sheet": "CHORD SHEET\nKey: Bb \u00b7 BPM: 90 \u00b7 Time Signature: 4/4\n\n[Intro]\n| C | Am | F | G |\n\n[Verse]\n| C | Am | F | G |\n| Am | F | G | C |\n\n[Hook]\n| F | G | C | Am |\n| G | C | Am | F |\n\nPerformance Notes:\nKeep the feel calm and let the Piano groove breathe.",
+      "chord_sheet": "CHORD SHEET\nKey: Eb \u00b7 BPM: 90 \u00b7 Time Signature: 4/4\n\n[Intro]\n| C | Am | F | G |\n\n[Verse]\n| C | Am | F | G |\n| Am | F | G | C |\n\n[Hook]\n| F | G | C | Am |\n| G | C | Am | F |\n\nPerformance Notes:\nKeep the feel calm and let the Piano groove breathe.",
       "music_sheet": {
         "title": "Inspiration WXYZ",
-        "key": "Bb",
+        "key": "Eb",
         "bpm": 90,
         "timeSignature": "4/4",
-        "scale": "Bb major/minor modal color",
+        "scale": "Eb major/minor modal color",
         "mood": "Calm",
         "genre": "Piano",
         "melodySketch": [
-          "Bar 1: B - D# - G# - D#",
-          "Bar 2: C# - D# - F#",
-          "Bar 3: G# - F# - D# - C#"
+          "Bar 1: E - G - C - G",
+          "Bar 2: F# - G - B",
+          "Bar 3: C - B - G - F#"
         ],
         "arrangement": [
           "Piano/Synth: Main harmonic bed using C, Am, F, G",
@@ -900,16 +900,16 @@
       },
       "sheetMusic": {
         "title": "Inspiration WXYZ",
-        "key": "Bb",
+        "key": "Eb",
         "bpm": 90,
         "timeSignature": "4/4",
-        "scale": "Bb major/minor modal color",
+        "scale": "Eb major/minor modal color",
         "mood": "Calm",
         "genre": "Piano",
         "melodySketch": [
-          "Bar 1: B - D# - G# - D#",
-          "Bar 2: C# - D# - F#",
-          "Bar 3: G# - F# - D# - C#"
+          "Bar 1: E - G - C - G",
+          "Bar 2: F# - G - B",
+          "Bar 3: C - B - G - F#"
         ],
         "arrangement": [
           "Piano/Synth: Main harmonic bed using C, Am, F, G",

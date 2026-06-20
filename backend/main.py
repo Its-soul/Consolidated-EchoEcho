@@ -38,6 +38,7 @@ from .api_generator import (
 from .music_generator import (
     TARGET_SECONDS,
     build_prompt as build_music_prompt,
+    generate_fallback_music,
     generate_music,
     load_model,
 )
@@ -1393,20 +1394,6 @@ def generate_with_musicgen(
         update_generation_status("Failed", 100)
         raise HTTPException(status_code=500, detail=f"Song ID assignment failed: {error}") from error
 
-    with model_lock:
-        ready_model = model
-        ready_processor = processor
-        current_status = model_status
-
-    if current_status != "ready" or ready_model is None or ready_processor is None:
-        update_generation_status("Failed", 100)
-        detail = (
-            "MusicGen is unavailable on this deployment — it requires a GPU and is not installed."
-            if current_status == "error"
-            else "MusicGen is still loading, please try again in a moment."
-        )
-        raise HTTPException(status_code=503, detail=detail)
-
     try:
         custom_prompt = request.custom_prompt.strip() or request.prompt.strip()
         prompt = build_music_prompt(
@@ -1420,19 +1407,40 @@ def generate_with_musicgen(
             custom_prompt=custom_prompt,
             duration_seconds=request.duration,
         )
-        generation_result = generate_music(
-            ready_model,
-            ready_processor,
-            prompt,
-            output_path,
-            progress_callback=update_generation_status,
-            duration_seconds=request.duration,
-        )
-    except RuntimeError as error:
-        update_generation_status("Failed", 100)
-        if "out of memory" in str(error).lower():
-            raise HTTPException(status_code=500, detail="MusicGen ran out of memory.") from error
-        raise HTTPException(status_code=500, detail=f"Music generation failed: {error}") from error
+        with model_lock:
+            ready_model = model
+            ready_processor = processor
+            current_status = model_status
+
+        if current_status == "ready" and ready_model is not None and ready_processor is not None:
+            try:
+                generation_result = generate_music(
+                    ready_model,
+                    ready_processor,
+                    prompt,
+                    output_path,
+                    progress_callback=update_generation_status,
+                    duration_seconds=request.duration,
+                )
+            except (RuntimeError, MemoryError) as model_exc:
+                logger.warning("MusicGen inference failed (%s); switching to fallback renderer", model_exc)
+                generation_result = generate_fallback_music(
+                    prompt,
+                    output_path,
+                    progress_callback=update_generation_status,
+                    duration_seconds=request.duration,
+                    tempo=request.tempo,
+                )
+                generation_result["fallback"] = True
+        else:
+            logger.warning("MusicGen unavailable (%s); using fallback renderer: %s", current_status, model_error)
+            generation_result = generate_fallback_music(
+                prompt,
+                output_path,
+                progress_callback=update_generation_status,
+                duration_seconds=request.duration,
+                tempo=request.tempo,
+            )
     except Exception as error:
         update_generation_status("Failed", 100)
         logger.exception("MusicGen generation failed")
@@ -1466,6 +1474,7 @@ def generate_with_musicgen(
         "output_file": f"generated/{filename}",
         "audio_url": f"/generated/{filename}",
         "inference_seconds": round(float(generation_result.get("inference_seconds", 0)), 2),
+        "fallback": bool(generation_result.get("fallback")),
     }
     finalize_generated_record(
         record,
@@ -1476,6 +1485,8 @@ def generate_with_musicgen(
     )
     record["lyrics"] = None
     record["copyright"] = copyright_unavailable("MusicGen does not produce lyrics for this instrumental inspiration.")
+    if record["fallback"]:
+        record["providerNote"] = "Local fallback instrumental rendered because the MusicGen model is unavailable."
     attach_sheet(record)
     save_user_song(user_id, record, user_email=user_email, user_name=user_name)
     update_generation_status("Completed", 100)
@@ -1627,7 +1638,7 @@ class AceStepLyricsRequest(BaseModel):
     mood: str = ""
     genre: str = ""
     theme: str = ""
-    instruments: str = ""
+    instruments: str | list[str] = ""
     vocal: str = ""
     tempo: int = 90
     energy: int = 5
@@ -1655,6 +1666,7 @@ def api_ace_step_lyrics(request: AceStepLyricsRequest) -> dict[str, Any]:
     energy_desc = energy_words.get(request.energy, "moderate")
     duration = int(request.duration or 60)
     max_lines = 8 if duration <= 30 else 16 if duration <= 60 else 24 if duration <= 90 else 48
+    instruments = ", ".join(request.instruments) if isinstance(request.instruments, list) else request.instruments
 
     system = (
         "You are a professional songwriter. Write original song lyrics for an AI-generated song preview. "
@@ -1670,21 +1682,34 @@ def api_ace_step_lyrics(request: AceStepLyricsRequest) -> dict[str, Any]:
         "Use section labels and 2-4 short lines per section.\n"
         f"Mood: {request.mood or 'emotional'}\n"
         f"Genre: {request.genre or 'pop'}\n"
-        f"Instruments: {request.instruments or 'piano, guitar'}\n"
+        f"Instruments: {instruments or 'piano, guitar'}\n"
         f"Vocal style: {request.vocal or 'smooth'}\n"
         f"Tempo: {request.tempo} BPM ({energy_desc} energy)\n"
         f"Theme/prompt: {request.prompt or request.promptText or request.theme or 'life and journey'}\n\n"
         "Make the lyrics singable, emotional, and original."
     )
 
-    completion = client.chat.completions.create(
-        model="llama-3.1-8b-instant",
-        messages=[{"role": "system", "content": system}, {"role": "user", "content": user_prompt}],
-        max_tokens=600,
-        temperature=0.85,
-    )
-    lyrics = completion.choices[0].message.content.strip()
-    return {"ok": True, "lyrics": lyrics}
+    try:
+        completion = client.chat.completions.create(
+            model="llama-3.1-8b-instant",
+            messages=[{"role": "system", "content": system}, {"role": "user", "content": user_prompt}],
+            max_tokens=600,
+            temperature=0.85,
+        )
+        lyrics = completion.choices[0].message.content.strip()
+        if not lyrics:
+            raise HTTPException(status_code=502, detail="Groq returned an empty response. Please try again.")
+        return {"ok": True, "lyrics": lyrics}
+    except HTTPException:
+        raise
+    except Exception as exc:
+        err_msg = str(exc)
+        if "rate_limit" in err_msg.lower() or "rate limit" in err_msg.lower():
+            raise HTTPException(status_code=429, detail="Groq rate limit reached. Please wait a moment and try again.")
+        if "authentication" in err_msg.lower() or "invalid" in err_msg.lower() or "api key" in err_msg.lower():
+            raise HTTPException(status_code=503, detail="Groq API key is invalid or expired. Please check your GROQ_API_KEY.")
+        logger.exception("Groq lyrics generation failed")
+        raise HTTPException(status_code=502, detail=f"Groq lyrics generation failed: {err_msg}") from exc
 
 
 @app.post("/api/kie-vocal")

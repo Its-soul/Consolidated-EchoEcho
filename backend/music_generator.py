@@ -1,4 +1,7 @@
 import logging
+import math
+import wave
+from array import array
 import time
 from typing import Any
 from pathlib import Path
@@ -164,19 +167,26 @@ def load_model() -> tuple[Any, Any]:
     from transformers import AutoProcessor, MusicgenForConditionalGeneration
 
     start_time = time.perf_counter()
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-    logger.info("Loading %s on %s", MODEL_ID, device)
-    if device.type == "cuda":
+    if torch.cuda.is_available():
+        device = torch.device("cuda")
         torch.backends.cuda.matmul.allow_tf32 = True
         torch.backends.cudnn.allow_tf32 = True
+    elif hasattr(torch.backends, "mps") and torch.backends.mps.is_available():
+        device = torch.device("mps")
+    else:
+        device = torch.device("cpu")
+
+    logger.info("Loading %s on %s", MODEL_ID, device)
 
     processor = AutoProcessor.from_pretrained(MODEL_ID)
     model = MusicgenForConditionalGeneration.from_pretrained(MODEL_ID)
+
     if device.type == "cuda":
         model.to(device=device, dtype=torch.float16)
     else:
         model.to(device)
+
     model.eval()
 
     logger.info("Model loaded in %.1f seconds", time.perf_counter() - start_time)
@@ -301,4 +311,68 @@ def generate_music(
         "inference_seconds": inference_seconds,
         "wav_export_seconds": wav_seconds,
         "total_seconds": total_seconds,
+    }
+
+
+def generate_fallback_music(
+    prompt: str,
+    output_path: Path,
+    progress_callback=None,
+    duration_seconds: int = TARGET_SECONDS,
+    tempo: int = 90,
+) -> dict:
+    """Render a small deterministic instrumental WAV when MusicGen is unavailable."""
+    start = time.perf_counter()
+    GENERATED_DIR.mkdir(parents=True, exist_ok=True)
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+
+    if progress_callback:
+        progress_callback("Rendering fallback instrumental", 30)
+
+    prompt_key = sum(ord(ch) for ch in prompt.lower())
+    roots = [220.0, 261.63, 293.66, 329.63, 392.0]
+    root = roots[prompt_key % len(roots)]
+    minor = any(word in prompt.lower() for word in ("sad", "dark", "melancholy", "rain", "night"))
+    third = 2 ** ((3 if minor else 4) / 12)
+    fifth = 2 ** (7 / 12)
+    progression = [
+        (root, root * third, root * fifth),
+        (root * 0.75, root * 0.75 * third, root * 0.75 * fifth),
+        (root * 4 / 3, root * 4 / 3 * third, root * 4 / 3 * fifth),
+        (root * 3 / 2, root * 3 / 2 * third, root * 3 / 2 * fifth),
+    ]
+    seconds = max(1, int(duration_seconds or TARGET_SECONDS))
+    sample_count = SAMPLE_RATE * seconds
+    beat_seconds = 60 / max(40, min(220, int(tempo or 90)))
+    bar_seconds = beat_seconds * 4
+    max_amp = 32767
+    samples = array("h")
+
+    for idx in range(sample_count):
+        t = idx / SAMPLE_RATE
+        bar_index = int(t / bar_seconds) % len(progression)
+        local = (t % bar_seconds) / bar_seconds
+        chord = progression[bar_index]
+        envelope = min(1.0, local * 10) * min(1.0, (1 - local) * 8)
+        pad = sum(math.sin(2 * math.pi * freq * t) for freq in chord) / len(chord)
+        bass = math.sin(2 * math.pi * (chord[0] / 2) * t)
+        pulse = 0.18 if (t % beat_seconds) < 0.045 else 0.0
+        value = (pad * 0.28 + bass * 0.18 + pulse) * envelope
+        samples.append(int(max(-0.95, min(0.95, value)) * max_amp))
+
+    if progress_callback:
+        progress_callback("Saving audio", 90)
+    with wave.open(str(output_path), "wb") as wav:
+        wav.setnchannels(1)
+        wav.setsampwidth(2)
+        wav.setframerate(SAMPLE_RATE)
+        wav.writeframes(samples.tobytes())
+
+    total_seconds = time.perf_counter() - start
+    return {
+        "output_path": output_path,
+        "inference_seconds": total_seconds,
+        "wav_export_seconds": total_seconds,
+        "total_seconds": total_seconds,
+        "fallback": True,
     }
